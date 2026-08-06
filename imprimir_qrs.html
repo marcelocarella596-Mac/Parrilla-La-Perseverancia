@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Imprimir QRs - Parrilla La Perseverancia</title>
+  <!-- Librería para generar QRs -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; background: #f0f0f0; padding: 20px; }
+    
+    .no-print { text-align: center; margin-bottom: 20px; }
+    .btn-print { background: #8b0000; color: white; border: none; padding: 12px 24px; font-size: 1.1rem; font-weight: bold; border-radius: 6px; cursor: pointer; }
+
+    .grid-qrs {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    /* Tarjeta individual de Mesa */
+    .qr-card {
+      background: white;
+      border: 3px solid #8b0000;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      page-break-inside: avoid;
+    }
+
+    .qr-card h2 { font-size: 1.4rem; color: #8b0000; text-transform: uppercase; margin-bottom: 5px; }
+    .qr-card h3 { font-size: 1.8rem; color: #111; margin-bottom: 15px; background: #ffc107; padding: 5px; border-radius: 6px; }
+    .qr-code { display: flex; justify-content: center; margin: 15px 0; }
+    .qr-card p { font-size: 0.9rem; color: #555; font-weight: bold; }
+
+    @media print {
+      .no-print { display: none; }
+      body { background: white; padding: 0; }
+      .grid-qrs { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+      .qr-card { border: 2px solid #000; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="no-print">
+    <h1>🖨️ Generador de QRs para Mesas</h1>
+    <p style="margin: 10px 0;">Hacé clic en el botón para mandar a imprimir las tarjetas de las mesas.</p>
+    <button class="btn-print" onclick="window.print()">Imprimir Tarjetas QR 🖨️</button>
+  </div>
+
+  <div class="grid-qrs" id="contenedorQRs"></div>
+
+  <script>
+    const baseUrl = "https://marcelocarella596-Mac.github.io/Parrilla-La-Perseverancia-/parrilla.html";
+
+    const mesas = [
+      { id: "Salon_Mesa_1", nombre: "Salón - Mesa 1" },
+      { id: "Salon_Mesa_2", nombre: "Salón - Mesa 2" },
+      { id: "Salon_Mesa_3", nombre: "Salón - Mesa 3" },
+      { id: "Salon_Mesa_4", nombre: "Salón - Mesa 4" },
+      { id: "Vereda_Mesa_5", nombre: "Vereda - Mesa 5" },
+      { id: "Vereda_Mesa_6", nombre: "Vereda - Mesa 6" },
+      { id: "Vereda_Mesa_7", nombre: "Vereda - Mesa 7" },
+      { id: "Vereda_Mesa_8", nombre: "Vereda - Mesa 8" }
+    ];
+
+    const contenedor = document.getElementById('contenedorQRs');
+
+    mesas.forEach(m => {
+      const tarjeta = document.createElement('div');
+      tarjeta.className = 'qr-card';
+      
+      const linkFinal = `${baseUrl}?mesa=${m.id}`;
+
+      tarjeta.innerHTML = `
+        <h2>🔥 La Perseverancia 🔥</h2>
+        <h3>${m.nombre}</h3>
+        <p>Escaneá para ver la carta digital</p>
+        <div class="qr-code" id="qr_${m.id}"></div>
+        <p style="font-size: 0.75rem; color: #888;">Av. Argentina 5801</p>
+      `;
+
+      contenedor.appendChild(tarjeta);
+
+      // Generar el gráfico QR
+      new QRCode(document.getElementById(`qr_${m.id}`), {
+        text: linkFinal,
+        width: 160,
+        height: 160
+      });
+    });
+  </script>
+</body>
+</html>
