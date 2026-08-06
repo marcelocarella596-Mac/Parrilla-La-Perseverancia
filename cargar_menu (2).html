@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cargador Oficial - Parrilla La Perseverancia</title>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, deleteDoc, doc, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    // Configuración real con el Project ID oficial
+    const firebaseConfig = {
+      apiKey: "AIzaSyB-DEFAULT-KEY",
+      authDomain: "parrilla-la-perseveranci-f3f54.firebaseapp.com",
+      projectId: "parrilla-la-perseveranci-f3f54",
+      storageBucket: "parrilla-la-perseveranci-f3f54.appspot.com",
+      messagingSenderId: "100000000000",
+      appId: "1:100000000000:web:1234567890abcdef"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Productos exactos extraídos del PDF del Menú
+    const productosPDF = [
+      // PARRILLA
+      { nombre: "Asado c/Fritas (1/2)", precio: 25000, categoria: "Parrilla" },
+      { nombre: "Asado c/Fritas (Entero)", precio: 28000, categoria: "Parrilla" },
+      { nombre: "Vacío c/Fritas (1/2)", precio: 29000, categoria: "Parrilla" },
+      { nombre: "Vacío c/Fritas (Entero)", precio: 32000, categoria: "Parrilla" },
+      { nombre: "Entraña c/Fritas Sola (1/2)", precio: 32000, categoria: "Parrilla" },
+      { nombre: "Entraña c/Fritas Sola (Entera)", precio: 34000, categoria: "Parrilla" },
+      { nombre: "Mini Bife de Chorizo c/Fritas", precio: 20000, categoria: "Parrilla" },
+      { nombre: "Bife de Costilla c/Fritas", precio: 17000, categoria: "Parrilla" },
+      { nombre: "Bondiola c/Fritas", precio: 18000, categoria: "Parrilla" },
+      { nombre: "Chorizo", precio: 6500, categoria: "Parrilla" },
+      { nombre: "Morcilla", precio: 6000, categoria: "Parrilla" },
+      { nombre: "Parrillada para 2", precio: 59000, categoria: "Parrilla" },
+      { nombre: "Riñones (1/2)", precio: 10800, categoria: "Parrilla" },
+      { nombre: "Riñones (Entero)", precio: 13000, categoria: "Parrilla" },
+      { nombre: "Chinchulines (1/2)", precio: 10500, categoria: "Parrilla" },
+      { nombre: "Chinchulines (Entero)", precio: 12000, categoria: "Parrilla" },
+      { nombre: "1/4 de Pollo c/Fritas", precio: 12000, categoria: "Parrilla" },
+      { nombre: "Fritas Gigantes", precio: 12000, categoria: "Papas" },
+      { nombre: "Fritas Grandes", precio: 9000, categoria: "Papas" },
+      { nombre: "Frita Chica", precio: 8000, categoria: "Papas" },
+      { nombre: "Provoleta", precio: 13000, categoria: "Parrilla" },
+      { nombre: "Pollo Entero (Solo Llevar)", precio: 33000, categoria: "Parrilla" },
+      { nombre: "Pollo Entero c/Fritas (Solo Llevar)", precio: 38000, categoria: "Parrilla" },
+
+      // MINUTAS
+      { nombre: "Milanesa c/Fritas", precio: 14500, categoria: "Minutas" },
+      { nombre: "Milanesa c/Fritas y 2 Huevos", precio: 22000, categoria: "Minutas" },
+      { nombre: "Milanesa Napolitana c/Fritas", precio: 18000, categoria: "Minutas" },
+      { nombre: "Suprema c/Fritas", precio: 14000, categoria: "Minutas" },
+      { nombre: "Suprema c/Fritas y 2 Huevos", precio: 19000, categoria: "Minutas" },
+      { nombre: "Suprema Napolitana c/Fritas", precio: 18000, categoria: "Minutas" },
+      { nombre: "Tortilla de Papas", precio: 9000, categoria: "Minutas" },
+      { nombre: "Buñuelo de Acelga (c/u)", precio: 1800, categoria: "Minutas" },
+      { nombre: "Pechuga Grillé c/Fritas", precio: 15000, categoria: "Minutas" },
+
+      // ENSALADAS
+      { nombre: "Ensalada Mixta (Chica)", precio: 5000, categoria: "Ensaladas" },
+      { nombre: "Ensalada Mixta (Grande)", precio: 7000, categoria: "Ensaladas" },
+      { nombre: "Zanahoria y Huevo (Chica)", precio: 4000, categoria: "Ensaladas" },
+      { nombre: "Zanahoria y Huevo (Grande)", precio: 7000, categoria: "Ensaladas" },
+      { nombre: "Lechuga, Tomate, Huevo y Zanahoria (Chica)", precio: 8000, categoria: "Ensaladas" },
+      { nombre: "Lechuga, Tomate, Huevo y Zanahoria (Grande)", precio: 9500, categoria: "Ensaladas" },
+
+      // POSTRES Y ADICIONALES
+      { nombre: "Flan", precio: 8000, categoria: "Postres" },
+      { nombre: "Budín de Pan", precio: 8000, categoria: "Postres" },
+      { nombre: "Queso y Dulce", precio: 15000, categoria: "Postres" },
+      { nombre: "Adicional Crema y/o Dulce de Leche", precio: 2800, categoria: "Postres" },
+
+      // BEBIDAS - GASEOSAS Y AGUAS
+      { nombre: "Coca Cola 1.750 L", precio: 8000, categoria: "Bebidas" },
+      { nombre: "Coca Cero 1.750 L", precio: 8000, categoria: "Bebidas" },
+      { nombre: "Sprite 1.750 L", precio: 8000, categoria: "Bebidas" },
+      { nombre: "Sprite Cero 1.750 L", precio: 8000, categoria: "Bebidas" },
+      { nombre: "Fanta 1.750 L", precio: 8000, categoria: "Bebidas" },
+      { nombre: "Coca Cola 500cc", precio: 5500, categoria: "Bebidas" },
+      { nombre: "Sprite 500cc", precio: 5500, categoria: "Bebidas" },
+      { nombre: "Fanta 500cc", precio: 5500, categoria: "Bebidas" },
+      { nombre: "Agua Saborizada Pomelo 1.5 L", precio: 7000, categoria: "Bebidas" },
+      { nombre: "Agua Saborizada Manzana 1.5 L", precio: 7000, categoria: "Bebidas" },
+      { nombre: "Agua Saborizada Pera 1.5 L", precio: 7000, categoria: "Bebidas" },
+      { nombre: "Agua Saborizada Pomelo 500ml", precio: 4500, categoria: "Bebidas" },
+      { nombre: "Agua Saborizada Manzana 500ml", precio: 4500, categoria: "Bebidas" },
+      { nombre: "Agua Saborizada Pera 500ml", precio: 4500, categoria: "Bebidas" },
+      { nombre: "Agua 1.5 L", precio: 5500, categoria: "Bebidas" },
+      { nombre: "Agua 500ml", precio: 3500, categoria: "Bebidas" },
+      { nombre: "Soda", precio: 3500, categoria: "Bebidas" },
+
+      // BEBIDAS - VINOS Y CERVEZAS
+      { nombre: "López Tinto 750cc", precio: 11000, categoria: "Bebidas" },
+      { nombre: "López Blanco 750cc", precio: 10000, categoria: "Bebidas" },
+      { nombre: "Vasco Tinto 750cc", precio: 8000, categoria: "Bebidas" },
+      { nombre: "Vasco Tinto Edición Limitada 750cc", precio: 8500, categoria: "Bebidas" },
+      { nombre: "Vasco Blanco 750cc", precio: 8500, categoria: "Bebidas" },
+      { nombre: "López Tinto 375cc", precio: 8000, categoria: "Bebidas" },
+      { nombre: "López Blanco 375cc", precio: 7500, categoria: "Bebidas" },
+      { nombre: "Vasco Tinto 375cc", precio: 7000, categoria: "Bebidas" },
+      { nombre: "Vasco Blanco 375cc", precio: 7000, categoria: "Bebidas" },
+      { nombre: "Miller 1 L", precio: 8500, categoria: "Bebidas" },
+      { nombre: "Miller 473cc", precio: 4500, categoria: "Bebidas" },
+      { nombre: "Heineken 1 L", precio: 9000, categoria: "Bebidas" },
+      { nombre: "Heineken 473cc", precio: 5000, categoria: "Bebidas" },
+
+      // SANDWICHES / SÁNDWICHES ESPECIALES
+      { nombre: "Choripán", precio: 6500, categoria: "Sandwiches" },
+      { nombre: "Morcipán", precio: 6000, categoria: "Sandwiches" },
+      { nombre: "Sánguche Vacío Solo", precio: 15000, categoria: "Sandwiches" },
+      { nombre: "Sánguche Vacío L y T", precio: 16000, categoria: "Sandwiches" },
+      { nombre: "Sánguche Vacío J y Q", precio: 17000, categoria: "Sandwiches" },
+      { nombre: "Sánguche Vacío Completo (L,T,J,Q)", precio: 18000, categoria: "Sandwiches" },
+      { nombre: "Sánguche Vacío Súper Completo (+Huevo)", precio: 19000, categoria: "Sandwiches" },
+      { nombre: "Sánguche Bondiola Sola", precio: 13000, categoria: "Sandwiches" },
+      { nombre: "Sánguche Bondiola L y T", precio: 13500, categoria: "Sandwiches" },
+      { nombre: "Sánguche Bondiola J y Q", precio: 14000, categoria: "Sandwiches" },
+      { nombre: "Sánguche Bondiola Completa (L,T,J,Q)", precio: 15000, categoria: "Sandwiches" },
+      { nombre: "Sánguche Bondiola Súper Completa (+Huevo)", precio: 16500, categoria: "Sandwiches" },
+      { nombre: "Sánguche Milanesa Sola", precio: 9000, categoria: "Sandwiches" },
+      { nombre: "Sánguche Milanesa L y T", precio: 9500, categoria: "Sandwiches" },
+      { nombre: "Sánguche Milanesa J y Q", precio: 10000, categoria: "Sandwiches" },
+      { nombre: "Sánguche Milanesa Completa", precio: 11000, categoria: "Sandwiches" },
+      { nombre: "Sánguche Milanesa Súper Completa (+Huevo)", precio: 12500, categoria: "Sandwiches" },
+      { nombre: "Sánguche Grillé Solo", precio: 10000, categoria: "Sandwiches" },
+      { nombre: "Sánguche Grillé L y t", precio: 11000, categoria: "Sandwiches" },
+      { nombre: "Sánguche Grillé L, T, J y Q", precio: 12000, categoria: "Sandwiches" },
+      { nombre: "Sánguche Grillé Completo (L,T,J,Q, Huevo)", precio: 13500, categoria: "Sandwiches" }
+    ];
+
+    window.subirDatosOficiales = async () => {
+      const log = document.getElementById("log");
+      log.innerHTML = "⏳ Limpiando base de datos vieja...<br>";
+
+      try {
+        const querySnapshot = await getDocs(collection(db, "menu_items"));
+        for (const docSnap of querySnapshot.docs) {
+          await deleteDoc(doc(db, "menu_items", docSnap.id));
+        }
+        log.innerHTML += "✅ Base de datos limpia.<br><br>🚀 Cargando productos del PDF...<br>";
+
+        for (const item of productosPDF) {
+          await addDoc(collection(db, "menu_items"), item);
+          log.innerHTML += `✔️ Cargado: ${item.nombre} ($${item.precio}) - [${item.categoria}]<br>`;
+        }
+
+        log.innerHTML += "<br><strong>🎉 ¡Carga completa del Menú PDF exitosa!</strong>";
+      } catch (error) {
+        log.innerHTML += `<br>❌ Error: ${error.message}`;
+      }
+    };
+  </script>
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #121212; color: #fff; padding: 20px; text-align: center; }
+    button { background: #ff9800; color: #000; font-size: 18px; font-weight: bold; border: none; padding: 15px 30px; border-radius: 8px; cursor: pointer; }
+    #log { text-align: left; background: #1e1e1e; padding: 15px; margin-top: 20px; border-radius: 8px; max-height: 400px; overflow-y: auto; font-family: monospace; }
+  </style>
+</head>
+<body>
+  <h1>🔥 Cargador Oficial de Carta (PDF)</h1>
+  <button onclick="subirDatosOficiales()">REEMPLAZAR TODO CON MENÚ PDF</button>
+  <div id="log"></div>
+</body>
+</html>
