@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>La Perseverancia - Panel de Control</title>
+  <style>
+    :root {
+      --bg: #121212;
+      --card-bg: #1e1e1e;
+      --accent-red: #8b0000;
+      --accent-green: #006644;
+      --accent-yellow: #d35400;
+      --text: #ffffff;
+      --yellow: #f1c40f;
+    }
+
+    body {
+      margin: 0;
+      padding: 16px;
+      font-family: system-ui, -apple-system, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #8b0000, #4a0000);
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      margin-bottom: 25px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      border: 1px solid #555;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 1.6rem;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .header p {
+      margin: 6px 0 0 0;
+      font-size: 0.9rem;
+      color: var(--yellow);
+      font-weight: bold;
+    }
+
+    .section-title {
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: #888;
+      text-transform: uppercase;
+      margin: 15px 0 10px 4px;
+      letter-spacing: 1px;
+    }
+
+    .btn-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border-radius: 10px;
+      margin-bottom: 14px;
+      text-decoration: none;
+      color: #fff;
+      font-weight: bold;
+      font-size: 1.05rem;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+      transition: transform 0.1s, filter 0.2s;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .btn-card:active {
+      transform: scale(0.98);
+    }
+
+    .btn-gustavo {
+      background: linear-gradient(135deg, #8b0000, #5a0000);
+    }
+
+    .btn-hernan {
+      background: linear-gradient(135deg, #006644, #003322);
+    }
+
+    .btn-mariana {
+      background: linear-gradient(135deg, #d35400, #8e3800);
+    }
+
+    .btn-subtitle {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: normal;
+      color: var(--yellow);
+      margin-top: 3px;
+    }
+
+    .arrow {
+      font-size: 1.2rem;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: auto;
+      padding-top: 20px;
+      font-size: 0.75rem;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <div class="header">
+      <h1>🔥 LA PERSEVERANCIA 🔥</h1>
+      <p>Sistema Integrado de Gestión Gastronómica</p>
+    </div>
+
+    <div class="section-title">TERMINALES PRINCIPALES</div>
+
+    <!-- TERMINAL GUSTAVO -->
+    <a href="parrilla_gustavo.html" class="btn-card btn-gustavo">
+      <div>
+        🔥 TERMINAL GUSTAVO
+        <span class="btn-subtitle">Parrilla / Caja / Cobros / KDS Global</span>
+      </div>
+      <span class="arrow">➔</span>
+    </a>
+
+    <!-- TERMINAL HERNÁN -->
+    <a href="cocina_hernan.html" class="btn-card btn-hernan">
+      <div>
+        🍳 TERMINAL HERNÁN
+        <span class="btn-subtitle">Chef Jefe / Stock / Gastos / KDS Global</span>
+      </div>
+      <span class="arrow">➔</span>
+    </a>
+
+    <div class="section-title">COMANDERA MÓVIL</div>
+
+    <!-- COMANDERA MARIANA -->
+    <a href="mariana_mozo.html" class="btn-card btn-mariana">
+      <div>
+        📱 COMANDERA MOZO (MARIANA)
+        <span class="btn-subtitle">Toma de pedidos desde salón y envío a KDS</span>
+      </div>
+      <span class="arrow">➔</span>
+    </a>
+
+    <div class="footer">
+      Gastronomía La Perseverancia • GitHub Pages Edition
+    </div>
+
+  </div>
+
+</body>
+</html>
