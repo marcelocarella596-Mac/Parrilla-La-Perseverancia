@@ -56,7 +56,8 @@
   <div class="grid-qrs" id="contenedorQRs"></div>
 
   <script>
-    const baseUrl = "https://marcelocarella596-Mac.github.io/Parrilla-La-Perseverancia-/parrilla.html";
+    // Enlace directo al PDF del menú en GitHub Pages
+    const pdfUrl = "https://marcelocarella596-mac.github.io/Parrilla-La-Perseverancia/menu-ejecutivo.pdf";
 
     const mesas = [
       { id: "Salon_Mesa_1", nombre: "Salón - Mesa 1" },
@@ -75,8 +76,6 @@
       const tarjeta = document.createElement('div');
       tarjeta.className = 'qr-card';
       
-      const linkFinal = `${baseUrl}?mesa=${m.id}`;
-
       tarjeta.innerHTML = `
         <h2>🔥 La Perseverancia 🔥</h2>
         <h3>${m.nombre}</h3>
@@ -87,9 +86,9 @@
 
       contenedor.appendChild(tarjeta);
 
-      // Generar el gráfico QR
+      // Generar el gráfico QR apuntando directamente al PDF
       new QRCode(document.getElementById(`qr_${m.id}`), {
-        text: linkFinal,
+        text: pdfUrl,
         width: 160,
         height: 160
       });
