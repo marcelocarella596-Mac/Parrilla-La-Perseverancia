@@ -48,15 +48,16 @@
 <body>
 
   <div class="no-print">
-    <h1>🖨️ Generador de QRs para Mesas</h1>
-    <p style="margin: 10px 0;">Hacé clic en el botón para mandar a imprimir las tarjetas de las mesas.</p>
+    <h1>🖨️ Generador de QRs para Menú PDF</h1>
+    <p style="margin: 10px 0;">Hacé clic en el botón para mandar a imprimir las tarjetas con el menú digital.</p>
     <button class="btn-print" onclick="window.print()">Imprimir Tarjetas QR 🖨️</button>
   </div>
 
   <div class="grid-qrs" id="contenedorQRs"></div>
 
   <script>
-    const baseUrl = "https://marcelocarella596-Mac.github.io/Parrilla-La-Perseverancia-/parrilla.html";
+    // Enlace directo al PDF en GitHub Pages
+    const linkPdf = "https://marcelocarella596-mac.github.io/Parrilla-La-Perseverancia/menu-ejecutivo.pdf";
 
     const mesas = [
       { id: "Salon_Mesa_1", nombre: "Salón - Mesa 1" },
@@ -74,22 +75,20 @@
     mesas.forEach(m => {
       const tarjeta = document.createElement('div');
       tarjeta.className = 'qr-card';
-      
-      const linkFinal = `${baseUrl}?mesa=${m.id}`;
 
       tarjeta.innerHTML = `
         <h2>🔥 La Perseverancia 🔥</h2>
         <h3>${m.nombre}</h3>
-        <p>Escaneá para ver la carta digital</p>
+        <p>Escaneá para ver el Menú</p>
         <div class="qr-code" id="qr_${m.id}"></div>
         <p style="font-size: 0.75rem; color: #888;">Av. Argentina 5801</p>
       `;
 
       contenedor.appendChild(tarjeta);
 
-      // Generar el gráfico QR
+      // Generar el gráfico QR apuntando directamente al PDF
       new QRCode(document.getElementById(`qr_${m.id}`), {
-        text: linkFinal,
+        text: linkPdf,
         width: 160,
         height: 160
       });
