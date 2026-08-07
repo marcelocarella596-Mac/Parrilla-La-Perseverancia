@@ -44,23 +44,26 @@
 
     .header-btns {
       display: flex;
-      gap: 10px;
+      gap: 8px;
       align-items: center;
+      flex-wrap: wrap;
     }
 
-    .btn-caja {
+    .btn-top-accion {
       background-color: #27ae60;
       color: white;
       border: none;
-      padding: 6px 12px;
+      padding: 6px 10px;
       border-radius: 4px;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: bold;
       cursor: pointer;
       transition: 0.2s;
     }
 
-    .btn-caja:hover { background-color: #2ecc71; }
+    .btn-top-accion:hover { filter: brightness(1.2); }
+    .btn-egresos { background-color: #c0392b; }
+    .btn-mjes { background-color: #2980b9; }
 
     .badge-live {
       background-color: #000;
@@ -77,6 +80,10 @@
       display: grid;
       grid-template-columns: 440px 1fr;
       gap: 12px;
+    }
+
+    @media(max-width: 1024px) {
+      .layout-principal { grid-template-columns: 1fr; }
     }
 
     /* --- PANEL IZQUIERDO --- */
@@ -104,7 +111,7 @@
       gap: 8px;
     }
 
-    select, input {
+    select, input, textarea {
       width: 100%;
       padding: 8px;
       background-color: #222;
@@ -158,7 +165,7 @@
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(125px, 1fr));
       gap: 6px;
-      max-height: 220px;
+      max-height: 200px;
       overflow-y: auto;
       background-color: #0d0d0d;
       padding: 8px;
@@ -193,8 +200,8 @@
       border: 1px solid #262626;
       border-radius: 6px;
       padding: 10px;
-      min-height: 110px;
-      max-height: 150px;
+      min-height: 100px;
+      max-height: 130px;
       overflow-y: auto;
     }
 
@@ -246,7 +253,7 @@
 
     .btn-enviar:hover { background: linear-gradient(180deg, #e67e22, #d35400); }
 
-    /* --- PANEL DERECHO --- */
+    /* --- PANEL DERECHO (PLANO AMPLIADO) --- */
     .panel-produccion {
       background-color: #161616;
       border: 1px solid #2a2a2a;
@@ -259,59 +266,63 @@
       border: 1px dashed #333;
       border-radius: 8px;
       padding: 12px;
-      position: relative;
-      min-height: 320px;
-    }
-
-    .zona-salon {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 10px;
-    }
-
-    .etiqueta-zona { font-size: 11px; font-weight: bold; color: #777; }
-
-    .zona-vereda {
-      position: absolute;
-      bottom: 12px;
-      left: 12px;
-      display: flex;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
       gap: 12px;
+      min-height: 340px;
+      align-content: start;
     }
 
-    .mesa {
-      background-color: #222;
-      border: 2px solid #555;
-      border-radius: 6px;
+    .mesa-card-ampliada {
+      background-color: #1b1b1b;
+      border: 2px solid #444;
+      border-radius: 8px;
+      padding: 10px;
+      cursor: pointer;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      user-select: none;
-      transition: all 0.2s;
+      justify-content: space-between;
+      min-height: 135px;
+      transition: 0.2s;
+      position: relative;
     }
 
-    .mesa:hover { border-color: #ff6600; }
-    .h-mesa { width: 130px; height: 46px; }
-    .v-mesa { width: 75px; height: 85px; }
+    .mesa-card-ampliada:hover { border-color: #ff6600; transform: translateY(-2px); }
+    .mesa-card-ampliada.ocupada { background-color: #3b1412; border-color: #c0392b; }
+    .mesa-card-ampliada.lista { background-color: #113822; border-color: #27ae60; }
 
-    .mesa .nombre { font-size: 11px; font-weight: bold; }
-    .mesa.ocupada { background-color: #7b241c; border-color: #e74c3c; }
+    .mesa-header-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding-bottom: 5px;
+      margin-bottom: 6px;
+    }
 
-    /* TEMPORIZADORES Y BADGES */
-    .timer-badge {
-      margin-top: 2px;
-      background-color: #000;
-      color: #00ffcc;
-      font-family: monospace;
-      font-size: 10px;
+    .mesa-nombre { font-size: 12px; font-weight: bold; color: #ff9900; }
+    .mesa-estado-badge { font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 4px; background: #222; color: #aaa; }
+    .ocupada .mesa-estado-badge { background: #962d22; color: #fff; }
+    .lista .mesa-estado-badge { background: #27ae60; color: #fff; }
+
+    .mesa-items-preview {
+      font-size: 11px;
+      color: #ddd;
+      max-height: 60px;
+      overflow-y: auto;
+      margin-bottom: 6px;
+      line-height: 1.3;
+    }
+
+    .mesa-footer-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
       font-weight: bold;
-      padding: 1px 5px;
-      border-radius: 3px;
-      border: 1px solid #00ffcc;
-      text-align: center;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 4px;
+      color: #00ff66;
     }
 
     .separador { border: 0; height: 1px; background-color: #2a2a2a; margin: 15px 0; }
@@ -322,12 +333,16 @@
       gap: 10px;
     }
 
+    @media(max-width: 768px) {
+      .canales-inferiores { grid-template-columns: 1fr; }
+    }
+
     .canal-col {
       background-color: #0d0d0d;
       border: 1px solid #222;
       border-radius: 6px;
       padding: 8px;
-      min-height: 160px;
+      min-height: 140px;
     }
 
     .canal-hdr { font-size: 11px; font-weight: bold; padding: 5px; border-radius: 4px; text-align: center; margin-bottom: 8px; }
@@ -392,7 +407,9 @@
   <header>
     <h1>🔥 LA PERSEVERANCIA 🔥 <span style="font-size: 12px; opacity: 0.8; font-weight: normal;">Comandera Gustavo</span></h1>
     <div class="header-btns">
-      <button class="btn-caja" onclick="abrirModalCierreCaja()">📊 CIERRE DE CAJA / ARQUEO</button>
+      <button class="btn-top-accion btn-egresos" onclick="abrirModalEgresos()">💸 EGRESOS</button>
+      <button class="btn-top-accion btn-mjes" onclick="abrirModalMensajes()">💬 MJES (MARIANA/HERNÁN)</button>
+      <button class="btn-top-accion" onclick="abrirModalCierreCaja()">📊 CAJA</button>
       <span class="badge-live">• EN VIVO</span>
     </div>
   </header>
@@ -457,20 +474,9 @@
     </aside>
 
     <main class="panel-produccion">
-      <div class="seccion-titulo">📍 PLANO DE MESAS Y ESTADOS DE COCINA</div>
-      <div class="mapa-contenedor">
-        <div class="zona-salon">
-          <span class="etiqueta-zona">SALÓN</span>
-          <div class="mesa h-mesa" data-id="Mesa 1" onclick="clickUbicacion('Mesa 1')"><span class="nombre">MESA 1</span></div>
-          <div class="mesa h-mesa" data-id="Mesa 2" onclick="clickUbicacion('Mesa 2')"><span class="nombre">MESA 2</span></div>
-          <div class="mesa h-mesa" data-id="Mesa 3" onclick="clickUbicacion('Mesa 3')"><span class="nombre">MESA 3</span></div>
-          <div class="mesa h-mesa" data-id="Mesa 4" onclick="clickUbicacion('Mesa 4')"><span class="nombre">MESA 4</span></div>
-        </div>
-        <div class="zona-vereda">
-          <div class="mesa v-mesa" data-id="Mesa 5 Vereda" onclick="clickUbicacion('Mesa 5 Vereda')"><span class="nombre">MESA 5<br><small>VEREDA</small></span></div>
-          <div class="mesa v-mesa" data-id="Mesa 6 Vereda" onclick="clickUbicacion('Mesa 6 Vereda')"><span class="nombre">MESA 6<br><small>VEREDA</small></span></div>
-          <div class="mesa v-mesa" data-id="Mesa 7 Vereda" onclick="clickUbicacion('Mesa 7 Vereda')"><span class="nombre">MESA 7<br><small>VEREDA</small></span></div>
-        </div>
+      <div class="seccion-titulo" style="margin-bottom: 8px;">📍 PLANO DE MESAS Y COMANDAS ACTIVAS</div>
+      <div class="mapa-contenedor" id="planoMesasContainer">
+        <!-- Generadas dinámicamente con detalle de comanda integrada -->
       </div>
 
       <hr class="separador">
@@ -501,7 +507,7 @@
         <button class="btn-cerrar-modal" onclick="cerrarModal('modalOpcionesMesa')">✕</button>
       </div>
       <button class="btn-opcion-mesa" style="background-color: #3498db; color: white;" onclick="cambiarEstadoCocina('PREPARACION')">🔥 PASAR A PREPARACIÓN</button>
-      <button class="btn-opcion-mesa" style="background-color: #27ae60; color: white;" onclick="cambiarEstadoCocina('MANOS')">🖐️ ¡MANOS! / LISTO</button>
+      <button class="btn-opcion-mesa" style="background-color: #27ae60; color: white;" onclick="cambiarEstadoCocina('LISTO ✔️')">🖐️ ¡MANOS! / LISTO ✔️</button>
       <hr style="border-color: #333; margin: 10px 0;">
       <button class="btn-opcion-mesa btn-opcion-agregar" onclick="seleccionarMesaParaAgregar()">➕ AGREGAR MÁS ÍTEMS</button>
       <button class="btn-opcion-mesa btn-opcion-cobrar" onclick="irACobrarDesdeOpciones()">💵 VER DETALLE Y COBRAR</button>
@@ -563,12 +569,49 @@
         <div style="display: flex; justify-content: space-between; margin-top: 5px;"><span>💵 Efectivo:</span> <strong id="desgEfectivo">$0</strong></div>
         <div style="display: flex; justify-content: space-between; margin-top: 3px;"><span>📱 Mercado Pago:</span> <strong id="desgMP">$0</strong></div>
         <div style="display: flex; justify-content: space-between; margin-top: 3px;"><span>💳 Tarjetas:</span> <strong id="desgTarjeta">$0</strong></div>
+        <div style="display: flex; justify-content: space-between; margin-top: 3px; color: #e74c3c;"><span>💸 Total Egresos:</span> <strong id="desgEgresos">$0</strong></div>
       </div>
       <div style="max-height: 180px; overflow-y: auto;">
         <table class="tabla-historial">
           <thead><tr><th>Hora</th><th>Origen</th><th>Pago</th><th>Propina</th><th>Total</th></tr></thead>
           <tbody id="tbodyHistorial"></tbody>
         </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL EGRESOS -->
+  <div class="modal-overlay" id="modalEgresos">
+    <div class="modal-contenido" style="max-width: 400px;">
+      <div class="modal-hdr">
+        <h3 style="color: #e74c3c;">💸 REGISTRAR EGRESO / GASTO</h3>
+        <button class="btn-cerrar-modal" onclick="cerrarModal('modalEgresos')">✕</button>
+      </div>
+      <div style="margin-bottom: 10px;">
+        <label style="font-size: 11px; color: #aaa;">Concepto / Detalle:</label>
+        <input type="text" id="egresoConcepto" placeholder="Ej: Compra de carbón, hielo, etc." style="margin-top: 4px;">
+      </div>
+      <div style="margin-bottom: 15px;">
+        <label style="font-size: 11px; color: #aaa;">Monto ($):</label>
+        <input type="number" id="egresoMonto" placeholder="0.00" style="margin-top: 4px;">
+      </div>
+      <button class="btn-opcion-mesa" style="background-color: #c0392b; color: white;" onclick="guardarEgreso()">REGISTRAR EGRESO</button>
+    </div>
+  </div>
+
+  <!-- MODAL MENSAJES -->
+  <div class="modal-overlay" id="modalMensajes">
+    <div class="modal-contenido" style="max-width: 450px;">
+      <div class="modal-hdr">
+        <h3 style="color: #2980b9;">💬 MENSAJES (MARIANA / HERNÁN)</h3>
+        <button class="btn-cerrar-modal" onclick="cerrarModal('modalMensajes')">✕</button>
+      </div>
+      <div id="contenedorChatMjes" style="background: #111; border: 1px solid #333; height: 180px; overflow-y: auto; padding: 8px; font-size: 11px; margin-bottom: 10px; border-radius: 4px;">
+        <div style="color: #666; text-align: center; margin-top: 20px;">Sin mensajes recientes.</div>
+      </div>
+      <div style="display: flex; gap: 6px;">
+        <input type="text" id="inputNuevoMje" placeholder="Escribir aviso para Mariana o Hernán..." onkeypress="if(event.key==='Enter')enviarMensajeChat()">
+        <button class="btn-top-accion btn-mjes" onclick="enviarMensajeChat()">Enviar</button>
       </div>
     </div>
   </div>
@@ -587,12 +630,43 @@
     let carrito = [];
     let comandasActivas = JSON.parse(localStorage.getItem('comandasActivas')) || {};
     let historialCaja = JSON.parse(localStorage.getItem('historialCaja')) || [];
+    let listaEgresos = JSON.parse(localStorage.getItem('listaEgresos')) || [];
+    let historialMensajes = JSON.parse(localStorage.getItem('historialMensajes')) || [];
     let idMesaGestion = null;
+
+    const listadoMesasDefinidas = [
+      { id: "Mesa 1", nombre: "Salón - Mesa 1" },
+      { id: "Mesa 2", nombre: "Salón - Mesa 2" },
+      { id: "Mesa 3", nombre: "Salón - Mesa 3" },
+      { id: "Mesa 4", nombre: "Salón - Mesa 4" },
+      { id: "Mesa 5 Vereda", nombre: "Vereda - Mesa 5" },
+      { id: "Mesa 6 Vereda", nombre: "Vereda - Mesa 6" },
+      { id: "Mesa 7 Vereda", nombre: "Vereda - Mesa 7" }
+    ];
 
     window.onload = () => { 
       sincronizarVistaGustavo();
       escucharMenuFirebase();
+      escucharComandasRemotas();
     };
+
+    // Alerta sonora sutil mediante Web Audio API
+    function reproducirAlertaSonora() {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // Nota D5
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.25);
+      } catch(e) {
+        console.log("Audio no soportado sin interacción previa", e);
+      }
+    }
 
     function escucharMenuFirebase() {
       const menuRef = db.ref('menu');
@@ -617,9 +691,24 @@
         } else {
           document.getElementById('grillaProductos').innerHTML = '<p style="color: #e74c3c; font-size: 11px; text-align: center; grid-column: span 2; margin-top: 15px;">⚠️ El nodo "menu" está vacío en Firebase.</p>';
         }
-      }, (error) => {
-        console.error("Error al leer Firebase:", error);
       });
+    }
+
+    // Sincronización en tiempo real opcional con Firebase para comandas
+    function escucharComandasRemotas() {
+      const cmdRef = db.ref('comandas_activas');
+      cmdRef.on('value', (snapshot) => {
+        const data = snapshot.val();
+        if(data) {
+          comandasActivas = data;
+          guardarDatosStorage();
+          sincronizarVistaGustavo();
+        }
+      });
+    }
+
+    function sincronizarFirebaseRemoto() {
+      db.ref('comandas_activas').set(comandasActivas);
     }
 
     function construirBotonesCategorias() {
@@ -639,6 +728,8 @@
     function guardarDatosStorage() {
       localStorage.setItem('comandasActivas', JSON.stringify(comandasActivas));
       localStorage.setItem('historialCaja', JSON.stringify(historialCaja));
+      localStorage.setItem('listaEgresos', JSON.stringify(listaEgresos));
+      localStorage.setItem('historialMensajes', JSON.stringify(historialMensajes));
     }
 
     function evaluarCanalSeleccionado() {
@@ -659,7 +750,7 @@
       const filtrados = (categoria === 'Todos') ? MENU : MENU.filter(m => m.cat === categoria);
       
       if (filtrados.length === 0) {
-        contenedor.innerHTML = '<p style="color: #666; font-size: 11px; text-align: center; grid-column: span 2; margin-top: 20px;">No hay productos en esta categoría.</p>';
+        contenedor.innerHTML = '<p style="color: #666; font-size: 11px; text-align: center; grid-column: span 2; margin-top: 20px;">No hay productos.</p>';
         return;
       }
 
@@ -729,35 +820,82 @@
         };
       }
       guardarDatosStorage();
+      sincronizarFirebaseRemoto();
       carrito = [];
       renderCarrito();
       sincronizarVistaGustavo();
     }
 
+    // Renderizado del plano de mesas ampliado y canales adicionales
     function sincronizarVistaGustavo() {
-      document.querySelectorAll('.mesa').forEach(m => m.classList.remove('ocupada'));
-      document.querySelectorAll('.timer-badge').forEach(b => b.remove());
+      const containerMesas = document.getElementById('planoMesasContainer');
+      containerMesas.innerHTML = '';
       document.getElementById('col-mostrador').innerHTML = '';
       document.getElementById('col-delivery').innerHTML = '';
       document.getElementById('col-pickup').innerHTML = '';
 
+      listadoMesasDefinidas.forEach(m => {
+        const cmd = comandasActivas[m.id];
+        const card = document.createElement('div');
+        
+        let estadoClase = '';
+        let estadoTexto = 'LIBRE';
+        let itemsHtml = '<div style="color: #666; font-style: italic;">Mesa libre / sin comanda</div>';
+        let totalMesa = 0;
+
+        if (cmd) {
+          estadoTexto = cmd.estado;
+          if (cmd.estado.includes('LISTO')) {
+            estadoClase = 'lista';
+          } else {
+            estadoClase = 'ocupada';
+          }
+          itemsHtml = '<ul style="list-style: none; padding:0;">';
+          cmd.items.forEach(i => {
+            totalMesa += (i.precio * i.cantidad);
+            itemsHtml += `<li>• ${i.cantidad}x ${i.nombre}</li>`;
+          });
+          itemsHtml += '</ul>';
+        }
+
+        card.className = `mesa-card-ampliada ${estadoClase}`;
+        card.onclick = () => clickUbicacion(m.id);
+        card.innerHTML = `
+          <div>
+            <div class="mesa-header-info">
+              <span class="mesa-nombre">${m.nombre}</span>
+              <span class="mesa-estado-badge">${estadoTexto}</span>
+            </div>
+            <div class="mesa-items-preview">${itemsHtml}</div>
+          </div>
+          <div class="mesa-footer-info">
+            <span>Total:</span>
+            <span>$${totalMesa.toLocaleString('es-AR')}</span>
+          </div>
+        `;
+        containerMesas.appendChild(card);
+      });
+
+      // Canales adicionales (Mostrador, Delivery, Pickup)
       Object.keys(comandasActivas).forEach(id => {
-        const cmd = comandasActivas[id];
-        const mesaEl = document.querySelector(`.mesa[data-id="${id}"]`);
-        if (mesaEl) {
-          mesaEl.classList.add('ocupada');
-          let badge = document.createElement('div');
-          badge.className = 'timer-badge';
-          badge.textContent = cmd.estado;
-          mesaEl.appendChild(badge);
-        } else {
+        if (!listadoMesasDefinidas.some(m => m.id === id)) {
+          const cmd = comandasActivas[id];
           const colId = id.includes('Delivery') ? 'col-delivery' : id.includes('Pickup') ? 'col-pickup' : 'col-mostrador';
           const contenedor = document.getElementById(colId);
           if(contenedor) {
+            let subT = 0;
+            cmd.items.forEach(i => subT += (i.precio * i.cantidad));
             const tarjeta = document.createElement('div');
             tarjeta.className = 'tarjeta-comanda';
-            tarjeta.innerHTML = `<div style="font-weight:bold;"><span>${id}</span></div>`;
+            if(cmd.estado.includes('LISTO')) tarjeta.style.borderLeftColor = '#27ae60';
             tarjeta.onclick = () => clickUbicacion(id);
+            tarjeta.innerHTML = `
+              <div style="font-weight:bold; display:flex; justify-content:space-between;">
+                <span>${id}</span>
+                <span style="color:#00ff66;">$${subT.toLocaleString('es-AR')}</span>
+              </div>
+              <div style="font-size:10px; color:#aaa; margin-top:2px;">Estado: ${cmd.estado}</div>
+            `;
             contenedor.appendChild(tarjeta);
           }
         }
@@ -767,7 +905,7 @@
     function clickUbicacion(id) {
       if (comandasActivas[id]) {
         idMesaGestion = id;
-        document.getElementById('tituloOpcionesMesa').textContent = `Mesa: ${id}`;
+        document.getElementById('tituloOpcionesMesa').textContent = `Gestionar: ${id}`;
         document.getElementById('modalOpcionesMesa').style.display = 'flex';
       } else {
         document.getElementById('selectUbicacion').value = id;
@@ -779,7 +917,13 @@
       if (!idMesaGestion || !comandasActivas[idMesaGestion]) return;
       comandasActivas[idMesaGestion].estado = nuevoEstado;
       comandasActivas[idMesaGestion].tiempoInicioEstado = Date.now();
+      
+      if(nuevoEstado.includes('LISTO')) {
+        reproducirAlertaSonora();
+      }
+
       guardarDatosStorage();
+      sincronizarFirebaseRemoto();
       sincronizarVistaGustavo();
       cerrarModal('modalOpcionesMesa');
     }
@@ -842,15 +986,74 @@
 
       delete comandasActivas[id];
       guardarDatosStorage();
+      sincronizarFirebaseRemoto();
       sincronizarVistaGustavo();
       cerrarModal('modalCobro');
       alert(`✅ Comanda cobrada con éxito.`);
     }
 
+    // Funciones de Egresos
+    function abrirModalEgresos() {
+      document.getElementById('egresoConcepto').value = '';
+      document.getElementById('egresoMonto').value = '';
+      document.getElementById('modalEgresos').style.display = 'flex';
+    }
+
+    function guardarEgreso() {
+      const concepto = document.getElementById('egresoConcepto').value.trim();
+      const monto = parseFloat(document.getElementById('egresoMonto').value) || 0;
+      if(!concepto || monto <= 0) { alert("⚠️ Completá un concepto y monto válido."); return; }
+
+      listaEgresos.push({
+        hora: new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }),
+        concepto,
+        monto
+      });
+      guardarDatosStorage();
+      cerrarModal('modalEgresos');
+      alert("✅ Egreso registrado correctamente.");
+    }
+
+    // Funciones de Mensajería Mariana / Hernán
+    function abrirModalMensajes() {
+      renderizarChatMjes();
+      document.getElementById('modalMensajes').style.display = 'flex';
+    }
+
+    function enviarMensajeChat() {
+      const texto = document.getElementById('inputNuevoMje').value.trim();
+      if(!texto) return;
+      historialMensajes.push({
+        remitente: 'Gustavo',
+        texto,
+        hora: new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })
+      });
+      guardarDatosStorage();
+      document.getElementById('inputNuevoMje').value = '';
+      renderizarChatMjes();
+    }
+
+    function renderizarChatMjes() {
+      const box = document.getElementById('contenedorChatMjes');
+      box.innerHTML = '';
+      if(historialMensajes.length === 0) {
+        box.innerHTML = '<div style="color: #666; text-align: center; margin-top: 20px;">Sin mensajes recientes.</div>';
+        return;
+      }
+      historialMensajes.forEach(m => {
+        const div = document.createElement('div');
+        div.style.marginBottom = '6px';
+        div.innerHTML = `<span style="color: #ff9900; font-weight: bold;">[${m.hora}] ${m.remitente}:</span> ${m.texto}`;
+        box.appendChild(div);
+      });
+      box.scrollTop = box.scrollHeight;
+    }
+
     function abrirModalCierreCaja() {
-      let totFacturado = 0, totPropinas = 0, efct = 0, mp = 0, tarj = 0;
+      let totFacturado = 0, totPropinas = 0, efct = 0, mp = 0, tarj = 0, totEgresos = 0;
       const tbody = document.getElementById('tbodyHistorial');
       tbody.innerHTML = '';
+
       historialCaja.forEach(h => {
         totFacturado += h.total;
         totPropinas += h.propina;
@@ -861,12 +1064,18 @@
         tr.innerHTML = `<td>${h.hora}</td><td>${h.origen}</td><td>${h.medioPago}</td><td style="color:#ff9900;">$${h.propina.toLocaleString('es-AR')}</td><td style="color:#00ff66;">$${h.total.toLocaleString('es-AR')}</td>`;
         tbody.appendChild(tr);
       });
+
+      listaEgresos.forEach(e => {
+        totEgresos += e.monto;
+      });
+
       document.getElementById('totCajaRecaudado').textContent = `$${totFacturado.toLocaleString('es-AR')}`;
       document.getElementById('totCajaPropina').textContent = `$${totPropinas.toLocaleString('es-AR')}`;
       document.getElementById('totCajaCant').textContent = historialCaja.length;
       document.getElementById('desgEfectivo').textContent = `$${efct.toLocaleString('es-AR')}`;
       document.getElementById('desgMP').textContent = `$${mp.toLocaleString('es-AR')}`;
       document.getElementById('desgTarjeta').textContent = `$${tarj.toLocaleString('es-AR')}`;
+      document.getElementById('desgEgresos').textContent = `$${totEgresos.toLocaleString('es-AR')}`;
       document.getElementById('modalCierreCaja').style.display = 'flex';
     }
 
