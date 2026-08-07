@@ -260,7 +260,7 @@
       border-radius: 8px;
       padding: 12px;
       position: relative;
-      min-height: 320px;
+      min-height: 420px;
     }
 
     .zona-salon {
@@ -280,6 +280,7 @@
       gap: 12px;
     }
 
+    /* MESAS AMPLIADAS PARA VISUALIZAR COMANDAS */
     .mesa {
       background-color: #222;
       border: 2px solid #555;
@@ -287,18 +288,31 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
+      padding: 6px;
       cursor: pointer;
       user-select: none;
       transition: all 0.2s;
+      overflow: hidden;
     }
 
     .mesa:hover { border-color: #ff6600; }
-    .h-mesa { width: 130px; height: 46px; }
-    .v-mesa { width: 75px; height: 85px; }
+    .h-mesa { width: 170px; height: 95px; }
+    .v-mesa { width: 100px; height: 165px; }
 
     .mesa .nombre { font-size: 11px; font-weight: bold; }
-    .mesa.ocupada { background-color: #7b241c; border-color: #e74c3c; }
+    .mesa.ocupada { background-color: #3d2b1f; border-color: #e74c3c; }
+
+    .items-mesa-preview {
+      font-size: 9px;
+      color: #ddd;
+      margin-top: 4px;
+      text-align: left;
+      width: 100%;
+      overflow: hidden;
+      max-height: 55px;
+      line-height: 1.1;
+    }
 
     /* TEMPORIZADORES Y BADGES */
     .timer-badge {
@@ -306,9 +320,9 @@
       background-color: #000;
       color: #00ffcc;
       font-family: monospace;
-      font-size: 10px;
+      font-size: 9px;
       font-weight: bold;
-      padding: 1px 5px;
+      padding: 1px 4px;
       border-radius: 3px;
       border: 1px solid #00ffcc;
       text-align: center;
@@ -380,8 +394,7 @@
     .btn-cerrar-modal { background: none; border: none; color: #999; font-size: 18px; cursor: pointer; }
     .btn-opcion-mesa { width: 100%; padding: 12px; margin-bottom: 8px; border: none; border-radius: 5px; font-weight: bold; font-size: 13px; cursor: pointer; }
     .btn-opcion-agregar { background-color: #e67e22; color: white; }
-    .btn-opcion-cobrar { background-color: #27ae60; color: white; }
-
+    
     .tabla-historial { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 10px; }
     .tabla-historial th, .tabla-historial td { border: 1px solid #333; padding: 6px; text-align: left; }
     .tabla-historial th { background-color: #222; color: #ff9900; }
@@ -392,7 +405,7 @@
   <header>
     <h1>🔥 LA PERSEVERANCIA 🔥 <span style="font-size: 12px; opacity: 0.8; font-weight: normal;">Comandera Mariana</span></h1>
     <div class="header-btns">
-      <button class="btn-caja" onclick="abrirModalCierreCaja()">📊 CIERRE DE CAJA / ARQUEO</button>
+      <button class="btn-caja" onclick="abrirModalResumenOperativo()">📊 MESAS ATENDIDAS Y PROPINAS</button>
       <span class="badge-live">• EN VIVO</span>
     </div>
   </header>
@@ -493,55 +506,36 @@
     </main>
   </div>
 
-  <!-- MODAL OPCIONES MESA -->
+  <!-- MODAL OPCIONES MESA SIMPLIFICADO -->
   <div class="modal-overlay" id="modalOpcionesMesa">
     <div class="modal-contenido" style="max-width: 400px; text-align: center;">
       <div class="modal-hdr">
         <h3 id="tituloOpcionesMesa" style="color: #ff9900;">Gestionar Comanda</h3>
         <button class="btn-cerrar-modal" onclick="cerrarModal('modalOpcionesMesa')">✕</button>
       </div>
-      <button class="btn-opcion-mesa" style="background-color: #3498db; color: white;" onclick="cambiarEstadoCocina('PREPARACION')">🔥 PASAR A PREPARACIÓN</button>
-      <button class="btn-opcion-mesa" style="background-color: #27ae60; color: white;" onclick="cambiarEstadoCocina('MANOS')">🖐️ ¡MANOS! / LISTO</button>
-      <hr style="border-color: #333; margin: 10px 0;">
       <button class="btn-opcion-mesa btn-opcion-agregar" onclick="seleccionarMesaParaAgregar()">➕ AGREGAR MÁS ÍTEMS</button>
-      <button class="btn-opcion-mesa btn-opcion-cobrar" onclick="irACobrarDesdeOpciones()">💵 VER DETALLE Y COBRAR</button>
+      <button class="btn-opcion-mesa" style="background-color: #3498db; color: white;" onclick="verDetalleSoloLectura()">👁️ VER DETALLE (Solo Lectura)</button>
+      <button class="btn-opcion-mesa" style="background-color: #444; color: white;" onclick="cerrarModal('modalOpcionesMesa')">CANCELAR</button>
     </div>
   </div>
 
-  <!-- MODAL COBRO -->
-  <div class="modal-overlay" id="modalCobro">
+  <!-- MODAL DETALLE SOLO LECTURA -->
+  <div class="modal-overlay" id="modalDetalleMesa">
     <div class="modal-contenido">
       <div class="modal-hdr">
-        <h3 id="modalCobroTitulo" style="color: #ff9900;">Cobrar</h3>
-        <button class="btn-cerrar-modal" onclick="cerrarModal('modalCobro')">✕</button>
+        <h3 id="tituloDetalleMesa" style="color: #ff9900;">Detalle de Comanda</h3>
+        <button class="btn-cerrar-modal" onclick="cerrarModal('modalDetalleMesa')">✕</button>
       </div>
-      <div id="modalCobroDetalle" style="margin-bottom: 15px; font-size: 12px; background: #111; padding: 10px; border-radius: 4px;"></div>
-      <div style="margin-bottom: 12px;">
-        <label style="font-size: 11px; font-weight: bold; color: #aaa; display: block; margin-bottom: 5px;">MEDIO DE PAGO:</label>
-        <select id="selectMedioPago" onchange="evaluarMedioPago()">
-          <option value="Efectivo">💵 Efectivo</option>
-          <option value="Mercado Pago / Transferencia">📱 Mercado Pago / Transferencia</option>
-          <option value="Tarjeta Débito/Crédito">💳 Tarjeta</option>
-        </select>
-      </div>
-      <div style="margin-bottom: 12px; background: #222; padding: 8px; border-radius: 4px;">
-        <label style="font-size: 11px; font-weight: bold; color: #ff9900;">💰 PROPINA ($):</label>
-        <input type="number" id="inputPropina" placeholder="0.00" oninput="calcularVuelto()" style="margin-top: 4px;">
-      </div>
-      <div id="boxCalculoVuelto" style="margin-bottom: 15px; background: #222; padding: 8px; border-radius: 4px;">
-        <label style="font-size: 11px; color: #aaa;">Monto abonado:</label>
-        <input type="number" id="inputMontoAbonado" placeholder="0.00" oninput="calcularVuelto()" style="margin-top: 4px;">
-        <div style="margin-top: 6px; font-size: 12px; font-weight: bold; color: #00ff66;">VUELTO: <span id="lblVuelto">$0</span></div>
-      </div>
-      <button class="btn-opcion-mesa btn-opcion-cobrar" onclick="confirmarCobroYLiberar()">✅ CERRAR Y COBRAR</button>
+      <div id="contenidoDetalleMesa" style="margin-bottom: 15px; font-size: 12px; background: #111; padding: 10px; border-radius: 4px;"></div>
+      <button class="btn-opcion-mesa" style="background-color: #333; color: white;" onclick="cerrarModal('modalDetalleMesa')">CERRAR</button>
     </div>
   </div>
 
-  <!-- MODAL CIERRE DE CAJA -->
+  <!-- MODAL RESUMEN OPERATIVO (MESAS ATENDIDAS Y PROPINAS - EXCLUSIVO HERNAN Y GUSTAVO) -->
   <div class="modal-overlay" id="modalCierreCaja">
     <div class="modal-contenido" style="max-width: 650px;">
       <div class="modal-hdr">
-        <h3 style="color: #00ff66;">📊 ARQUEO Y CIERRE DE CAJA</h3>
+        <h3 style="color: #00ff66;">📊 RESUMEN OPERATIVO (ATENDIDAS Y PROPINAS)</h3>
         <button class="btn-cerrar-modal" onclick="cerrarModal('modalCierreCaja')">✕</button>
       </div>
       <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px;">
@@ -559,7 +553,7 @@
         </div>
       </div>
       <div style="background: #111; padding: 10px; border-radius: 5px; font-size: 11px; margin-bottom: 15px;">
-        <strong style="color: #ff9900;">DESGLOSE:</strong>
+        <strong style="color: #ff9900;">DESGLOSE POR MEDIO DE PAGO:</strong>
         <div style="display: flex; justify-content: space-between; margin-top: 5px;"><span>💵 Efectivo:</span> <strong id="desgEfectivo">$0</strong></div>
         <div style="display: flex; justify-content: space-between; margin-top: 3px;"><span>📱 Mercado Pago:</span> <strong id="desgMP">$0</strong></div>
         <div style="display: flex; justify-content: space-between; margin-top: 3px;"><span>💳 Tarjetas:</span> <strong id="desgTarjeta">$0</strong></div>
@@ -758,8 +752,14 @@
     }
 
     function sincronizarVistaGustavo() {
-      document.querySelectorAll('.mesa').forEach(m => m.classList.remove('ocupada'));
-      document.querySelectorAll('.timer-badge').forEach(b => b.remove());
+      document.querySelectorAll('.mesa').forEach(m => {
+        m.classList.remove('ocupada');
+        const prev = m.querySelector('.items-mesa-preview');
+        if (prev) prev.remove();
+        const badge = m.querySelector('.timer-badge');
+        if (badge) badge.remove();
+      });
+
       document.getElementById('col-mostrador').innerHTML = '';
       document.getElementById('col-delivery').innerHTML = '';
       document.getElementById('col-pickup').innerHTML = '';
@@ -769,10 +769,18 @@
         const mesaEl = document.querySelector(`.mesa[data-id="${id}"]`);
         if (mesaEl) {
           mesaEl.classList.add('ocupada');
+          
+          // Badge de estado
           let badge = document.createElement('div');
           badge.className = 'timer-badge';
           badge.textContent = cmd.estado;
           mesaEl.appendChild(badge);
+
+          // Preview visual de ítems dentro de la mesa
+          let preview = document.createElement('div');
+          preview.className = 'items-mesa-preview';
+          preview.innerHTML = cmd.items.map(i => `• ${i.cantidad}x ${i.nombre}`).join('<br>');
+          mesaEl.appendChild(preview);
         } else {
           const colId = id.includes('Delivery') ? 'col-delivery' : id.includes('Pickup') ? 'col-pickup' : 'col-mostrador';
           const contenedor = document.getElementById(colId);
@@ -798,79 +806,30 @@
       }
     }
 
-    function cambiarEstadoCocina(nuevoEstado) {
-      if (!idMesaGestion || !comandasActivas[idMesaGestion]) return;
-      comandasActivas[idMesaGestion].estado = nuevoEstado;
-      comandasActivas[idMesaGestion].tiempoInicioEstado = Date.now();
-      guardarDatosStorage();
-      sincronizarVistaGustavo();
-      cerrarModal('modalOpcionesMesa');
-    }
-
     function seleccionarMesaParaAgregar() {
       document.getElementById('selectUbicacion').value = idMesaGestion;
       evaluarCanalSeleccionado();
       cerrarModal('modalOpcionesMesa');
     }
 
-    function irACobrarDesdeOpciones() {
+    function verDetalleSoloLectura() {
       cerrarModal('modalOpcionesMesa');
-      abrirModalCobro(idMesaGestion);
-    }
-
-    function abrirModalCobro(id) {
-      idMesaGestion = id;
-      const cmd = comandasActivas[id];
-      const detalle = document.getElementById('modalCobroDetalle');
-      document.getElementById('modalCobroTitulo').textContent = `Cobrar: ${id}`;
+      const cmd = comandasActivas[idMesaGestion];
+      const detalle = document.getElementById('contenidoDetalleMesa');
+      document.getElementById('tituloDetalleMesa').textContent = `Detalle: ${idMesaGestion} (${cmd.estado})`;
       let total = 0;
       let html = '<ul style="list-style:none; padding:0;">';
       cmd.items.forEach(i => {
         const sub = i.precio * i.cantidad;
         total += sub;
-        html += `<li style="display:flex; justify-content:space-between;"><span>${i.cantidad}x ${i.nombre}</span><strong>$${sub.toLocaleString('es-AR')}</strong></li>`;
+        html += `<li style="display:flex; justify-content:space-between; padding: 4px 0; border-bottom: 1px solid #222;"><span>${i.cantidad}x ${i.nombre}</span><strong>$${sub.toLocaleString('es-AR')}</strong></li>`;
       });
-      html += `</ul><hr style="border-color:#333; margin:8px 0;"><div style="display:flex; justify-content:space-between; color:#ff9900;"><strong>TOTAL:</strong><strong id="montoTotalModal" data-total="${total}">$${total.toLocaleString('es-AR')}</strong></div>`;
+      html += `</ul><hr style="border-color:#333; margin:8px 0;"><div style="display:flex; justify-content:space-between; color:#ff9900;"><strong>TOTAL PARCIAL:</strong><strong>$${total.toLocaleString('es-AR')}</strong></div>`;
       detalle.innerHTML = html;
-      document.getElementById('modalCobro').style.display = 'flex';
+      document.getElementById('modalDetalleMesa').style.display = 'flex';
     }
 
-    function evaluarMedioPago() {
-      const medio = document.getElementById('selectMedioPago').value;
-      document.getElementById('boxCalculoVuelto').style.display = (medio === 'Efectivo') ? 'block' : 'none';
-    }
-
-    function calcularVuelto() {
-      const total = parseFloat(document.getElementById('montoTotalModal').getAttribute('data-total')) || 0;
-      const propina = parseFloat(document.getElementById('inputPropina').value) || 0;
-      const abonado = parseFloat(document.getElementById('inputMontoAbonado').value) || 0;
-      const vuelto = abonado - (total + propina);
-      document.getElementById('lblVuelto').textContent = vuelto >= 0 ? `$${vuelto.toLocaleString('es-AR')}` : 'Insuficiente';
-    }
-
-    function confirmarCobroYLiberar() {
-      const id = idMesaGestion;
-      const cmd = comandasActivas[id];
-      if (!cmd) return;
-      let totalCuenta = 0;
-      cmd.items.forEach(i => totalCuenta += (i.precio * i.cantidad));
-
-      historialCaja.push({
-        hora: new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }),
-        origen: id,
-        medioPago: document.getElementById('selectMedioPago').value,
-        propina: parseFloat(document.getElementById('inputPropina').value) || 0,
-        total: totalCuenta
-      });
-
-      delete comandasActivas[id];
-      guardarDatosStorage();
-      sincronizarVistaGustavo();
-      cerrarModal('modalCobro');
-      alert(`✅ Comanda cobrada con éxito.`);
-    }
-
-    function abrirModalCierreCaja() {
+    function abrirModalResumenOperativo() {
       let totFacturado = 0, totPropinas = 0, efct = 0, mp = 0, tarj = 0;
       const tbody = document.getElementById('tbodyHistorial');
       tbody.innerHTML = '';
