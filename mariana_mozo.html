@@ -1,1 +1,858 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comandera Mariana (Mozo) | Parrilla La Perseverancia</title>
+  
+  <!-- Firebase SDKs (Compat) -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
+  <style>
+    /* --- ESTILOS GENERALES Y TEMA OSCURO --- */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #0e0e0e;
+      color: #ffffff;
+      padding: 10px;
+    }
+
+    header {
+      background: linear-gradient(90deg, #b03a2e, #d35400);
+      padding: 10px 18px;
+      border-radius: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    header h1 {
+      font-size: 18px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .header-btns {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn-caja {
+      background-color: #27ae60;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .btn-caja:hover { background-color: #2ecc71; }
+
+    .badge-live {
+      background-color: #000;
+      color: #00ff66;
+      font-size: 11px;
+      font-weight: bold;
+      padding: 3px 8px;
+      border-radius: 12px;
+      border: 1px solid #00ff66;
+    }
+
+    /* LAYOUT PRINCIPAL */
+    .layout-principal {
+      display: grid;
+      grid-template-columns: 440px 1fr;
+      gap: 12px;
+    }
+
+    /* --- PANEL IZQUIERDO --- */
+    .panel-formulario {
+      background-color: #161616;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .seccion-titulo {
+      font-size: 11px;
+      font-weight: bold;
+      color: #ff9900;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .row-ubicacion {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 8px;
+    }
+
+    select, input {
+      width: 100%;
+      padding: 8px;
+      background-color: #222;
+      border: 1px solid #444;
+      color: #fff;
+      border-radius: 4px;
+      font-size: 12px;
+      outline: none;
+    }
+
+    /* CAMPOS DELIVERY */
+    .box-delivery {
+      background-color: #1a1a1a;
+      border: 1px dashed #e67e22;
+      padding: 8px;
+      border-radius: 5px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    /* CATEGORÍAS */
+    .contenedor-categorias {
+      display: flex;
+      gap: 5px;
+      overflow-x: auto;
+      padding-bottom: 5px;
+    }
+
+    .btn-cat {
+      background-color: #222;
+      border: 1px solid #444;
+      color: #ccc;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: bold;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: 0.2s;
+    }
+
+    .btn-cat:hover, .btn-cat.activo {
+      background-color: #d35400;
+      color: #fff;
+      border-color: #ff6600;
+    }
+
+    /* GRILLA DE PRODUCTOS */
+    .grilla-productos {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(125px, 1fr));
+      gap: 6px;
+      max-height: 220px;
+      overflow-y: auto;
+      background-color: #0d0d0d;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #222;
+    }
+
+    .card-prod {
+      background-color: #1c1c1c;
+      border: 1px solid #333;
+      border-radius: 5px;
+      padding: 8px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 65px;
+      transition: transform 0.1s, border-color 0.2s;
+    }
+
+    .card-prod:hover {
+      border-color: #ff6600;
+      transform: scale(1.02);
+    }
+
+    .card-prod .nombre { font-size: 11px; font-weight: bold; color: #ffffff; line-height: 1.2; }
+    .card-prod .precio { font-size: 11px; font-weight: bold; color: #00ff66; margin-top: 4px; }
+
+    /* RESUMEN DE COMANDA */
+    .resumen-box {
+      background-color: #111;
+      border: 1px solid #262626;
+      border-radius: 6px;
+      padding: 10px;
+      min-height: 110px;
+      max-height: 150px;
+      overflow-y: auto;
+    }
+
+    .item-carrito {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 0;
+      border-bottom: 1px solid #222;
+      font-size: 12px;
+    }
+
+    .cnt-ctrls { display: flex; align-items: center; gap: 6px; }
+
+    .btn-qty {
+      background-color: #333;
+      color: #fff;
+      border: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .total-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: bold;
+      font-size: 15px;
+      padding: 4px 0;
+      color: #ff9900;
+    }
+
+    .btn-enviar {
+      width: 100%;
+      background: linear-gradient(180deg, #d35400, #b03a2e);
+      border: none;
+      color: white;
+      padding: 10px;
+      font-size: 13px;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+      text-transform: uppercase;
+      box-shadow: 0 4px 8px rgba(211, 84, 0, 0.3);
+    }
+
+    .btn-enviar:hover { background: linear-gradient(180deg, #e67e22, #d35400); }
+
+    /* --- PANEL DERECHO --- */
+    .panel-produccion {
+      background-color: #161616;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      padding: 12px;
+    }
+
+    .mapa-contenedor {
+      background-color: #0b0b0b;
+      border: 1px dashed #333;
+      border-radius: 8px;
+      padding: 12px;
+      position: relative;
+      min-height: 420px;
+    }
+
+    .zona-salon {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 10px;
+    }
+
+    .etiqueta-zona { font-size: 11px; font-weight: bold; color: #777; }
+
+    .zona-vereda {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      display: flex;
+      gap: 12px;
+    }
+
+    /* MESAS AMPLIADAS PARA VISUALIZAR COMANDAS */
+    .mesa {
+      background-color: #222;
+      border: 2px solid #555;
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 6px;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s;
+      overflow: hidden;
+    }
+
+    .mesa:hover { border-color: #ff6600; }
+    .h-mesa { width: 170px; height: 95px; }
+    .v-mesa { width: 100px; height: 165px; }
+
+    .mesa .nombre { font-size: 11px; font-weight: bold; }
+    .mesa.ocupada { background-color: #3d2b1f; border-color: #e74c3c; }
+
+    .items-mesa-preview {
+      font-size: 9px;
+      color: #ddd;
+      margin-top: 4px;
+      text-align: left;
+      width: 100%;
+      overflow: hidden;
+      max-height: 55px;
+      line-height: 1.1;
+    }
+
+    /* TEMPORIZADORES Y BADGES */
+    .timer-badge {
+      margin-top: 2px;
+      background-color: #000;
+      color: #00ffcc;
+      font-family: monospace;
+      font-size: 9px;
+      font-weight: bold;
+      padding: 1px 4px;
+      border-radius: 3px;
+      border: 1px solid #00ffcc;
+      text-align: center;
+    }
+
+    .separador { border: 0; height: 1px; background-color: #2a2a2a; margin: 15px 0; }
+
+    .canales-inferiores {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .canal-col {
+      background-color: #0d0d0d;
+      border: 1px solid #222;
+      border-radius: 6px;
+      padding: 8px;
+      min-height: 160px;
+    }
+
+    .canal-hdr { font-size: 11px; font-weight: bold; padding: 5px; border-radius: 4px; text-align: center; margin-bottom: 8px; }
+    .canal-hdr.mostrador { background-color: #1f618d; }
+    .canal-hdr.delivery { background-color: #1e8449; }
+    .canal-hdr.pickup { background-color: #7d3c98; }
+
+    .tarjeta-comanda {
+      background-color: #222;
+      border-left: 4px solid #ff6600;
+      padding: 8px;
+      border-radius: 4px;
+      margin-bottom: 6px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    /* MODALES */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-contenido {
+      background-color: #181818;
+      border: 1px solid #444;
+      border-radius: 8px;
+      padding: 20px;
+      width: 90%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.8);
+    }
+
+    .modal-hdr {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #333;
+      padding-bottom: 10px;
+      margin-bottom: 15px;
+    }
+
+    .btn-cerrar-modal { background: none; border: none; color: #999; font-size: 18px; cursor: pointer; }
+    .btn-opcion-mesa { width: 100%; padding: 12px; margin-bottom: 8px; border: none; border-radius: 5px; font-weight: bold; font-size: 13px; cursor: pointer; }
+    .btn-opcion-agregar { background-color: #e67e22; color: white; }
+    
+    .tabla-historial { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 10px; }
+    .tabla-historial th, .tabla-historial td { border: 1px solid #333; padding: 6px; text-align: left; }
+    .tabla-historial th { background-color: #222; color: #ff9900; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>🔥 LA PERSEVERANCIA 🔥 <span style="font-size: 12px; opacity: 0.8; font-weight: normal;">Comandera Mariana</span></h1>
+    <div class="header-btns">
+      <button class="btn-caja" onclick="abrirModalResumenOperativo()">📊 MESAS ATENDIDAS Y PROPINAS</button>
+      <span class="badge-live">• EN VIVO</span>
+    </div>
+  </header>
+
+  <div class="layout-principal">
+    <aside class="panel-formulario">
+      <div class="seccion-titulo">1. Ubicación y Cliente</div>
+      <div class="row-ubicacion">
+        <select id="selectUbicacion" onchange="evaluarCanalSeleccionado()">
+          <optgroup label="Salón">
+            <option value="Mesa 1">Salón - Mesa 1</option>
+            <option value="Mesa 2">Salón - Mesa 2</option>
+            <option value="Mesa 3">Salón - Mesa 3</option>
+            <option value="Mesa 4">Salón - Mesa 4</option>
+          </optgroup>
+          <optgroup label="Vereda">
+            <option value="Mesa 5 Vereda">Vereda - Mesa 5</option>
+            <option value="Mesa 6 Vereda">Vereda - Mesa 6</option>
+            <option value="Mesa 7 Vereda">Vereda - Mesa 7</option>
+          </optgroup>
+          <optgroup label="Canales Directos">
+            <option value="Mostrador">Mostrador</option>
+            <option value="Delivery">Delivery</option>
+            <option value="Pickup">Pickup</option>
+          </optgroup>
+        </select>
+        <select id="selectComensales">
+          <option value="1">1 Pers.</option>
+          <option value="2" selected>2 Pers.</option>
+          <option value="4">4 Pers.</option>
+          <option value="6">6 Pers.</option>
+        </select>
+      </div>
+
+      <div id="boxDelivery" class="box-delivery" style="display: none;">
+        <div style="font-size: 10px; color: #ff9900; font-weight: bold;">🛵 DATOS DE ENVÍO DELIVERY</div>
+        <input type="text" id="delivNombre" placeholder="Nombre del Cliente">
+        <input type="text" id="delivDireccion" placeholder="Dirección completa">
+        <input type="text" id="delivTelefono" placeholder="Teléfono de contacto">
+      </div>
+
+      <div class="seccion-titulo">2. Menú de Productos (Firebase RTDB)</div>
+      <div class="contenedor-categorias" id="contenedorCategorias">
+        <button class="btn-cat activo" onclick="filtrarCategoria('Todos', this)">Todos</button>
+      </div>
+
+      <div class="grilla-productos" id="grillaProductos">
+        <div style="color: #666; font-size: 11px; text-align: center; grid-column: span 2; margin-top: 20px;">Cargando menú desde Firebase...</div>
+      </div>
+
+      <div class="seccion-titulo">3. Selección Actual</div>
+      <div class="resumen-box" id="resumenComanda">
+        <p style="color: #666; font-size: 11px; text-align: center; margin-top: 20px;">No hay ítems seleccionados.</p>
+      </div>
+
+      <div class="total-bar">
+        <span>TOTAL SELECCIONADO:</span>
+        <span id="totalMonto">$0</span>
+      </div>
+
+      <button class="btn-enviar" onclick="enviarOActualizarComanda()">🚀 ENVIAR / AGREGAR A COMANDA</button>
+    </aside>
+
+    <main class="panel-produccion">
+      <div class="seccion-titulo">📍 PLANO DE MESAS Y ESTADOS DE COCINA</div>
+      <div class="mapa-contenedor">
+        <div class="zona-salon">
+          <span class="etiqueta-zona">SALÓN</span>
+          <div class="mesa h-mesa" data-id="Mesa 1" onclick="clickUbicacion('Mesa 1')"><span class="nombre">MESA 1</span></div>
+          <div class="mesa h-mesa" data-id="Mesa 2" onclick="clickUbicacion('Mesa 2')"><span class="nombre">MESA 2</span></div>
+          <div class="mesa h-mesa" data-id="Mesa 3" onclick="clickUbicacion('Mesa 3')"><span class="nombre">MESA 3</span></div>
+          <div class="mesa h-mesa" data-id="Mesa 4" onclick="clickUbicacion('Mesa 4')"><span class="nombre">MESA 4</span></div>
+        </div>
+        <div class="zona-vereda">
+          <div class="mesa v-mesa" data-id="Mesa 5 Vereda" onclick="clickUbicacion('Mesa 5 Vereda')"><span class="nombre">MESA 5<br><small>VEREDA</small></span></div>
+          <div class="mesa v-mesa" data-id="Mesa 6 Vereda" onclick="clickUbicacion('Mesa 6 Vereda')"><span class="nombre">MESA 6<br><small>VEREDA</small></span></div>
+          <div class="mesa v-mesa" data-id="Mesa 7 Vereda" onclick="clickUbicacion('Mesa 7 Vereda')"><span class="nombre">MESA 7<br><small>VEREDA</small></span></div>
+        </div>
+      </div>
+
+      <hr class="separador">
+
+      <div class="seccion-titulo" style="margin-bottom: 8px;">📦 OTROS CANALES EN PRODUCCIÓN</div>
+      <div class="canales-inferiores">
+        <div class="canal-col">
+          <div class="canal-hdr mostrador">🏪 MOSTRADOR</div>
+          <div id="col-mostrador"></div>
+        </div>
+        <div class="canal-col">
+          <div class="canal-hdr delivery">🛵 DELIVERY</div>
+          <div id="col-delivery"></div>
+        </div>
+        <div class="canal-col">
+          <div class="canal-hdr pickup">🛍️ PICKUP</div>
+          <div id="col-pickup"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- MODAL OPCIONES MESA SIMPLIFICADO -->
+  <div class="modal-overlay" id="modalOpcionesMesa">
+    <div class="modal-contenido" style="max-width: 400px; text-align: center;">
+      <div class="modal-hdr">
+        <h3 id="tituloOpcionesMesa" style="color: #ff9900;">Gestionar Comanda</h3>
+        <button class="btn-cerrar-modal" onclick="cerrarModal('modalOpcionesMesa')">✕</button>
+      </div>
+      <button class="btn-opcion-mesa btn-opcion-agregar" onclick="seleccionarMesaParaAgregar()">➕ AGREGAR MÁS ÍTEMS</button>
+      <button class="btn-opcion-mesa" style="background-color: #3498db; color: white;" onclick="verDetalleSoloLectura()">👁️ VER DETALLE (Solo Lectura)</button>
+      <button class="btn-opcion-mesa" style="background-color: #444; color: white;" onclick="cerrarModal('modalOpcionesMesa')">CANCELAR</button>
+    </div>
+  </div>
+
+  <!-- MODAL DETALLE SOLO LECTURA -->
+  <div class="modal-overlay" id="modalDetalleMesa">
+    <div class="modal-contenido">
+      <div class="modal-hdr">
+        <h3 id="tituloDetalleMesa" style="color: #ff9900;">Detalle de Comanda</h3>
+        <button class="btn-cerrar-modal" onclick="cerrarModal('modalDetalleMesa')">✕</button>
+      </div>
+      <div id="contenidoDetalleMesa" style="margin-bottom: 15px; font-size: 12px; background: #111; padding: 10px; border-radius: 4px;"></div>
+      <button class="btn-opcion-mesa" style="background-color: #333; color: white;" onclick="cerrarModal('modalDetalleMesa')">CERRAR</button>
+    </div>
+  </div>
+
+  <!-- MODAL RESUMEN OPERATIVO (MESAS ATENDIDAS Y PROPINAS - EXCLUSIVO HERNAN Y GUSTAVO) -->
+  <div class="modal-overlay" id="modalCierreCaja">
+    <div class="modal-contenido" style="max-width: 650px;">
+      <div class="modal-hdr">
+        <h3 style="color: #00ff66;">📊 RESUMEN OPERATIVO (ATENDIDAS Y PROPINAS)</h3>
+        <button class="btn-cerrar-modal" onclick="cerrarModal('modalCierreCaja')">✕</button>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px;">
+        <div style="background: #222; padding: 10px; border-radius: 5px; text-align: center;">
+          <small style="color: #aaa;">TOTAL FACTURADO</small>
+          <div id="totCajaRecaudado" style="font-size: 18px; font-weight: bold; color: #00ff66;">$0</div>
+        </div>
+        <div style="background: #222; padding: 10px; border-radius: 5px; text-align: center;">
+          <small style="color: #aaa;">PROPINAS</small>
+          <div id="totCajaPropina" style="font-size: 18px; font-weight: bold; color: #ff9900;">$0</div>
+        </div>
+        <div style="background: #222; padding: 10px; border-radius: 5px; text-align: center;">
+          <small style="color: #aaa;">ATENDIDOS</small>
+          <div id="totCajaCant" style="font-size: 18px; font-weight: bold; color: #3498db;">0</div>
+        </div>
+      </div>
+      <div style="background: #111; padding: 10px; border-radius: 5px; font-size: 11px; margin-bottom: 15px;">
+        <strong style="color: #ff9900;">DESGLOSE POR MEDIO DE PAGO:</strong>
+        <div style="display: flex; justify-content: space-between; margin-top: 5px;"><span>💵 Efectivo:</span> <strong id="desgEfectivo">$0</strong></div>
+        <div style="display: flex; justify-content: space-between; margin-top: 3px;"><span>📱 Mercado Pago:</span> <strong id="desgMP">$0</strong></div>
+        <div style="display: flex; justify-content: space-between; margin-top: 3px;"><span>💳 Tarjetas:</span> <strong id="desgTarjeta">$0</strong></div>
+      </div>
+      <div style="max-height: 180px; overflow-y: auto;">
+        <table class="tabla-historial">
+          <thead><tr><th>Hora</th><th>Origen</th><th>Pago</th><th>Propina</th><th>Total</th></tr></thead>
+          <tbody id="tbodyHistorial"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Configuración de Firebase Realtime Database
+    const firebaseConfig = {
+      databaseURL: "https://parrilla-la-perseveranci-f3f54-default-rtdb.firebaseio.com"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    let MENU = [];
+    let categoriaActiva = 'Todos';
+    let carrito = [];
+    let comandasActivas = JSON.parse(localStorage.getItem('comandasActivas')) || {};
+    let historialCaja = JSON.parse(localStorage.getItem('historialCaja')) || [];
+    let idMesaGestion = null;
+
+    window.onload = () => { 
+      sincronizarVistaGustavo();
+      escurinMenuFirebase();
+    };
+
+    function escurinMenuFirebase() {
+      const menuRef = db.ref('menu');
+      menuRef.on('value', (snapshot) => {
+        const data = snapshot.val();
+        
+        if (data) {
+          let tempMenu = [];
+
+          if (Array.isArray(data)) {
+            tempMenu = data.filter(item => item !== null);
+          } else {
+            tempMenu = Object.keys(data).map(key => {
+              const item = data[key];
+              if (!item) return null;
+              if (typeof item !== 'object') {
+                return { id: key, nombre: String(item), cat: 'General', precio: 0 };
+              }
+              return {
+                id: item.id || key,
+                nombre: item.nombre || item.titulo || item.name || 'Sin Nombre',
+                cat: item.cat || item.categoria || item.category || 'General',
+                precio: Number(item.precio || item.price || 0)
+              };
+            }).filter(i => i !== null);
+          }
+
+          MENU = tempMenu.filter(i => i.nombre && i.nombre !== 'Sin Nombre');
+
+          if (MENU.length === 0) {
+            MENU = Object.values(data).map((item, idx) => ({
+              id: idx,
+              nombre: item.nombre || item[Object.keys(item).find(k => k.toLowerCase().includes('nom'))] || `Item ${idx+1}`,
+              cat: item.cat || item.categoria || 'General',
+              precio: Number(item.precio || item.price || 0)
+            }));
+          }
+
+          construirBotonesCategorias();
+          renderGrilla(categoriaActiva);
+        } else {
+          document.getElementById('grillaProductos').innerHTML = '<p style="color: #ff5555; font-size: 11px; text-align: center; grid-column: 1 / -1; margin-top: 20px;">La ruta "menu" en Firebase está vacía.</p>';
+        }
+      }, (error) => {
+        console.error("Error de conexión con Firebase:", error);
+      });
+    }
+
+    function escucharMenuFirebase() {
+      escurinMenuFirebase();
+    }
+
+    function construirBotonesCategorias() {
+      const contenedor = document.getElementById('contenedorCategorias');
+      const categoriasUnicas = ['Todos', ...new Set(MENU.map(item => item.cat))];
+      
+      contenedor.innerHTML = '';
+      categoriasUnicas.forEach(cat => {
+        const btn = document.createElement('button');
+        btn.className = `btn-cat ${cat === categoriaActiva ? 'activo' : ''}`;
+        btn.textContent = cat === 'Todos' ? 'Todos' : cat;
+        btn.onclick = () => filtrarCategoria(cat, btn);
+        contenedor.appendChild(btn);
+      });
+    }
+
+    function guardarDatosStorage() {
+      localStorage.setItem('comandasActivas', JSON.stringify(comandasActivas));
+      localStorage.setItem('historialCaja', JSON.stringify(historialCaja));
+    }
+
+    function evaluarCanalSeleccionado() {
+      const canal = document.getElementById('selectUbicacion').value;
+      document.getElementById('boxDelivery').style.display = (canal === 'Delivery') ? 'flex' : 'none';
+    }
+
+    function filtrarCategoria(cat, btn) {
+      categoriaActiva = cat;
+      document.querySelectorAll('.btn-cat').forEach(b => b.classList.remove('activo'));
+      if(btn) btn.classList.add('activo');
+      renderGrilla(cat);
+    }
+
+    function renderGrilla(categoria) {
+      const contenedor = document.getElementById('grillaProductos');
+      contenedor.innerHTML = '';
+      const filtrados = (categoria === 'Todos') ? MENU : MENU.filter(m => m.cat === categoria);
+      
+      if (filtrados.length === 0) {
+        contenedor.innerHTML = '<p style="color: #666; font-size: 11px; text-align: center; grid-column: span 2; margin-top: 20px;">No hay productos en esta categoría.</p>';
+        return;
+      }
+
+      filtrados.forEach(prod => {
+        const card = document.createElement('div');
+        card.className = 'card-prod';
+        card.onclick = () => agregarAlCarrito(prod);
+        card.innerHTML = `<div class="nombre">${prod.nombre}</div><div class="precio">$${prod.precio.toLocaleString('es-AR')}</div>`;
+        contenedor.appendChild(card);
+      });
+    }
+
+    function agregarAlCarrito(prod) {
+      const existe = carrito.find(item => item.id === prod.id);
+      if (existe) existe.cantidad++;
+      else carrito.push({ ...prod, cantidad: 1 });
+      renderCarrito();
+    }
+
+    function cambiarCantidad(id, delta) {
+      const item = carrito.find(i => i.id === id);
+      if (item) {
+        item.cantidad += delta;
+        if (item.cantidad <= 0) carrito = carrito.filter(i => i.id !== id);
+      }
+      renderCarrito();
+    }
+
+    function renderCarrito() {
+      const contenedor = document.getElementById('resumenComanda');
+      const totalEl = document.getElementById('totalMonto');
+      contenedor.innerHTML = '';
+      if (carrito.length === 0) {
+        contenedor.innerHTML = '<p style="color: #666; font-size: 11px; text-align: center; margin-top: 20px;">No hay ítems seleccionados.</p>';
+        totalEl.textContent = '$0';
+        return;
+      }
+      let total = 0;
+      carrito.forEach(item => {
+        total += item.precio * item.cantidad;
+        const row = document.createElement('div');
+        row.className = 'item-carrito';
+        row.innerHTML = `<div><strong>${item.nombre}</strong><br><small style="color:#00ff66;">$${item.precio.toLocaleString('es-AR')}</small></div>
+        <div class="cnt-ctrls"><button class="btn-qty" onclick="cambiarCantidad('${item.id}', -1)">-</button><span>${item.cantidad}</span><button class="btn-qty" onclick="cambiarCantidad('${item.id}', 1)">+</button></div>`;
+        contenedor.appendChild(row);
+      });
+      totalEl.textContent = `$${total.toLocaleString('es-AR')}`;
+    }
+
+    function enviarOActualizarComanda() {
+      if (carrito.length === 0) { alert("⚠️ Seleccioná al menos un producto."); return; }
+      const destino = document.getElementById('selectUbicacion').value;
+
+      if (comandasActivas[destino]) {
+        carrito.forEach(newItem => {
+          const ex = comandasActivas[destino].items.find(i => i.id === newItem.id);
+          if (ex) ex.cantidad += newItem.cantidad;
+          else comandasActivas[destino].items.push({ ...newItem });
+        });
+        alert(`✅ Productos agregados a [${destino}]`);
+      } else {
+        comandasActivas[destino] = {
+          id: destino,
+          items: [...carrito],
+          estado: 'INGRESO',
+          tiempoInicioEstado: Date.now()
+        };
+      }
+      guardarDatosStorage();
+      carrito = [];
+      renderCarrito();
+      sincronizarVistaGustavo();
+    }
+
+    function sincronizarVistaGustavo() {
+      document.querySelectorAll('.mesa').forEach(m => {
+        m.classList.remove('ocupada');
+        const prev = m.querySelector('.items-mesa-preview');
+        if (prev) prev.remove();
+        const badge = m.querySelector('.timer-badge');
+        if (badge) badge.remove();
+      });
+
+      document.getElementById('col-mostrador').innerHTML = '';
+      document.getElementById('col-delivery').innerHTML = '';
+      document.getElementById('col-pickup').innerHTML = '';
+
+      Object.keys(comandasActivas).forEach(id => {
+        const cmd = comandasActivas[id];
+        const mesaEl = document.querySelector(`.mesa[data-id="${id}"]`);
+        if (mesaEl) {
+          mesaEl.classList.add('ocupada');
+          
+          // Badge de estado
+          let badge = document.createElement('div');
+          badge.className = 'timer-badge';
+          badge.textContent = cmd.estado;
+          mesaEl.appendChild(badge);
+
+          // Preview visual de ítems dentro de la mesa
+          let preview = document.createElement('div');
+          preview.className = 'items-mesa-preview';
+          preview.innerHTML = cmd.items.map(i => `• ${i.cantidad}x ${i.nombre}`).join('<br>');
+          mesaEl.appendChild(preview);
+        } else {
+          const colId = id.includes('Delivery') ? 'col-delivery' : id.includes('Pickup') ? 'col-pickup' : 'col-mostrador';
+          const contenedor = document.getElementById(colId);
+          if(contenedor) {
+            const tarjeta = document.createElement('div');
+            tarjeta.className = 'tarjeta-comanda';
+            tarjeta.innerHTML = `<div style="font-weight:bold;"><span>${id}</span></div>`;
+            tarjeta.onclick = () => clickUbicacion(id);
+            contenedor.appendChild(tarjeta);
+          }
+        }
+      });
+    }
+
+    function clickUbicacion(id) {
+      if (comandasActivas[id]) {
+        idMesaGestion = id;
+        document.getElementById('tituloOpcionesMesa').textContent = `Mesa: ${id}`;
+        document.getElementById('modalOpcionesMesa').style.display = 'flex';
+      } else {
+        document.getElementById('selectUbicacion').value = id;
+        evaluarCanalSeleccionado();
+      }
+    }
+
+    function seleccionarMesaParaAgregar() {
+      document.getElementById('selectUbicacion').value = idMesaGestion;
+      evaluarCanalSeleccionado();
+      cerrarModal('modalOpcionesMesa');
+    }
+
+    function verDetalleSoloLectura() {
+      cerrarModal('modalOpcionesMesa');
+      const cmd = comandasActivas[idMesaGestion];
+      const detalle = document.getElementById('contenidoDetalleMesa');
+      document.getElementById('tituloDetalleMesa').textContent = `Detalle: ${idMesaGestion} (${cmd.estado})`;
+      let total = 0;
+      let html = '<ul style="list-style:none; padding:0;">';
+      cmd.items.forEach(i => {
+        const sub = i.precio * i.cantidad;
+        total += sub;
+        html += `<li style="display:flex; justify-content:space-between; padding: 4px 0; border-bottom: 1px solid #222;"><span>${i.cantidad}x ${i.nombre}</span><strong>$${sub.toLocaleString('es-AR')}</strong></li>`;
+      });
+      html += `</ul><hr style="border-color:#333; margin:8px 0;"><div style="display:flex; justify-content:space-between; color:#ff9900;"><strong>TOTAL PARCIAL:</strong><strong>$${total.toLocaleString('es-AR')}</strong></div>`;
+      detalle.innerHTML = html;
+      document.getElementById('modalDetalleMesa').style.display = 'flex';
+    }
+
+    function abrirModalResumenOperativo() {
+      let totFacturado = 0, totPropinas = 0, efct = 0, mp = 0, tarj = 0;
+      const tbody = document.getElementById('tbodyHistorial');
+      tbody.innerHTML = '';
+      historialCaja.forEach(h => {
+        totFacturado += h.total;
+        totPropinas += h.propina;
+        if (h.medioPago === 'Efectivo') efct += h.total;
+        if (h.medioPago === 'Mercado Pago / Transferencia') mp += h.total;
+        if (h.medioPago === 'Tarjeta Débito/Crédito') tarj += h.total;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${h.hora}</td><td>${h.origen}</td><td>${h.medioPago}</td><td style="color:#ff9900;">$${h.propina.toLocaleString('es-AR')}</td><td style="color:#00ff66;">$${h.total.toLocaleString('es-AR')}</td>`;
+        tbody.appendChild(tr);
+      });
+      document.getElementById('totCajaRecaudado').textContent = `$${totFacturado.toLocaleString('es-AR')}`;
+      document.getElementById('totCajaPropina').textContent = `$${totPropinas.toLocaleString('es-AR')}`;
+      document.getElementById('totCajaCant').textContent = historialCaja.length;
+      document.getElementById('desgEfectivo').textContent = `$${efct.toLocaleString('es-AR')}`;
+      document.getElementById('desgMP').textContent = `$${mp.toLocaleString('es-AR')}`;
+      document.getElementById('desgTarjeta').textContent = `$${tarj.toLocaleString('es-AR')}`;
+      document.getElementById('modalCierreCaja').style.display = 'flex';
+    }
+
+    function cerrarModal(id) { document.getElementById(id).style.display = 'none'; }
+  </script>
+</body>
+</html>
