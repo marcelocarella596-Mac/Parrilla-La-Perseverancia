@@ -1,194 +1,154 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>La Perseverancia - Panel de Control</title>
-  <style>
-    :root {
-      --bg: #121212;
-      --card-bg: #1e1e1e;
-      --accent-red: #8b0000;
-      --accent-green: #006644;
-      --accent-yellow: #d35400;
-      --text: #ffffff;
-      --yellow: #f1c40f;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parrilla La Perseverancia - Panel de Control</title>
+    <style>
+        :root {
+            --primary-color: #8b0000;
+            --secondary-color: #222;
+            --bg-color: #f4f4f9;
+            --card-bg: #fff;
+            --text-color: #333;
+        }
 
-    body {
-      margin: 0;
-      padding: 16px;
-      font-family: system-ui, -apple-system, sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-      box-sizing: border-box;
-    }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-    .container {
-      width: 100%;
-      max-width: 500px;
-    }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
 
-    .header {
-      background: linear-gradient(135deg, #8b0000, #4a0000);
-      padding: 20px;
-      border-radius: 12px;
-      text-align: center;
-      margin-bottom: 25px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-      border: 1px solid #555;
-    }
+        header h1 {
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
 
-    .header h1 {
-      margin: 0;
-      font-size: 1.6rem;
-      color: #fff;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
+        header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
 
-    .header p {
-      margin: 6px 0 0 0;
-      font-size: 0.9rem;
-      color: var(--yellow);
-      font-weight: bold;
-    }
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 1000px;
+        }
 
-    .section-title {
-      font-size: 0.85rem;
-      font-weight: bold;
-      color: #888;
-      text-transform: uppercase;
-      margin: 15px 0 10px 4px;
-      letter-spacing: 1px;
-    }
+        .card-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
 
-    .btn-card {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 16px 20px;
-      border-radius: 10px;
-      margin-bottom: 14px;
-      text-decoration: none;
-      color: #fff;
-      font-weight: bold;
-      font-size: 1.05rem;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-      transition: transform 0.1s, filter 0.2s;
-      border: 1px solid rgba(255,255,255,0.1);
-    }
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border-left: 5px solid var(--primary-color);
+            height: 100%;
+            box-sizing: border-box;
+        }
 
-    .btn-card:active {
-      transform: scale(0.98);
-    }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
 
-    .btn-gustavo {
-      background: linear-gradient(135deg, #8b0000, #5a0000);
-    }
+        .card h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+            font-size: 1.25rem;
+        }
 
-    .btn-hernan {
-      background: linear-gradient(135deg, #006644, #003322);
-    }
+        .card p {
+            margin-bottom: 0;
+            color: #555;
+            font-size: 0.95rem;
+        }
 
-    .btn-mariana {
-      background: linear-gradient(135deg, #d35400, #8e3800);
-    }
-
-    .btn-admin {
-      background: linear-gradient(135deg, #444444, #222222);
-    }
-
-    .btn-subtitle {
-      display: block;
-      font-size: 0.75rem;
-      font-weight: normal;
-      color: var(--yellow);
-      margin-top: 3px;
-    }
-
-    .arrow {
-      font-size: 1.2rem;
-    }
-
-    .footer {
-      text-align: center;
-      margin-top: auto;
-      padding-top: 20px;
-      font-size: 0.75rem;
-      color: #555;
-    }
-  </style>
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #888;
+            font-size: 0.9rem;
+        }
+    </style>
 </head>
 <body>
 
-  <div class="container">
-    
-    <div class="header">
-      <h1>🔥 LA PERSEVERANCIA 🔥</h1>
-      <p>Sistema Integrado de Gestión Gastronómica</p>
+    <header>
+        <h1>Parrilla La Perseverancia</h1>
+        <p>Panel de Control y Gestión</p>
+    </header>
+
+    <div class="dashboard-grid">
+        <!-- 1. Cargador / Menú Ejecutivo -->
+        <a href="menu-ejecutivo.pdf" target="_blank" class="card-link">
+            <div class="card">
+                <h3>📄 CARGADOR DE CARTA (PDF)</h3>
+                <p>Actualizar precios y ver el menú ejecutivo vigente en formato digital.</p>
+            </div>
+        </a>
+
+        <!-- 2. Cargar Menú (Firebase) -->
+        <a href="cargar_menu.html" class="card-link">
+            <div class="card">
+                <h3>📋 GESTIÓN DE PRODUCTOS</h3>
+                <p>Administrar base de datos de platos, bebidas y modificaciones en Firebase.</p>
+            </div>
+        </a>
+
+        <!-- 3. Cocina Hernán -->
+        <a href="cocina_hernan.html" class="card-link">
+            <div class="card">
+                <h3>🍳 COMANDAS COCINA</h3>
+                <p>Monitoreo en tiempo real de los pedidos activos para cocina.</p>
+            </div>
+        </a>
+
+        <!-- 4. Mariana Mozo -->
+        <a href="mariana_mozo.html" class="card-link">
+            <div class="card">
+                <h3>🚶‍♂️ ESTACIÓN DE MOZOS</h3>
+                <p>Control de atención a mesas, toma de pedidos y estado de cuentas.</p>
+            </div>
+        </a>
+
+        <!-- 5. Parrilla Gustavo -->
+        <a href="parrilla_gustavo.html" class="card-link">
+            <div class="card">
+                <h3>🔥 ESTACIÓN DE PARRILLA</h3>
+                <p>Visualización específica de comandas y tiempos de cocción de carnes.</p>
+            </div>
+        </a>
+
+        <!-- 6. Generador de QR -->
+        <a href="codigos-qr.pdf" target="_blank" class="card-link">
+            <div class="card">
+                <h3>📱 GENERADOR DE QRS PARA MESAS</h3>
+                <p>Imprimir tarjetas de salón, vereda y códigos de acceso rápido.</p>
+            </div>
+        </a>
     </div>
 
-    <div class="section-title">TERMINALES PRINCIPALES</div>
-
-    <!-- TERMINAL GUSTAVO -->
-    <a href="parrilla_gustavo.html" class="btn-card btn-gustavo">
-      <div>
-        🔥 TERMINAL GUSTAVO
-        <span class="btn-subtitle">Parrilla / Caja / Cobros / KDS Global</span>
-      </div>
-      <span class="arrow">➔</span>
-    </a>
-
-    <!-- TERMINAL HERNÁN -->
-    <a href="cocina_hernan.html" class="btn-card btn-hernan">
-      <div>
-        🍳 TERMINAL HERNÁN
-        <span class="btn-subtitle">Chef Jefe / Stock / Gastos / KDS Global</span>
-      </div>
-      <span class="arrow">➔</span>
-    </a>
-
-    <div class="section-title">COMANDERA MÓVIL</div>
-
-    <!-- COMANDERA MARIANA -->
-    <a href="mariana_mozo.html" class="btn-card btn-mariana">
-      <div>
-        📱 COMANDERA MOZO (MARIANA)
-        <span class="btn-subtitle">Toma de pedidos desde salón y envío a KDS</span>
-      </div>
-      <span class="arrow">➔</span>
-    </a>
-
-    <div class="section-title">CONFIGURACIÓN Y CARTAS</div>
-
-    <!-- CARGADOR DE CARTA -->
-    <a href="cargar_menu.html" class="btn-card btn-admin">
-      <div>
-        📄 CARGADOR DE CARTA (PDF)
-        <span class="btn-subtitle">Actualizar precios y productos en Firebase</span>
-      </div>
-      <span class="arrow">➔</span>
-    </a>
-
-    <!-- GENERADOR DE QRS -->
-    <a href="generar_qr.html" class="btn-card btn-admin">
-      <div>
-        🖨️ GENERADOR DE QRS PARA MESAS
-        <span class="btn-subtitle">Imprimir tarjetas de salón y vereda</span>
-      </div>
-      <span class="arrow">➔</span>
-    </a>
-
-    <div class="footer">
-      Gastronomía La Perseverancia • GitHub Pages Edition
-    </div>
-
-  </div>
+    <footer>
+        <p>&copy; 2026 Parrilla La Perseverancia - Todos los derechos reservados.</p>
+    </footer>
 
 </body>
 </html>
