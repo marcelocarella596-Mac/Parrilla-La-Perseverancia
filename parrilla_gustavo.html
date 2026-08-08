@@ -510,7 +510,7 @@
       <button class="btn-opcion-mesa" style="background-color: #27ae60; color: white;" onclick="cambiarEstadoCocina('LISTO ✔️')">🖐️ ¡MANOS! / LISTO ✔️</button>
       <hr style="border-color: #333; margin: 10px 0;">
       <button class="btn-opcion-mesa btn-opcion-agregar" onclick="seleccionarMesaParaAgregar()">➕ AGREGAR MÁS ÍTEMS</button>
-      <button class="btn-opcion-mesa btn-opcion-cobrar" onclick="irACobrarDesdeOpciones()">💵 VER DETALLE Y COBRAR</button>
+      <button class="btn-opcion-mesa btn-opcion-cobrar" onclick="irACobrarDesdesOpciones()">💵 VER DETALLE Y COBRAR</button>
     </div>
   </div>
 
@@ -628,10 +628,10 @@
     let MENU = [];
     let categoriaActiva = 'Todos';
     let carrito = [];
-    let comandasActivas = JSON.parse(localStorage.getItem('comandasActivas')) || {};
-    let historialCaja = JSON.parse(localStorage.getItem('historialCaja')) || [];
-    let listaEgresos = JSON.parse(localStorage.getItem('listaEgresos')) || [];
-    let historialMensajes = JSON.parse(localStorage.getItem('historialMensajes')) || [];
+    let comandasActivas = {};
+    let historialCaja = [];
+    let listaEgresos = [];
+    let historialMensajes = [];
     let idMesaGestion = null;
 
     const listadoMesasDefinidas = [
@@ -645,9 +645,11 @@
     ];
 
     window.onload = () => { 
-      sincronizarVistaGustavo();
       escucharMenuFirebase();
       escucharComandasRemotas();
+      escucharEgresosRemotos();
+      escucharMensajesRemotos();
+      escucharCajaRemota();
     };
 
     // Alerta sonora sutil mediante Web Audio API
@@ -669,8 +671,7 @@
     }
 
     function escucharMenuFirebase() {
-      const menuRef = db.ref('menu');
-      menuRef.on('value', (snapshot) => {
+      db.ref('menu').on('value', (snapshot) => {
         const data = snapshot.val();
         if (data) {
           if (!Array.isArray(data)) {
@@ -694,15 +695,46 @@
       });
     }
 
-    // Sincronización en tiempo real opcional con Firebase para comandas
     function escucharComandasRemotas() {
-      const cmdRef = db.ref('comandas_activas');
-      cmdRef.on('value', (snapshot) => {
+      db.ref('comandas_activas').on('value', (snapshot) => {
+        const data = snapshot.val();
+        comandasActivas = data || {};
+        sincronizarVistaGustavo();
+      });
+    }
+
+    function escucharEgresosRemotos() {
+      db.ref('egresos').on('value', (snapshot) => {
         const data = snapshot.val();
         if(data) {
-          comandasActivas = data;
-          guardarDatosStorage();
-          sincronizarVistaGustavo();
+          listaEgresos = Array.isArray(data) ? data : Object.values(data);
+        } else {
+          listaEgresos = [];
+        }
+      });
+    }
+
+    function escucharMensajesRemotos() {
+      db.ref('mensajes').on('value', (snapshot) => {
+        const data = snapshot.val();
+        if(data) {
+          historialMensajes = Array.isArray(data) ? data : Object.values(data);
+        } else {
+          historialMensajes = [];
+        }
+        if(document.getElementById('modalMensajes').style.display === 'flex') {
+          renderizarChatMjes();
+        }
+      });
+    }
+
+    function escucharCajaRemota() {
+      db.ref('historial_caja').on('value', (snapshot) => {
+        const data = snapshot.val();
+        if(data) {
+          historialCaja = Array.isArray(data) ? data : Object.values(data);
+        } else {
+          historialCaja = [];
         }
       });
     }
@@ -723,13 +755,6 @@
         btn.onclick = () => filtrarCategoria(cat, btn);
         contenedor.appendChild(btn);
       });
-    }
-
-    function guardarDatosStorage() {
-      localStorage.setItem('comandasActivas', JSON.stringify(comandasActivas));
-      localStorage.setItem('historialCaja', JSON.stringify(historialCaja));
-      localStorage.setItem('listaEgresos', JSON.stringify(listaEgresos));
-      localStorage.setItem('historialMensajes', JSON.stringify(historialMensajes));
     }
 
     function evaluarCanalSeleccionado() {
@@ -819,14 +844,12 @@
           tiempoInicioEstado: Date.now()
         };
       }
-      guardarDatosStorage();
       sincronizarFirebaseRemoto();
       carrito = [];
       renderCarrito();
       sincronizarVistaGustavo();
     }
 
-    // Renderizado del plano de mesas ampliado y canales adicionales
     function sincronizarVistaGustavo() {
       const containerMesas = document.getElementById('planoMesasContainer');
       containerMesas.innerHTML = '';
@@ -876,7 +899,6 @@
         containerMesas.appendChild(card);
       });
 
-      // Canales adicionales (Mostrador, Delivery, Pickup)
       Object.keys(comandasActivas).forEach(id => {
         if (!listadoMesasDefinidas.some(m => m.id === id)) {
           const cmd = comandasActivas[id];
@@ -922,7 +944,6 @@
         reproducirAlertaSonora();
       }
 
-      guardarDatosStorage();
       sincronizarFirebaseRemoto();
       sincronizarVistaGustavo();
       cerrarModal('modalOpcionesMesa');
@@ -934,7 +955,7 @@
       cerrarModal('modalOpcionesMesa');
     }
 
-    function irACobrarDesdeOpciones() {
+    function irACobrarDesdesOpciones() {
       cerrarModal('modalOpcionesMesa');
       abrirModalCobro(idMesaGestion);
     }
@@ -976,23 +997,23 @@
       let totalCuenta = 0;
       cmd.items.forEach(i => totalCuenta += (i.precio * i.cantidad));
 
-      historialCaja.push({
+      const nuevoCobro = {
         hora: new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }),
         origen: id,
         medioPago: document.getElementById('selectMedioPago').value,
         propina: parseFloat(document.getElementById('inputPropina').value) || 0,
         total: totalCuenta
-      });
+      };
+
+      db.ref('historial_caja').push(nuevoCobro);
 
       delete comandasActivas[id];
-      guardarDatosStorage();
       sincronizarFirebaseRemoto();
       sincronizarVistaGustavo();
       cerrarModal('modalCobro');
       alert(`✅ Comanda cobrada con éxito.`);
     }
 
-    // Funciones de Egresos
     function abrirModalEgresos() {
       document.getElementById('egresoConcepto').value = '';
       document.getElementById('egresoMonto').value = '';
@@ -1004,17 +1025,17 @@
       const monto = parseFloat(document.getElementById('egresoMonto').value) || 0;
       if(!concepto || monto <= 0) { alert("⚠️ Completá un concepto y monto válido."); return; }
 
-      listaEgresos.push({
+      const nuevoEgreso = {
         hora: new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }),
         concepto,
         monto
-      });
-      guardarDatosStorage();
+      };
+
+      db.ref('egresos').push(nuevoEgreso);
       cerrarModal('modalEgresos');
       alert("✅ Egreso registrado correctamente.");
     }
 
-    // Funciones de Mensajería Mariana / Hernán
     function abrirModalMensajes() {
       renderizarChatMjes();
       document.getElementById('modalMensajes').style.display = 'flex';
@@ -1023,14 +1044,13 @@
     function enviarMensajeChat() {
       const texto = document.getElementById('inputNuevoMje').value.trim();
       if(!texto) return;
-      historialMensajes.push({
+      const nuevoMje = {
         remitente: 'Gustavo',
         texto,
         hora: new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })
-      });
-      guardarDatosStorage();
+      };
+      db.ref('mensajes').push(nuevoMje);
       document.getElementById('inputNuevoMje').value = '';
-      renderizarChatMjes();
     }
 
     function renderizarChatMjes() {
