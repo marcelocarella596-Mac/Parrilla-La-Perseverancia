@@ -650,13 +650,14 @@
       escucharComandasRemotas();
     };
 
+    // Alerta sonora sutil mediante Web Audio API
     function reproducirAlertaSonora() {
       try {
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
+        osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // Nota D5
         gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
         osc.connect(gain);
         gain.connect(audioCtx.destination);
@@ -693,6 +694,7 @@
       });
     }
 
+    // Sincronización en tiempo real opcional con Firebase para comandas
     function escucharComandasRemotas() {
       const cmdRef = db.ref('comandas_activas');
       cmdRef.on('value', (snapshot) => {
@@ -824,9 +826,9 @@
       sincronizarVistaGustavo();
     }
 
+    // Renderizado del plano de mesas ampliado y canales adicionales
     function sincronizarVistaGustavo() {
       const containerMesas = document.getElementById('planoMesasContainer');
-      if (!containerMesas) return;
       containerMesas.innerHTML = '';
       document.getElementById('col-mostrador').innerHTML = '';
       document.getElementById('col-delivery').innerHTML = '';
@@ -874,6 +876,7 @@
         containerMesas.appendChild(card);
       });
 
+      // Canales adicionales (Mostrador, Delivery, Pickup)
       Object.keys(comandasActivas).forEach(id => {
         if (!listadoMesasDefinidas.some(m => m.id === id)) {
           const cmd = comandasActivas[id];
@@ -989,6 +992,7 @@
       alert(`✅ Comanda cobrada con éxito.`);
     }
 
+    // Funciones de Egresos
     function abrirModalEgresos() {
       document.getElementById('egresoConcepto').value = '';
       document.getElementById('egresoMonto').value = '';
@@ -1010,6 +1014,7 @@
       alert("✅ Egreso registrado correctamente.");
     }
 
+    // Funciones de Mensajería Mariana / Hernán
     function abrirModalMensajes() {
       renderizarChatMjes();
       document.getElementById('modalMensajes').style.display = 'flex';
