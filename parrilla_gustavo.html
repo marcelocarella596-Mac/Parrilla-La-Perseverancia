@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -735,23 +735,33 @@
         const data = snapshot.val();
         if (data) {
           if (!Array.isArray(data)) {
+            // Manejar si los datos se devuelven como un objeto/diccionario desde Firebase
             MENU = Object.keys(data).map(key => {
               const item = data[key];
+              if (!item) return null;
               return {
                 id: item.id || key,
                 nombre: item.nombre || 'Sin Nombre',
                 cat: item.cat || item.categoria || 'General',
                 precio: Number(item.precio || 0)
               };
-            }).filter(i => i.nombre);
+            }).filter(i => i !== null && i.nombre);
           } else {
-            MENU = data;
+            MENU = data.map(item => ({
+              id: item.id || Math.random().toString(),
+              nombre: item.nombre || 'Sin Nombre',
+              cat: item.cat || item.categoria || 'General',
+              precio: Number(item.precio || 0)
+            }));
           }
           construirBotonesCategorias();
           renderGrilla(categoriaActiva);
         } else {
           document.getElementById('grillaProductos').innerHTML = '<p style="color: #e74c3c; font-size: 11px; text-align: center; grid-column: span 2; margin-top: 15px;">⚠️ El nodo "menu" está vacío en Firebase.</p>';
         }
+      }, (error) => {
+        console.error("Error al leer Firebase:", error);
+        document.getElementById('grillaProductos').innerHTML = '<p style="color: #e74c3c; font-size: 11px; text-align: center; grid-column: span 2; margin-top: 15px;">⚠️ Error de conexión con Firebase.</p>';
       });
     }
 
