@@ -1,4 +1,4 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -724,8 +724,11 @@
       }
     }
 
+    // Función blindada para evitar errores de tipo 'includes' sobre undefined
     function esItemParrilla(nombreItem, categoriaItem = '') {
-      const textoEval = (nombreItem + ' ' + categoriaItem).toLowerCase();
+      const nombre = nombreItem ? String(nombreItem) : '';
+      const cat = categoriaItem ? String(categoriaItem) : '';
+      const textoEval = (nombre + ' ' + cat).toLowerCase();
       return palabrasClaveParrilla.some(palabra => textoEval.includes(palabra));
     }
 
