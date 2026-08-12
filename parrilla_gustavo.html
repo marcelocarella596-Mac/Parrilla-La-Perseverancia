@@ -74,15 +74,16 @@
       border: 1px solid #00ff66;
     }
 
-    /* LAYOUT PRINCIPAL */
+    /* LAYOUT PRINCIPAL DE 3 COLUMNAS */
     .layout-principal {
       display: grid;
-      grid-template-columns: 420px 1fr;
+      grid-template-columns: 420px 1fr 340px;
       gap: 12px;
+      align-items: start;
     }
 
-    @media(max-width: 1024px) {
-      .layout-principal { grid-template-columns: 1fr; }
+    @media(max-width: 1400px) {
+      .layout-principal { grid-template-columns: 420px 1fr; }
     }
 
     /* PANEL IZQUIERDO */
@@ -159,9 +160,9 @@
 
     .grilla-productos {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(125px, 1fr));
       gap: 6px;
-      max-height: 180px;
+      max-height: 200px;
       overflow-y: auto;
       background-color: #0d0d0d;
       padding: 8px;
@@ -195,8 +196,8 @@
       border: 1px solid #262626;
       border-radius: 6px;
       padding: 10px;
-      min-height: 90px;
-      max-height: 115px;
+      min-height: 100px;
+      max-height: 130px;
       overflow-y: auto;
     }
 
@@ -227,8 +228,8 @@
       justify-content: space-between;
       align-items: center;
       font-weight: bold;
-      font-size: 14px;
-      padding: 2px 0;
+      font-size: 15px;
+      padding: 4px 0;
       color: #ff9900;
     }
 
@@ -237,8 +238,8 @@
       background: linear-gradient(180deg, #d35400, #b03a2e);
       border: none;
       color: white;
-      padding: 9px;
-      font-size: 12px;
+      padding: 10px;
+      font-size: 13px;
       font-weight: bold;
       border-radius: 6px;
       cursor: pointer;
@@ -248,7 +249,7 @@
 
     .btn-enviar:hover { background: linear-gradient(180deg, #e67e22, #d35400); }
 
-    /* PANEL DERECHO (PLANO DE MESAS AMPLIADO Y LEGIBLE) */
+    /* PANEL CENTRAL (PLANO DE MESAS) */
     .panel-produccion {
       background-color: #161616;
       border: 1px solid #2a2a2a;
@@ -260,24 +261,24 @@
       background-color: #0b0b0b;
       border: 1px dashed #333;
       border-radius: 8px;
-      padding: 12px;
+      padding: 10px;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 14px;
-      min-height: 520px;
+      grid-template-columns: repeat(auto-fit, minmax(195px, 1fr));
+      gap: 10px;
+      min-height: 530px;
       align-content: start;
     }
 
     .mesa-card-ampliada {
       background-color: #1b1b1b;
       border: 2px solid #444;
-      border-radius: 10px;
-      padding: 14px;
+      border-radius: 8px;
+      padding: 10px;
       cursor: pointer;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      min-height: 200px;
+      min-height: 135px;
       transition: 0.2s;
       position: relative;
     }
@@ -290,66 +291,86 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 2px solid rgba(255,255,255,0.15);
-      padding-bottom: 8px;
-      margin-bottom: 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding-bottom: 4px;
+      margin-bottom: 5px;
     }
 
-    .mesa-nombre { font-size: 15px; font-weight: bold; color: #ff9900; letter-spacing: 0.5px; }
-    .mesa-estado-badge { font-size: 11px; font-weight: bold; padding: 3px 8px; border-radius: 5px; background: #222; color: #aaa; }
+    .mesa-nombre { font-size: 12px; font-weight: bold; color: #ff9900; }
+    .mesa-estado-badge { font-size: 9px; font-weight: bold; padding: 2px 5px; border-radius: 4px; background: #222; color: #aaa; }
     .ocupada .mesa-estado-badge { background: #962d22; color: #fff; }
     .lista .mesa-estado-badge { background: #27ae60; color: #fff; }
 
-    /* DETALLE GRANDE Y LEGIBLE DENTRO DE CADA RECTÁNGULO */
     .mesa-items-preview {
-      font-size: 13.5px;
-      color: #eeeeee;
-      max-height: 115px;
+      font-size: 11px;
+      color: #ddd;
+      max-height: 55px;
       overflow-y: auto;
-      margin-bottom: 8px;
-      line-height: 1.4;
-      padding-right: 4px;
+      margin-bottom: 4px;
+      line-height: 1.2;
     }
 
-    .mesa-items-preview ul {
-      list-style: none;
-      padding: 0;
-    }
-
-    /* ESTILOS DE DESTACADO PARA PARRILLA (SECTOR REALZADO) */
+    /* ESTILOS DE DESTACADO PARA PARRILLA */
     .item-parrilla-destacado {
       color: #ff3d00 !important;
       font-weight: 900 !important;
-      font-size: 14px !important;
-      background: rgba(255, 61, 0, 0.22);
-      padding: 4px 8px;
-      border-radius: 5px;
-      border-left: 5px solid #ff3d00;
-      margin: 4px 0;
+      font-size: 11.5px !important;
+      background: rgba(255, 61, 0, 0.18);
+      padding: 2px 4px;
+      border-radius: 3px;
+      border-left: 3px solid #ff3d00;
+      margin: 2px 0;
       display: block;
       text-transform: uppercase;
-      letter-spacing: 0.3px;
     }
 
     .mesa-footer-info {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 13px;
+      font-size: 11px;
       font-weight: bold;
-      border-top: 2px solid rgba(255,255,255,0.15);
-      padding-top: 8px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 4px;
       color: #00ff66;
     }
 
-    .timer-badge-mesa {
-      font-size: 11px;
-      color: #ffffff;
-      background: rgba(0,0,0,0.4);
-      padding: 2px 6px;
-      border-radius: 4px;
-      border: 1px solid rgba(255,255,255,0.2);
+    /* PANEL DERECHO LATERAL (KDS Y MENSAJES) */
+    .panel-lateral-derecho {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
+
+    .panel-kds-box, .panel-chat-box {
+      background-color: #161616;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      padding: 12px;
+    }
+
+    .contenedor-kds-tarjetas {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 250px;
+      overflow-y: auto;
+    }
+
+    .tarjeta-kds-flotante {
+      background-color: #222;
+      border: 1px solid #444;
+      border-left: 4px solid #e67e22;
+      border-radius: 6px;
+      padding: 8px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .tarjeta-kds-flotante:hover { border-color: #ff6600; }
+    .tarjeta-kds-flotante.alerta-amarilla { border-left-color: #f1c40f; background: #2c2811; }
+    .tarjeta-kds-flotante.alerta-naranja { border-left-color: #e67e22; background: #331f11; }
+    .tarjeta-kds-flotante.alerta-verde { border-left-color: #27ae60; background: #11331c; }
 
     /* MODALES */
     .modal-overlay {
@@ -411,10 +432,10 @@
 <body>
 
   <header>
-    <h1>🔥 LA PERSEVERANCIA 🔥 <span style="font-size: 12px; opacity: 0.8; font-weight: normal;">Comandera Gustavo</span></h1>
+    <h1>🔥 LA PERSEVERANCIA <span style="font-size: 12px; opacity: 0.8; font-weight: normal;">| COMANDERA GUSTAVO & ESTACIÓN PARRILLA</span></h1>
     <div class="header-btns">
       <button class="btn-top-accion btn-egresos" onclick="abrirModalEgresos()">💸 EGRESOS</button>
-      <button class="btn-top-accion btn-mjes" onclick="abrirModalMensajes()">💬 MJES (MARIANA/HERNÁN)</button>
+      <button class="btn-top-accion btn-mjes" onclick="abrirModalMensajesModal()">💬 MJES (MARIANA/HERNÁN)</button>
       <button class="btn-top-accion" onclick="abrirModalCierreCaja()">📊 CAJA / ARQUEO</button>
       <button class="btn-top-accion" id="btnToggleSonido" onclick="toggleSonidoAlertas()" style="background-color: #8e44ad;">🔊 ALERTA: ON</button>
       <span class="badge-live">• EN VIVO</span>
@@ -422,6 +443,7 @@
   </header>
 
   <div class="layout-principal">
+    <!-- 1. PANEL IZQUIERDO: UBICACIÓN Y MENÚ -->
     <aside class="panel-formulario">
       <div class="seccion-titulo">1. Ubicación y Cliente</div>
       <div class="row-ubicacion">
@@ -438,9 +460,9 @@
             <option value="Mesa 7 Vereda">Vereda - Mesa 7</option>
           </optgroup>
           <optgroup label="Canales Directos">
-            <option value="Canal - Mostrador">Canal - Mostrador</option>
-            <option value="Canal - Delivery">Canal - Delivery</option>
-            <option value="Canal - Pickup">Canal - Pickup</option>
+            <option value="Mostrador">Mostrador</option>
+            <option value="Delivery">Delivery</option>
+            <option value="Pickup">Pickup</option>
           </optgroup>
         </select>
         <select id="selectComensales">
@@ -480,13 +502,40 @@
       <button class="btn-enviar" onclick="enviarOActualizarComanda()">🚀 ENVIAR / AGREGAR A COMANDA</button>
     </aside>
 
+    <!-- 2. PANEL CENTRAL: PLANO DE MESAS -->
     <main class="panel-produccion">
-      <div class="seccion-titulo" style="margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
-        <span>📍 PLANO DE MESAS Y COMANDAS ACTIVAS</span>
-        <span id="contadorTotalActivas" style="color: #00ff66; font-size: 12px;">0 activas</span>
-      </div>
+      <div class="seccion-titulo" style="margin-bottom: 8px;">📍 PLANO DE MESAS Y COMANDAS ACTIVAS</div>
       <div class="mapa-contenedor" id="planoMesasContainer"></div>
     </main>
+
+    <!-- 3. PANEL DERECHO: KDS / PENDIENTES Y MENSAJES -->
+    <aside class="panel-lateral-derecho">
+      <!-- KDS Pendientes -->
+      <div class="panel-kds-box">
+        <div class="seccion-titulo" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <span>🔥 PENDIENTES / KDS</span>
+          <span id="contadorTotalActivas" style="color: #00ff66; font-size: 11px;">0 pendientes</span>
+        </div>
+        <div class="contenedor-kds-tarjetas" id="contenedorTarjetasKds">
+          <div style="color: #666; font-size: 11px; text-align: center; margin-top: 20px;">Sin comandas pendientes.</div>
+        </div>
+      </div>
+
+      <!-- Mensajes / Avisos -->
+      <div class="panel-chat-box">
+        <div class="seccion-titulo" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <span>💬 MENSAJES / AVISOS</span>
+          <span style="color: #ff9900; font-size: 10px;">MARIANA / HERNÁN</span>
+        </div>
+        <div id="contenedorChatMjes" style="background: #111; border: 1px solid #333; height: 160px; overflow-y: auto; padding: 8px; font-size: 11px; margin-bottom: 8px; border-radius: 4px;">
+          <div style="color: #666; text-align: center; margin-top: 20px;">Sin mensajes recientes.</div>
+        </div>
+        <div style="display: flex; gap: 6px;">
+          <input type="text" id="inputNuevoMje" placeholder="Escribir aviso..." onkeypress="if(event.key==='Enter')enviarMensajeChat()">
+          <button class="btn-top-accion btn-mjes" onclick="enviarMensajeChat()">Enviar</button>
+        </div>
+      </div>
+    </aside>
   </div>
 
   <!-- MODAL OPCIONES MESA -->
@@ -501,7 +550,7 @@
       <button class="btn-opcion-mesa" style="background-color: #e67e22; color: white;" onclick="imprimirComandaCocina()">🖨️ IMPRIMIR COMANDA (PARRILLA/COCINA)</button>
       <hr style="border-color: #333; margin: 10px 0;">
       <button class="btn-opcion-mesa btn-opcion-agregar" onclick="seleccionarMesaParaAgregar()">➕ AGREGAR MÁS ÍTEMS</button>
-      <button class="btn-opcion-mesa btn-opcion-cobrar" onclick="irACobrarDesdOpciones()">💵 VER DETALLE Y COBRAR</button>
+      <button class="btn-opcion-mesa btn-opcion-cobrar" onclick="irACobrarDesdeOpciones()">💵 VER DETALLE Y COBRAR</button>
     </div>
   </div>
 
@@ -594,23 +643,6 @@
     </div>
   </div>
 
-  <!-- MODAL MENSAJES -->
-  <div class="modal-overlay" id="modalMensajes">
-    <div class="modal-contenido" style="max-width: 450px;">
-      <div class="modal-hdr">
-        <h3 style="color: #2980b9;">💬 MENSAJES (MARIANA / HERNÁN)</h3>
-        <button class="btn-cerrar-modal" onclick="cerrarModal('modalMensajes')">✕</button>
-      </div>
-      <div id="contenedorChatMjes" style="background: #111; border: 1px solid #333; height: 180px; overflow-y: auto; padding: 8px; font-size: 11px; margin-bottom: 10px; border-radius: 4px;">
-        <div style="color: #666; text-align: center; margin-top: 20px;">Sin mensajes recientes.</div>
-      </div>
-      <div style="display: flex; gap: 6px;">
-        <input type="text" id="inputNuevoMje" placeholder="Escribir aviso para Mariana o Hernán..." onkeypress="if(event.key==='Enter')enviarMensajeChat()">
-        <button class="btn-top-accion btn-mjes" onclick="enviarMensajeChat()">Enviar</button>
-      </div>
-    </div>
-  </div>
-
   <div id="ticketImpresionContainer" style="display: none;"></div>
 
   <script>
@@ -631,10 +663,7 @@
     let idMesaGestion = null;
     let alertasSonidoActivas = true;
 
-    // Control para evitar alertas repetitivas infinitas por cada segundo si ya sonó
-    let notificadosAlertaSonora = {};
-
-    // Palabras clave exactas para identificar ítems de parrilla (sectorial)
+    // Palabras clave exactas para identificar ítems de parrilla
     const palabrasClaveParrilla = ['asado', 'vacio', 'bife', 'entraña', 'morcilla', 'chinchulin', 'chorizo', 'provoleta', 'molleja', 'parrilla', 'costillar', 'asado con hueso', 'vacío'];
 
     const listadoMesasDefinidas = [
@@ -645,15 +674,16 @@
       { id: "Mesa 5 Vereda", nombre: "Vereda - Mesa 5" },
       { id: "Mesa 6 Vereda", nombre: "Vereda - Mesa 6" },
       { id: "Mesa 7 Vereda", nombre: "Vereda - Mesa 7" },
-      { id: "Canal - Mostrador", nombre: "Canal - Mostrador" },
-      { id: "Canal - Delivery", nombre: "Canal - Delivery" },
-      { id: "Canal - Pickup", nombre: "Canal - Pickup" }
+      { id: "Mostrador", nombre: "Canal - Mostrador" },
+      { id: "Delivery", nombre: "Canal - Delivery" },
+      { id: "Pickup", nombre: "Canal - Pickup" }
     ];
 
     window.onload = () => { 
       sincronizarVistaGustavo();
       escucharMenuFirebase();
       escucharComandasRemotas();
+      renderizarChatMjes();
       setInterval(actualizarContadoresTiempo, 1000);
     };
 
@@ -765,7 +795,7 @@
 
     function evaluarCanalSeleccionado() {
       const canal = document.getElementById('selectUbicacion').value;
-      document.getElementById('boxDelivery').style.display = (canal === 'Canal - Delivery') ? 'flex' : 'none';
+      document.getElementById('boxDelivery').style.display = (canal === 'Delivery') ? 'flex' : 'none';
     }
 
     function filtrarCategoria(cat, btn) {
@@ -849,7 +879,6 @@
           estado: 'INGRESO',
           tiempoInicioEstado: Date.now()
         };
-        notificadosAlertaSonora[destino] = false;
         reproducirAlertaSonora();
       }
       guardarDatosStorage();
@@ -859,10 +888,12 @@
       sincronizarVistaGustavo();
     }
 
-    // Sincronización del plano de mesas con detalle grande y legible dentro de cada rectángulo
     function sincronizarVistaGustavo() {
       const containerMesas = document.getElementById('planoMesasContainer');
       containerMesas.innerHTML = '';
+      
+      const contenedorKds = document.getElementById('contenedorTarjetasKds');
+      contenedorKds.innerHTML = '';
       
       let cantidadActivasTotal = 0;
 
@@ -872,25 +903,45 @@
         
         let estadoClase = '';
         let estadoTexto = 'LIBRE';
-        let itemsHtml = '<div style="color: #666; font-style: italic; font-size: 13px; text-align: center; margin-top: 25px;">Sin comanda activa</div>';
+        let itemsHtml = '<div style="color: #666; font-style: italic;">Sin comanda activa</div>';
         let totalMesa = 0;
-        let timerIdAttr = `timer-${m.id.replace(/[^a-zA-Z0-9]/g, '')}`;
 
         if (cmd) {
           cantidadActivasTotal++;
           estadoTexto = cmd.estado;
           estadoClase = cmd.estado.includes('LISTO') ? 'lista' : 'ocupada';
           
-          itemsHtml = '<ul>';
+          itemsHtml = '<ul style="list-style: none; padding:0;">';
           cmd.items.forEach(i => {
             totalMesa += (i.precio * i.cantidad);
             if (esItemParrilla(i.nombre, i.cat)) {
               itemsHtml += `<li><span class="item-parrilla-destacado">🔥 [PARRILLA] ${i.cantidad}x ${i.nombre}</span></li>`;
             } else {
-              itemsHtml += `<li style="padding: 3px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">• ${i.cantidad}x ${i.nombre}</li>`;
+              itemsHtml += `<li>• ${i.cantidad}x ${i.nombre}</li>`;
             }
           });
           itemsHtml += '</ul>';
+
+          // Tarjeta en panel KDS Lateral derecho
+          const tarjetaKds = document.createElement('div');
+          let claseAlertaColor = 'alerta-amarilla';
+          
+          if(cmd.estado === 'PREPARACION') {
+            claseAlertaColor = 'alerta-naranja';
+          } else if(cmd.estado.includes('LISTO')) {
+            claseAlertaColor = 'alerta-verde';
+          }
+
+          tarjetaKds.className = `tarjeta-kds-flotante ${claseAlertaColor}`;
+          tarjetaKds.onclick = () => clickUbicacion(m.id);
+          tarjetaKds.innerHTML = `
+            <div style="font-weight: bold; font-size: 11px; display: flex; justify-content: space-between; color: #ff9900;">
+              <span>${m.id}</span>
+              <span id="timer-${m.id.replace(/\s+/g, '')}" style="font-size:10px; color:#fff;">00:00</span>
+            </div>
+            <div style="font-size: 10px; color: #ccc; margin-top:2px;">Estado: ${cmd.estado}</div>
+          `;
+          contenedorKds.appendChild(tarjetaKds);
         }
 
         card.className = `mesa-card-ampliada ${estadoClase}`;
@@ -899,10 +950,7 @@
           <div>
             <div class="mesa-header-info">
               <span class="mesa-nombre">${m.nombre}</span>
-              <div style="display: flex; gap: 6px; align-items: center;">
-                ${cmd ? `<span class="timer-badge-mesa" id="${timerIdAttr}">00:00</span>` : ''}
-                <span class="mesa-estado-badge">${estadoTexto}</span>
-              </div>
+              <span class="mesa-estado-badge">${estadoTexto}</span>
             </div>
             <div class="mesa-items-preview">${itemsHtml}</div>
           </div>
@@ -914,7 +962,10 @@
         containerMesas.appendChild(card);
       });
 
-      document.getElementById('contadorTotalActivas').textContent = `${cantidadActivasTotal} activas`;
+      document.getElementById('contadorTotalActivas').textContent = `${cantidadActivasTotal} pendientes`;
+      if (cantidadActivasTotal === 0) {
+        contenedorKds.innerHTML = '<div style="color: #777; font-size: 11px; text-align: center; margin-top: 20px;">Sin comandas pendientes.</div>';
+      }
     }
 
     function actualizarContadoresTiempo() {
@@ -922,23 +973,14 @@
       Object.keys(comandasActivas).forEach(id => {
         const cmd = comandasActivas[id];
         if (!cmd) return;
-        const diffMs = ahora - cmd.tiempoInicioEstado;
-        const diffSecs = Math.floor(diffMs / 1000);
+        const diffSecs = Math.floor((ahora - cmd.tiempoInicioEstado) / 1000);
         const mins = Math.floor(diffSecs / 60);
         const secs = diffSecs % 60;
         const timeStr = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
         
-        const elTimer = document.getElementById(`timer-${id.replace(/[^a-zA-Z0-9]/g, '')}`);
+        const elTimer = document.getElementById(`timer-${id.replace(/\s+/g, '')}`);
         if(elTimer) {
           elTimer.textContent = timeStr;
-        }
-
-        // Lógica corregida de alerta sonora cumplido el tiempo de espera (Ej: Alerta si pasa de 15 minutos / 900000 ms en PREPARACION o INGRESO sin atender)
-        if (diffMs >= 15 * 60 * 1000) {
-          if (!notificadosAlertaSonora[id]) {
-            reproducirAlertaSonora();
-            notificadosAlertaSonora[id] = true; // Evita que suene cada segundo de forma molesta, suena una vez al cumplirse el umbral
-          }
         }
       });
     }
@@ -958,7 +1000,6 @@
       if (!idMesaGestion || !comandasActivas[idMesaGestion]) return;
       comandasActivas[idMesaGestion].estado = nuevoEstado;
       comandasActivas[idMesaGestion].tiempoInicioEstado = Date.now();
-      notificadosAlertaSonora[idMesaGestion] = false; // Reinicia el control de alerta para el nuevo estado
       
       if(nuevoEstado.includes('LISTO')) {
         reproducirAlertaSonora();
@@ -1004,7 +1045,7 @@
       cerrarModal('modalOpcionesMesa');
     }
 
-    function irACobrarDesdOpciones() {
+    function irACobrarDesdeOpciones() {
       cerrarModal('modalOpcionesMesa');
       abrirModalCobro(idMesaGestion);
     }
@@ -1062,7 +1103,6 @@
       imprimirTicketFiscal(registroCobro);
 
       delete comandasActivas[id];
-      delete notificadosAlertaSonora[id];
       guardarDatosStorage();
       sincronizarFirebaseRemoto();
       sincronizarVistaGustavo();
@@ -1140,9 +1180,9 @@
       alert("✅ Egreso registrado correctamente.");
     }
 
-    function abrirModalMensajes() {
-      renderizarChatMjes();
-      document.getElementById('modalMensajes').style.display = 'flex';
+    function abrirModalMensajesModal() {
+      // Por si se presiona el botón superior, enfoca el input de mensajes en el panel derecho
+      document.getElementById('inputNuevoMje').focus();
     }
 
     function enviarMensajeChat() {
