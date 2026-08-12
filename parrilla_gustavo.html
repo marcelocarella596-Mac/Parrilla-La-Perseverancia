@@ -10,7 +10,6 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
   <style>
-    /* --- ESTILOS GENERALES Y TEMA OSCURO --- */
     * {
       box-sizing: border-box;
       margin: 0;
@@ -78,7 +77,7 @@
     /* LAYOUT PRINCIPAL */
     .layout-principal {
       display: grid;
-      grid-template-columns: 440px 1fr;
+      grid-template-columns: 420px 1fr;
       gap: 12px;
     }
 
@@ -86,7 +85,7 @@
       .layout-principal { grid-template-columns: 1fr; }
     }
 
-    /* --- PANEL IZQUIERDO --- */
+    /* PANEL IZQUIERDO */
     .panel-formulario {
       background-color: #161616;
       border: 1px solid #2a2a2a;
@@ -122,7 +121,6 @@
       outline: none;
     }
 
-    /* CAMPOS DELIVERY */
     .box-delivery {
       background-color: #1a1a1a;
       border: 1px dashed #e67e22;
@@ -133,7 +131,6 @@
       gap: 6px;
     }
 
-    /* CATEGORÍAS */
     .contenedor-categorias {
       display: flex;
       gap: 5px;
@@ -160,12 +157,11 @@
       border-color: #ff6600;
     }
 
-    /* GRILLA DE PRODUCTOS */
     .grilla-productos {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(125px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
       gap: 6px;
-      max-height: 200px;
+      max-height: 180px;
       overflow-y: auto;
       background-color: #0d0d0d;
       padding: 8px;
@@ -194,14 +190,13 @@
     .card-prod .nombre { font-size: 11px; font-weight: bold; color: #ffffff; line-height: 1.2; }
     .card-prod .precio { font-size: 11px; font-weight: bold; color: #00ff66; margin-top: 4px; }
 
-    /* RESUMEN DE COMANDA */
     .resumen-box {
       background-color: #111;
       border: 1px solid #262626;
       border-radius: 6px;
       padding: 10px;
-      min-height: 100px;
-      max-height: 130px;
+      min-height: 90px;
+      max-height: 115px;
       overflow-y: auto;
     }
 
@@ -232,8 +227,8 @@
       justify-content: space-between;
       align-items: center;
       font-weight: bold;
-      font-size: 15px;
-      padding: 4px 0;
+      font-size: 14px;
+      padding: 2px 0;
       color: #ff9900;
     }
 
@@ -242,8 +237,8 @@
       background: linear-gradient(180deg, #d35400, #b03a2e);
       border: none;
       color: white;
-      padding: 10px;
-      font-size: 13px;
+      padding: 9px;
+      font-size: 12px;
       font-weight: bold;
       border-radius: 6px;
       cursor: pointer;
@@ -253,7 +248,7 @@
 
     .btn-enviar:hover { background: linear-gradient(180deg, #e67e22, #d35400); }
 
-    /* --- PANEL DERECHO (PLANO AMPLIADO) --- */
+    /* PANEL DERECHO (PLANO DE MESAS AMPLIADO Y LEGIBLE) */
     .panel-produccion {
       background-color: #161616;
       border: 1px solid #2a2a2a;
@@ -267,22 +262,22 @@
       border-radius: 8px;
       padding: 12px;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-      gap: 12px;
-      min-height: 340px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 14px;
+      min-height: 520px;
       align-content: start;
     }
 
     .mesa-card-ampliada {
       background-color: #1b1b1b;
       border: 2px solid #444;
-      border-radius: 8px;
-      padding: 10px;
+      border-radius: 10px;
+      padding: 14px;
       cursor: pointer;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      min-height: 135px;
+      min-height: 200px;
       transition: 0.2s;
       position: relative;
     }
@@ -295,82 +290,65 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      padding-bottom: 5px;
-      margin-bottom: 6px;
+      border-bottom: 2px solid rgba(255,255,255,0.15);
+      padding-bottom: 8px;
+      margin-bottom: 8px;
     }
 
-    .mesa-nombre { font-size: 12px; font-weight: bold; color: #ff9900; }
-    .mesa-estado-badge { font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 4px; background: #222; color: #aaa; }
+    .mesa-nombre { font-size: 15px; font-weight: bold; color: #ff9900; letter-spacing: 0.5px; }
+    .mesa-estado-badge { font-size: 11px; font-weight: bold; padding: 3px 8px; border-radius: 5px; background: #222; color: #aaa; }
     .ocupada .mesa-estado-badge { background: #962d22; color: #fff; }
     .lista .mesa-estado-badge { background: #27ae60; color: #fff; }
 
+    /* DETALLE GRANDE Y LEGIBLE DENTRO DE CADA RECTÁNGULO */
     .mesa-items-preview {
-      font-size: 11px;
-      color: #ddd;
-      max-height: 60px;
+      font-size: 13.5px;
+      color: #eeeeee;
+      max-height: 115px;
       overflow-y: auto;
-      margin-bottom: 6px;
-      line-height: 1.3;
+      margin-bottom: 8px;
+      line-height: 1.4;
+      padding-right: 4px;
     }
 
-    /* ESTILOS DE DESTACADO PARA ITEMS DE PARRILLA */
+    .mesa-items-preview ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    /* ESTILOS DE DESTACADO PARA PARRILLA (SECTOR REALZADO) */
     .item-parrilla-destacado {
-      color: #ff5722 !important;
-      font-weight: bold !important;
-      font-size: 12.5px !important;
-      background: rgba(255, 87, 34, 0.12);
-      padding: 2px 4px;
-      border-radius: 3px;
-      border-left: 3px solid #ff5722;
-      margin: 2px 0;
+      color: #ff3d00 !important;
+      font-weight: 900 !important;
+      font-size: 14px !important;
+      background: rgba(255, 61, 0, 0.22);
+      padding: 4px 8px;
+      border-radius: 5px;
+      border-left: 5px solid #ff3d00;
+      margin: 4px 0;
       display: block;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
     }
 
     .mesa-footer-info {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 11px;
+      font-size: 13px;
       font-weight: bold;
-      border-top: 1px solid rgba(255,255,255,0.1);
-      padding-top: 4px;
+      border-top: 2px solid rgba(255,255,255,0.15);
+      padding-top: 8px;
       color: #00ff66;
     }
 
-    .separador { border: 0; height: 1px; background-color: #2a2a2a; margin: 15px 0; }
-
-    .canales-inferiores {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-    }
-
-    @media(max-width: 768px) {
-      .canales-inferiores { grid-template-columns: 1fr; }
-    }
-
-    .canal-col {
-      background-color: #0d0d0d;
-      border: 1px solid #222;
-      border-radius: 6px;
-      padding: 8px;
-      min-height: 140px;
-    }
-
-    .canal-hdr { font-size: 11px; font-weight: bold; padding: 5px; border-radius: 4px; text-align: center; margin-bottom: 8px; }
-    .canal-hdr.mostrador { background-color: #1f618d; }
-    .canal-hdr.delivery { background-color: #1e8449; }
-    .canal-hdr.pickup { background-color: #7d3c98; }
-
-    .tarjeta-comanda {
-      background-color: #222;
-      border-left: 4px solid #ff6600;
-      padding: 8px;
-      border-radius: 4px;
-      margin-bottom: 6px;
+    .timer-badge-mesa {
       font-size: 11px;
-      cursor: pointer;
+      color: #ffffff;
+      background: rgba(0,0,0,0.4);
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid rgba(255,255,255,0.2);
     }
 
     /* MODALES */
@@ -414,7 +392,6 @@
     .tabla-historial th, .tabla-historial td { border: 1px solid #333; padding: 6px; text-align: left; }
     .tabla-historial th { background-color: #222; color: #ff9900; }
 
-    /* ESTILOS DE TICKET FISCAL / IMPRESIÓN (Oculto en pantalla normal) */
     @media print {
       body * { visibility: hidden; }
       #ticketImpresionContainer, #ticketImpresionContainer * { visibility: visible; }
@@ -461,9 +438,9 @@
             <option value="Mesa 7 Vereda">Vereda - Mesa 7</option>
           </optgroup>
           <optgroup label="Canales Directos">
-            <option value="Mostrador">Mostrador</option>
-            <option value="Delivery">Delivery</option>
-            <option value="Pickup">Pickup</option>
+            <option value="Canal - Mostrador">Canal - Mostrador</option>
+            <option value="Canal - Delivery">Canal - Delivery</option>
+            <option value="Canal - Pickup">Canal - Pickup</option>
           </optgroup>
         </select>
         <select id="selectComensales">
@@ -504,28 +481,11 @@
     </aside>
 
     <main class="panel-produccion">
-      <div class="seccion-titulo" style="margin-bottom: 8px;">📍 PLANO DE MESAS Y COMANDAS ACTIVAS</div>
-      <div class="mapa-contenedor" id="planoMesasContainer">
-        <!-- Generadas dinámicamente con detalle de comanda integrada -->
+      <div class="seccion-titulo" style="margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+        <span>📍 PLANO DE MESAS Y COMANDAS ACTIVAS</span>
+        <span id="contadorTotalActivas" style="color: #00ff66; font-size: 12px;">0 activas</span>
       </div>
-
-      <hr class="separador">
-
-      <div class="seccion-titulo" style="margin-bottom: 8px;">📦 OTROS CANALES EN PRODUCCIÓN</div>
-      <div class="canales-inferiores">
-        <div class="canal-col">
-          <div class="canal-hdr mostrador">🏪 MOSTRADOR</div>
-          <div id="col-mostrador"></div>
-        </div>
-        <div class="canal-col">
-          <div class="canal-hdr delivery">🛵 DELIVERY</div>
-          <div id="col-delivery"></div>
-        </div>
-        <div class="canal-col">
-          <div class="canal-hdr pickup">🛍️ PICKUP</div>
-          <div id="col-pickup"></div>
-        </div>
-      </div>
+      <div class="mapa-contenedor" id="planoMesasContainer"></div>
     </main>
   </div>
 
@@ -536,12 +496,12 @@
         <h3 id="tituloOpcionesMesa" style="color: #ff9900;">Gestionar Comanda</h3>
         <button class="btn-cerrar-modal" onclick="cerrarModal('modalOpcionesMesa')">✕</button>
       </div>
-      <button class="btn-opcion-mesa" style="background-color: #3498db; color: white;" onclick="cambiarEstadoCocina('PREPARACION')">🔥 PASAR A PREPARACIÓN</button>
-      <button class="btn-opcion-mesa" style="background-color: #27ae60; color: white;" onclick="cambiarEstadoCocina('LISTO ✔️')">🖐️ ¡MANOS! / LISTO ✔️</button>
-      <button class="btn-opcion-mesa" style="background-color: #e67e22; color: white;" onclick="imprimirComandaCocina()">🖨️ IMPRIMIR COMANDA (OPCIONAL)</button>
+      <button class="btn-opcion-mesa" style="background-color: #3498db; color: white;" onclick="cambiarEstadoCocina('PREPARACION')">🔥 PASAR A PREPARACIÓN (Inicia conteo)</button>
+      <button class="btn-opcion-mesa" style="background-color: #27ae60; color: white;" onclick="cambiarEstadoCocina('LISTO ✔️')">🖐️ ¡MANOS! / LISTO ✔️ (Ventana 1 min)</button>
+      <button class="btn-opcion-mesa" style="background-color: #e67e22; color: white;" onclick="imprimirComandaCocina()">🖨️ IMPRIMIR COMANDA (PARRILLA/COCINA)</button>
       <hr style="border-color: #333; margin: 10px 0;">
       <button class="btn-opcion-mesa btn-opcion-agregar" onclick="seleccionarMesaParaAgregar()">➕ AGREGAR MÁS ÍTEMS</button>
-      <button class="btn-opcion-mesa btn-opcion-cobrar" onclick="irACobrarDesdeOpciones()">💵 VER DETALLE Y COBRAR</button>
+      <button class="btn-opcion-mesa btn-opcion-cobrar" onclick="irACobrarDesdOpciones()">💵 VER DETALLE Y COBRAR</button>
     </div>
   </div>
 
@@ -574,7 +534,7 @@
     </div>
   </div>
 
-  <!-- MODAL CIERRE DE CAJA / ARQUEO -->
+  <!-- MODAL CIERRE DE CAJA -->
   <div class="modal-overlay" id="modalCierreCaja">
     <div class="modal-contenido" style="max-width: 650px;">
       <div class="modal-hdr">
@@ -651,11 +611,9 @@
     </div>
   </div>
 
-  <!-- CONTENEDOR OCULTO PARA IMPRESIONES TICKET FISCAL / COMANDA -->
   <div id="ticketImpresionContainer" style="display: none;"></div>
 
   <script>
-    // Configuración de Firebase Realtime Database
     const firebaseConfig = {
       databaseURL: "https://parrilla-la-perseveranci-f3f54-default-rtdb.firebaseio.com"
     };
@@ -673,8 +631,11 @@
     let idMesaGestion = null;
     let alertasSonidoActivas = true;
 
-    // Palabras clave para identificar ítems propios de la parrilla (resaltado y tamaño mayor)
-    const palabrasClaveParrilla = ['asado', 'vacio', 'bife', 'entraña', 'morcilla', 'chinchulin', 'chorizo', 'provoleta', 'molleja', 'parrilla', 'costillar', 'asado con hueso'];
+    // Control para evitar alertas repetitivas infinitas por cada segundo si ya sonó
+    let notificadosAlertaSonora = {};
+
+    // Palabras clave exactas para identificar ítems de parrilla (sectorial)
+    const palabrasClaveParrilla = ['asado', 'vacio', 'bife', 'entraña', 'morcilla', 'chinchulin', 'chorizo', 'provoleta', 'molleja', 'parrilla', 'costillar', 'asado con hueso', 'vacío'];
 
     const listadoMesasDefinidas = [
       { id: "Mesa 1", nombre: "Salón - Mesa 1" },
@@ -683,16 +644,19 @@
       { id: "Mesa 4", nombre: "Salón - Mesa 4" },
       { id: "Mesa 5 Vereda", nombre: "Vereda - Mesa 5" },
       { id: "Mesa 6 Vereda", nombre: "Vereda - Mesa 6" },
-      { id: "Mesa 7 Vereda", nombre: "Vereda - Mesa 7" }
+      { id: "Mesa 7 Vereda", nombre: "Vereda - Mesa 7" },
+      { id: "Canal - Mostrador", nombre: "Canal - Mostrador" },
+      { id: "Canal - Delivery", nombre: "Canal - Delivery" },
+      { id: "Canal - Pickup", nombre: "Canal - Pickup" }
     ];
 
     window.onload = () => { 
       sincronizarVistaGustavo();
       escucharMenuFirebase();
       escucharComandasRemotas();
+      setInterval(actualizarContadoresTiempo, 1000);
     };
 
-    // Control de alertas sonoras (silenciar o tildar sonido)
     function toggleSonidoAlertas() {
       alertasSonidoActivas = !alertasSonidoActivas;
       const btn = document.getElementById('btnToggleSonido');
@@ -705,7 +669,6 @@
       }
     }
 
-    // Alerta sonora sutil mediante Web Audio API
     function reproducirAlertaSonora() {
       if (!alertasSonidoActivas) return;
       try {
@@ -713,18 +676,17 @@
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // Nota D5
-        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        osc.frequency.setValueAtTime(659.25, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
         osc.connect(gain);
         gain.connect(audioCtx.destination);
         osc.start();
-        osc.stop(audioCtx.currentTime + 0.25);
+        osc.stop(audioCtx.currentTime + 0.3);
       } catch(e) {
-        console.log("Audio no soportado sin interacción previa", e);
+        console.log("Audio omitido por políticas del navegador", e);
       }
     }
 
-    // Función blindada para evitar errores de tipo 'includes' sobre undefined
     function esItemParrilla(nombreItem, categoriaItem = '') {
       const nombre = nombreItem ? String(nombreItem) : '';
       const cat = categoriaItem ? String(categoriaItem) : '';
@@ -738,7 +700,6 @@
         const data = snapshot.val();
         if (data) {
           if (!Array.isArray(data)) {
-            // Manejar si los datos se devuelven como un objeto/diccionario desde Firebase
             MENU = Object.keys(data).map(key => {
               const item = data[key];
               if (!item) return null;
@@ -762,13 +723,9 @@
         } else {
           document.getElementById('grillaProductos').innerHTML = '<p style="color: #e74c3c; font-size: 11px; text-align: center; grid-column: span 2; margin-top: 15px;">⚠️ El nodo "menu" está vacío en Firebase.</p>';
         }
-      }, (error) => {
-        console.error("Error al leer Firebase:", error);
-        document.getElementById('grillaProductos').innerHTML = '<p style="color: #e74c3c; font-size: 11px; text-align: center; grid-column: span 2; margin-top: 15px;">⚠️ Error de conexión con Firebase.</p>';
       });
     }
 
-    // Sincronización en tiempo real con Firebase para comandas
     function escucharComandasRemotas() {
       const cmdRef = db.ref('comandas_activas');
       cmdRef.on('value', (snapshot) => {
@@ -808,7 +765,7 @@
 
     function evaluarCanalSeleccionado() {
       const canal = document.getElementById('selectUbicacion').value;
-      document.getElementById('boxDelivery').style.display = (canal === 'Delivery') ? 'flex' : 'none';
+      document.getElementById('boxDelivery').style.display = (canal === 'Canal - Delivery') ? 'flex' : 'none';
     }
 
     function filtrarCategoria(cat, btn) {
@@ -892,6 +849,8 @@
           estado: 'INGRESO',
           tiempoInicioEstado: Date.now()
         };
+        notificadosAlertaSonora[destino] = false;
+        reproducirAlertaSonora();
       }
       guardarDatosStorage();
       sincronizarFirebaseRemoto();
@@ -900,13 +859,12 @@
       sincronizarVistaGustavo();
     }
 
-    // Renderizado del plano de mesas ampliado y canales adicionales
+    // Sincronización del plano de mesas con detalle grande y legible dentro de cada rectángulo
     function sincronizarVistaGustavo() {
       const containerMesas = document.getElementById('planoMesasContainer');
       containerMesas.innerHTML = '';
-      document.getElementById('col-mostrador').innerHTML = '';
-      document.getElementById('col-delivery').innerHTML = '';
-      document.getElementById('col-pickup').innerHTML = '';
+      
+      let cantidadActivasTotal = 0;
 
       listadoMesasDefinidas.forEach(m => {
         const cmd = comandasActivas[m.id];
@@ -914,24 +872,22 @@
         
         let estadoClase = '';
         let estadoTexto = 'LIBRE';
-        let itemsHtml = '<div style="color: #666; font-style: italic;">Mesa libre / sin comanda</div>';
+        let itemsHtml = '<div style="color: #666; font-style: italic; font-size: 13px; text-align: center; margin-top: 25px;">Sin comanda activa</div>';
         let totalMesa = 0;
+        let timerIdAttr = `timer-${m.id.replace(/[^a-zA-Z0-9]/g, '')}`;
 
         if (cmd) {
+          cantidadActivasTotal++;
           estadoTexto = cmd.estado;
-          if (cmd.estado.includes('LISTO')) {
-            estadoClase = 'lista';
-          } else {
-            estadoClase = 'ocupada';
-          }
-          itemsHtml = '<ul style="list-style: none; padding:0;">';
+          estadoClase = cmd.estado.includes('LISTO') ? 'lista' : 'ocupada';
+          
+          itemsHtml = '<ul>';
           cmd.items.forEach(i => {
             totalMesa += (i.precio * i.cantidad);
-            // Validar si es ítem de parrilla para resaltarlo y aumentar tamaño
             if (esItemParrilla(i.nombre, i.cat)) {
-              itemsHtml += `<li><span class="item-parrilla-destacado">🔥 ${i.cantidad}x ${i.nombre}</span></li>`;
+              itemsHtml += `<li><span class="item-parrilla-destacado">🔥 [PARRILLA] ${i.cantidad}x ${i.nombre}</span></li>`;
             } else {
-              itemsHtml += `<li>• ${i.cantidad}x ${i.nombre}</li>`;
+              itemsHtml += `<li style="padding: 3px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">• ${i.cantidad}x ${i.nombre}</li>`;
             }
           });
           itemsHtml += '</ul>';
@@ -943,7 +899,10 @@
           <div>
             <div class="mesa-header-info">
               <span class="mesa-nombre">${m.nombre}</span>
-              <span class="mesa-estado-badge">${estadoTexto}</span>
+              <div style="display: flex; gap: 6px; align-items: center;">
+                ${cmd ? `<span class="timer-badge-mesa" id="${timerIdAttr}">00:00</span>` : ''}
+                <span class="mesa-estado-badge">${estadoTexto}</span>
+              </div>
             </div>
             <div class="mesa-items-preview">${itemsHtml}</div>
           </div>
@@ -955,27 +914,30 @@
         containerMesas.appendChild(card);
       });
 
-      // Canales adicionales (Mostrador, Delivery, Pickup)
+      document.getElementById('contadorTotalActivas').textContent = `${cantidadActivasTotal} activas`;
+    }
+
+    function actualizarContadoresTiempo() {
+      const ahora = Date.now();
       Object.keys(comandasActivas).forEach(id => {
-        if (!listadoMesasDefinidas.some(m => m.id === id)) {
-          const cmd = comandasActivas[id];
-          const colId = id.includes('Delivery') ? 'col-delivery' : id.includes('Pickup') ? 'col-pickup' : 'col-mostrador';
-          const contenedor = document.getElementById(colId);
-          if(contenedor) {
-            let subT = 0;
-            cmd.items.forEach(i => subT += (i.precio * i.cantidad));
-            const tarjeta = document.createElement('div');
-            tarjeta.className = 'tarjeta-comanda';
-            if(cmd.estado.includes('LISTO')) tarjeta.style.borderLeftColor = '#27ae60';
-            tarjeta.onclick = () => clickUbicacion(id);
-            tarjeta.innerHTML = `
-              <div style="font-weight:bold; display:flex; justify-content:space-between;">
-                <span>${id}</span>
-                <span style="color:#00ff66;">$${subT.toLocaleString('es-AR')}</span>
-              </div>
-              <div style="font-size:10px; color:#aaa; margin-top:2px;">Estado: ${cmd.estado}</div>
-            `;
-            contenedor.appendChild(tarjeta);
+        const cmd = comandasActivas[id];
+        if (!cmd) return;
+        const diffMs = ahora - cmd.tiempoInicioEstado;
+        const diffSecs = Math.floor(diffMs / 1000);
+        const mins = Math.floor(diffSecs / 60);
+        const secs = diffSecs % 60;
+        const timeStr = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        
+        const elTimer = document.getElementById(`timer-${id.replace(/[^a-zA-Z0-9]/g, '')}`);
+        if(elTimer) {
+          elTimer.textContent = timeStr;
+        }
+
+        // Lógica corregida de alerta sonora cumplido el tiempo de espera (Ej: Alerta si pasa de 15 minutos / 900000 ms en PREPARACION o INGRESO sin atender)
+        if (diffMs >= 15 * 60 * 1000) {
+          if (!notificadosAlertaSonora[id]) {
+            reproducirAlertaSonora();
+            notificadosAlertaSonora[id] = true; // Evita que suene cada segundo de forma molesta, suena una vez al cumplirse el umbral
           }
         }
       });
@@ -996,6 +958,7 @@
       if (!idMesaGestion || !comandasActivas[idMesaGestion]) return;
       comandasActivas[idMesaGestion].estado = nuevoEstado;
       comandasActivas[idMesaGestion].tiempoInicioEstado = Date.now();
+      notificadosAlertaSonora[idMesaGestion] = false; // Reinicia el control de alerta para el nuevo estado
       
       if(nuevoEstado.includes('LISTO')) {
         reproducirAlertaSonora();
@@ -1007,13 +970,12 @@
       cerrarModal('modalOpcionesMesa');
     }
 
-    // Funcionalidad de impresión de comanda opcional
     function imprimirComandaCocina() {
       if (!idMesaGestion || !comandasActivas[idMesaGestion]) return;
       const cmd = comandasActivas[idMesaGestion];
       
       let htmlTicket = `<div class="ticket-fiscal">
-        <center><strong>--- COMANDA DE COCINA / PARRILLA ---</strong></center>
+        <center><strong>--- COMANDA OFICIAL SECTORIAL ---</strong></center>
         <br>Destino/Mesa: <strong>${idMesaGestion}</strong>
         <br>Hora: ${new Date().toLocaleTimeString('es-AR')}
         <br>Estado: ${cmd.estado}
@@ -1022,9 +984,9 @@
       
       cmd.items.forEach(i => {
         if(esItemParrilla(i.nombre, i.cat)) {
-          htmlTicket += `<li style="font-size: 14px; font-weight: bold; margin: 4px 0;">[PARRILLA] ${i.cantidad}x ${i.nombre}</li>`;
+          htmlTicket += `<li style="font-size: 14px; font-weight: bold; margin: 4px 0; color: #ff3d00;">🔥 [PARRILLA] ${i.cantidad}x ${i.nombre}</li>`;
         } else {
-          htmlTicket += `<li style="margin: 3px 0;">${i.cantidad}x ${i.nombre}</li>`;
+          htmlTicket += `<li style="margin: 3px 0;">[COCINA] ${i.cantidad}x ${i.nombre}</li>`;
         }
       });
 
@@ -1042,7 +1004,7 @@
       cerrarModal('modalOpcionesMesa');
     }
 
-    function irACobrarDesdeOpciones() {
+    function irACobrarDesdOpciones() {
       cerrarModal('modalOpcionesMesa');
       abrirModalCobro(idMesaGestion);
     }
@@ -1097,19 +1059,17 @@
       };
 
       historialCaja.push(registroCobro);
-
-      // Generar e imprimir Ticket de Cierre Fiscal / Cliente automáticamente al cobrar
       imprimirTicketFiscal(registroCobro);
 
       delete comandasActivas[id];
+      delete notificadosAlertaSonora[id];
       guardarDatosStorage();
       sincronizarFirebaseRemoto();
       sincronizarVistaGustavo();
       cerrarModal('modalCobro');
-      alert(`✅ Comanda cobrada con éxito e impreso el ticket fiscal.`);
+      alert(`✅ Comanda cobrada con éxito.`);
     }
 
-    // Desarrollo de Ticket de Cierre Fiscal (Impresión)
     function imprimirTicketFiscal(registro) {
       let htmlTicket = `<div class="ticket-fiscal">
         <center>
@@ -1151,7 +1111,7 @@
           <span>TOTAL PAGADO:</span>
           <span>$${registro.total.toLocaleString('es-AR')}</span>
         </div>
-        <br><center><small>¡Gracias por su compra!<br>Conserve este ticket como comprobante</small></center>
+        <br><center><small>¡Gracias por su compra!</small></center>
       </div>`;
 
       const contenedorPrint = document.getElementById('ticketImpresionContainer');
@@ -1159,7 +1119,6 @@
       window.print();
     }
 
-    // Funciones de Egresos
     function abrirModalEgresos() {
       document.getElementById('egresoConcepto').value = '';
       document.getElementById('egresoMonto').value = '';
@@ -1181,7 +1140,6 @@
       alert("✅ Egreso registrado correctamente.");
     }
 
-    // Funciones de Mensajería Mariana / Hernán
     function abrirModalMensajes() {
       renderizarChatMjes();
       document.getElementById('modalMensajes').style.display = 'flex';
@@ -1232,9 +1190,7 @@
         tbody.appendChild(tr);
       });
 
-      listaEgresos.forEach(e => {
-        totEgresos += e.monto;
-      });
+      listaEgresos.forEach(e => totEgresos += e.monto);
 
       document.getElementById('totCajaRecaudado').textContent = `$${totFacturado.toLocaleString('es-AR')}`;
       document.getElementById('totCajaPropina').textContent = `$${totPropinas.toLocaleString('es-AR')}`;
