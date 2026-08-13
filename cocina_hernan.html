@@ -36,6 +36,12 @@
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
     }
 
+    .header-izquierda {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
     header h1 {
       font-size: 18px;
       font-weight: bold;
@@ -44,6 +50,34 @@
       display: flex;
       align-items: center;
       gap: 8px;
+    }
+
+    /* WIDGET INFO (HORA, TEMPERATURA, DÓLAR) JUNTO AL TÍTULO */
+    .header-info-widget {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .info-pill {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: #f1c40f;
+    }
+
+    .info-pill.temp {
+      color: #00ffcc;
+    }
+
+    .info-pill.dolar {
+      color: #2ecc71;
     }
 
     .acciones-header {
@@ -86,6 +120,21 @@
     }
     .btn-hdr.btn-agotados:hover { background-color: #943126; color: #fff; }
 
+    /* BOTÓN DE ALARMA ACTIVA / SILENCIADA */
+    .btn-hdr.btn-alarma-activo {
+      background-color: #196f3d;
+      border-color: #27ae60;
+      color: #abebc6;
+    }
+    .btn-hdr.btn-alarma-activo:hover { background-color: #219653; color: #fff; }
+
+    .btn-hdr.btn-alarma-silenciado {
+      background-color: #78281f;
+      border-color: #c0392b;
+      color: #f5b7b1;
+    }
+    .btn-hdr.btn-alarma-silenciado:hover { background-color: #922b21; color: #fff; }
+
     .badge-caja {
       background-color: #1c2833;
       color: #00ff66;
@@ -109,10 +158,10 @@
       border: 1px solid #ff9900;
     }
 
-    /* LAYOUT PRINCIPAL: PLANO DE MESAS AMPLIADO COMO CENTRO DE COMANDAS */
+    /* LAYOUT PRINCIPAL */
     .layout-cocina {
       display: grid;
-      grid-template-columns: 320px 1fr;
+      grid-template-columns: 360px 1fr;
       gap: 14px;
     }
 
@@ -124,7 +173,7 @@
     }
 
     .seccion-titulo {
-      font-size: 13px;
+      font-size: 14px;
       font-weight: bold;
       color: #ff9900;
       text-transform: uppercase;
@@ -135,25 +184,83 @@
       align-items: center;
     }
 
-    /* LISTA LATERAL DE RESUMEN RÁPIDO */
+    /* MARGEN IZQUIERDO: ÍTEMS DE COCINA */
     .contenedor-tickets-lateral {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 10px;
       max-height: calc(100vh - 120px);
       overflow-y: auto;
       padding-right: 4px;
     }
 
-    .ticket-miniatura {
+    .item-cocina-card {
       background-color: #1c1c1c;
-      border-left: 4px solid #e74c3c;
-      border-radius: 5px;
-      padding: 8px 10px;
-      font-size: 12px;
+      border: 2px solid #e74c3c;
+      border-radius: 6px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.4);
     }
 
-    /* MAPA DE MESAS: TARJETAS RECTANGULARES GRANDES CON COMANDAS ADENTRO */
+    .item-cocina-card.urgente-card {
+      border-color: #ff0000 !important;
+      background-color: #2b1111;
+      animation: pulsoUrgenteCard 1s infinite;
+    }
+
+    @keyframes pulsoUrgenteCard {
+      0% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7); }
+      70% { box-shadow: 0 0 0 8px rgba(255, 0, 0, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0); }
+    }
+
+    .item-cocina-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #333;
+      padding-bottom: 4px;
+    }
+
+    .item-cocina-mesa {
+      font-size: 14px;
+      font-weight: bold;
+      color: #ff9900;
+    }
+
+    .item-cocina-estado {
+      font-size: 11px;
+      font-weight: bold;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: #333;
+      color: #fff;
+    }
+
+    .item-cocina-nombre {
+      font-size: 16px;
+      font-weight: bold;
+      color: #ffffff;
+      padding: 4px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .item-cocina-cant {
+      font-size: 18px;
+      font-weight: bold;
+      color: #00ff66;
+      background: #000;
+      padding: 2px 10px;
+      border-radius: 4px;
+      border: 1px solid #00ff66;
+    }
+
+    /* MAPA DE MESAS */
     .mapa-contenedor {
       background-color: #0d0d0d;
       border: 1px dashed #333;
@@ -189,7 +296,6 @@
       gap: 12px;
     }
 
-    /* TARJETAS DE MESA AMPLIADAS CON LA COMANDA DENTRO */
     .mesa-tarjeta {
       background-color: #1a1a1a;
       border: 2px solid #333;
@@ -242,7 +348,6 @@
       letter-spacing: 0.5px;
     }
 
-    /* ITEMS DE LA COMANDA DENTRO DE LA MESA */
     .mesa-items-lista {
       list-style: none;
       font-size: 12px;
@@ -271,7 +376,6 @@
       margin-left: 4px;
     }
 
-    /* TEMPORIZADORES ESTRICTOS EN CADA MESA */
     .timer-badge {
       background-color: #000;
       color: #00ffcc;
@@ -311,7 +415,7 @@
       100% { transform: scale(1); opacity: 1; }
     }
 
-    /* MODAL DE GESTIÓN DE ESTADOS (SIN CIERRE DE MESA) */
+    /* MODAL DE GESTIÓN DE ESTADOS */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -377,7 +481,6 @@
     .btn-urgente { background-color: #c0392b; color: white; }
     .btn-urgente:hover { background-color: #962d22; }
 
-    /* ESTILOS MODAL AGOTADOS Y RESUMEN */
     .lista-agotados-grid {
       display: flex;
       flex-direction: column;
@@ -427,9 +530,23 @@
 
   <!-- HEADER HERNÁN COCINA -->
   <header>
-    <h1>🔥 LA PERSEVERANCIA <span style="font-size: 12px; opacity: 0.85; font-weight: normal;">| Vista Cocina (Hernán)</span></h1>
+    <div class="header-izquierda">
+      <h1>🔥 LA PERSEVERANCIA <span style="font-size: 12px; opacity: 0.85; font-weight: normal;">| Vista Cocina (Hernán)</span></h1>
+      
+      <!-- WIDGET DE HORA, TEMPERATURA Y DÓLAR AL LADO DEL TÍTULO -->
+      <div class="header-info-widget">
+        <div class="info-pill"><i class="fa-regular fa-clock"></i> <span id="relojHeader">--:--:--</span></div>
+        <div class="info-pill temp"><i class="fa-solid fa-temperature-half"></i> <span id="tempHeader">--°C</span></div>
+        <div class="info-pill dolar"><i class="fa-solid fa-dollar-sign"></i> <span id="dolarHeader">USD: ...</span></div>
+      </div>
+    </div>
     
     <div class="acciones-header">
+      <!-- BOTÓN DE ALARMA SONORA EN MARGEN SUPERIOR DERECHO -->
+      <button id="btnAlarmaToggle" class="btn-hdr btn-alarma-activo" onclick="toggleAlarmaSonora()">
+        <i id="iconoAlarma" class="fa-solid fa-volume-high"></i> <span id="textoAlarmaBtn">ALARMA ON</span>
+      </button>
+
       <button class="btn-hdr btn-resumen" onclick="abrirResumenAcumulado()">
         <i class="fa-solid fa-list-check"></i> RESUMEN
       </button>
@@ -449,20 +566,20 @@
   <!-- LAYOUT PRINCIPAL -->
   <div class="layout-cocina">
 
-    <!-- PANEL IZQUIERDO: RESUMEN RÁPIDO DE COMANDAS ACTIVAS -->
+    <!-- PANEL IZQUIERDO: ÍTEMS DE COCINA AMPLIADOS Y RESALTADOS -->
     <aside class="panel-box">
       <div class="seccion-titulo">
-        <span>📋 ESTADO GENERAL</span>
+        <span>🍳 ÍTEMS DE COCINA (FIFO)</span>
         <span id="cantComandas" style="color: #00ff66; font-size: 13px;">0</span>
       </div>
       <div class="contenedor-tickets-lateral" id="contenedorTicketsLateral">
         <p style="color: #666; font-size: 12px; text-align: center; margin-top: 20px;">
-          Sincronizando comandas...
+          Sincronizando ítems...
         </p>
       </div>
     </aside>
 
-    <!-- PANEL DERECHO: PLANO DE MESAS CON COMANDAS VISIBLES ADENTRO Y TIEMPOS ESTRICTOS -->
+    <!-- PANEL DERECHO: PLANO DE MESAS CON COMANDAS ADENTRO Y TIEMPOS ESTRICTOS -->
     <main class="panel-box">
       <div class="seccion-titulo">
         <span>📍 PLANO DE COCINA (COMANDAS EN TIEMPO REAL)</span>
@@ -473,7 +590,6 @@
         <div class="grupo-zona">
           <span class="etiqueta-zona">🍷 SALÓN PRINCIPAL</span>
           <div class="grilla-mesas" id="grillaSalon">
-            <!-- Se generan dinámicamente o se mapean -->
             <div class="mesa-tarjeta" data-id="Mesa 1" onclick="abrirModalEstado('Mesa 1')">
               <div class="mesa-hdr-info"><span class="mesa-nombre">MESA 1</span><small style="color:#666;">Libre</small></div>
               <p style="color:#555; font-size:12px; text-align:center; margin:auto;">Sin comanda</p>
@@ -534,7 +650,7 @@
     </main>
   </div>
 
-  <!-- MODAL DE CAMBIO DE ESTADO (SOLO ESTADOS, NO CIERRE) -->
+  <!-- MODAL DE CAMBIO DE ESTADO -->
   <div class="modal-overlay" id="modalEstadoCocina">
     <div class="modal-contenido">
       <div class="modal-hdr">
@@ -605,10 +721,48 @@
     const platosAgotados = new Set();
     let catalogoPlatos = [];
     let mesaSeleccionadaId = null;
+    let alarmaHabilitada = true;
 
     window.onload = () => {
       sincronizarFirebase();
+      iniciarReloj();
+      obtenerClimaYDolar();
+      // Actualizar clima y dólar cada 10 minutos
+      setInterval(obtenerClimaYDolar, 600000);
     };
+
+    function iniciarReloj() {
+      const actualizarReloj = () => {
+        const ahora = new Date();
+        document.getElementById('relojHeader').textContent = ahora.toLocaleTimeString('es-AR');
+      };
+      actualizarReloj();
+      setInterval(actualizarReloj, 1000);
+    }
+
+    async function obtenerClimaYDolar() {
+      // 1. Obtener Dólar Blue desde API pública (DolarAPI Argentina)
+      try {
+        const resDolar = await fetch('https://dolarapi.com/v1/dolares/blue');
+        const dataDolar = await resDolar.json();
+        if (dataDolar && dataDolar.venta) {
+          document.getElementById('dolarHeader').textContent = `$${dataDolar.venta}`;
+        }
+      } catch (e) {
+        document.getElementById('dolarHeader').textContent = 'USD: N/D';
+      }
+
+      // 2. Obtener Temperatura de Buenos Aires (Open-Meteo API libre sin API key)
+      try {
+        const resClima = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-34.6132&longitude=-58.3772&current=temperature_2m');
+        const dataClima = await resClima.json();
+        if (dataClima && dataClima.current && dataClima.current.temperature_2m !== undefined) {
+          document.getElementById('tempHeader').textContent = `${Math.round(dataClima.current.temperature_2m)}°C`;
+        }
+      } catch (e) {
+        document.getElementById('tempHeader').textContent = '--°C';
+      }
+    }
 
     function sincronizarFirebase() {
       db.ref('menu').on('value', (snapshot) => {
@@ -622,10 +776,26 @@
       setInterval(actualizarDatosLocales, 1000);
     }
 
+    function toggleAlarmaSonora() {
+      alarmaHabilitada = !alarmaHabilitada;
+      const btn = document.getElementById('btnAlarmaToggle');
+      const icono = document.getElementById('iconoAlarma');
+      const texto = document.getElementById('textoAlarmaBtn');
+
+      if (alarmaHabilitada) {
+        btn.className = 'btn-hdr btn-alarma-activo';
+        icono.className = 'fa-solid fa-volume-high';
+        texto.textContent = 'ALARMA ON';
+      } else {
+        btn.className = 'btn-hdr btn-alarma-silenciado';
+        icono.className = 'fa-solid fa-volume-xmark';
+        texto.textContent = 'ALARMA OFF';
+      }
+    }
+
     function actualizarDatosLocales() {
       const stored = JSON.parse(localStorage.getItem('comandasActivas')) || {};
       
-      // Sincronizar altas y cambios
       Object.keys(stored).forEach(id => {
         if (!comandasActivas[id]) {
           comandasActivas[id] = {
@@ -638,14 +808,12 @@
         }
       });
 
-      // Sincronizar bajas (si se cerró desde salón)
       Object.keys(comandasActivas).forEach(id => {
         if (!stored[id]) {
           delete comandasActivas[id];
         }
       });
 
-      // Actualizar caja
       const historialCaja = JSON.parse(localStorage.getItem('historialCaja')) || [];
       let totalCaja = 0;
       historialCaja.forEach(h => totalCaja += h.total);
@@ -672,23 +840,33 @@
       const ids = Object.keys(comandasActivas);
       document.getElementById('cantComandas').textContent = ids.length;
 
-      // Actualizar lateral rápido
       const contenedorLateral = document.getElementById('contenedorTicketsLateral');
       if (ids.length === 0) {
-        contenedorLateral.innerHTML = '<p style="color:#666; font-size:12px; text-align:center; margin-top:20px;">Sin comandas pendientes.</p>';
+        contenedorLateral.innerHTML = '<p style="color:#666; font-size:13px; text-align:center; margin-top:20px;">Sin ítems pendientes en cocina.</p>';
       } else {
         contenedorLateral.innerHTML = '';
         ids.forEach(id => {
           const cmd = comandasActivas[id];
-          const div = document.createElement('div');
-          div.className = 'ticket-miniatura';
-          div.style.borderLeftColor = cmd.urgente ? '#ff0000' : '#e74c3c';
-          div.innerHTML = `<strong>📍 ${cmd.id}</strong> <span style="color:#ff9900; float:right;">${cmd.estado}</span>`;
-          contenedorLateral.appendChild(div);
+          cmd.items.forEach(i => {
+            const agotado = platosAgotados.has(i.nombre);
+            const card = document.createElement('div');
+            card.className = `item-cocina-card ${cmd.urgente ? 'urgente-card' : ''}`;
+            
+            card.innerHTML = `
+              <div class="item-cocina-header">
+                <span class="item-cocina-mesa">📍 ${cmd.id}</span>
+                <span class="item-cocina-estado" style="background:${cmd.estado==='MANOS'?'#27ae60':cmd.estado==='PREPARACION'?'#d35400':'#2980b9'}">${cmd.urgente ? '🚨 URGENTE' : cmd.estado}</span>
+              </div>
+              <div class="item-cocina-nombre">
+                <span class="${agotado ? 'item-agotado-texto' : ''}">${i.nombre}${agotado ? '<span class="badge-agotado-tag">86</span>' : ''}</span>
+                <span class="item-cocina-cant">x${i.cantidad}</span>
+              </div>
+            `;
+            contenedorLateral.appendChild(card);
+          });
         });
       }
 
-      // Actualizar todas las tarjetas de mesas en el plano
       const todasLasTarjetas = document.querySelectorAll('.mesa-tarjeta');
       todasLasTarjetas.forEach(tarjeta => {
         const idMesa = tarjeta.getAttribute('data-id');
@@ -703,13 +881,12 @@
             <p style="color:#555; font-size:12px; text-align:center; margin:auto;">Sin comanda</p>
           `;
         } else {
-          // Calcular tiempo transcurrido para temporizadores estrictos
           const segundos = Math.floor((Date.now() - cmd.tiempoInicio) / 1000);
           let badgeClass = 'timer-badge';
           let textoTimer = '';
 
           if (cmd.estado === 'RECIBIDO') {
-            const restante = 300 - segundos; // 5 min máx
+            const restante = 300 - segundos;
             if (restante >= 0) {
               const m = String(Math.floor(restante / 60)).padStart(2, '0');
               const s = String(restante % 60).padStart(2, '0');
@@ -720,7 +897,6 @@
               dispararAlarmaSonora();
             }
           } else if (cmd.estado === 'PREPARACION') {
-            // Entre 7 a 15 min (420 a 900 segs)
             const m = String(Math.floor(segundos / 60)).padStart(2, '0');
             const s = String(segundos % 60).padStart(2, '0');
             textoTimer = `🔥 Prep. ${m}:${s}`;
@@ -732,7 +908,7 @@
               badgeClass += ' alerta-naranja';
             }
           } else if (cmd.estado === 'MANOS') {
-            const restante = 60 - segundos; // 1 min para retirar
+            const restante = 60 - segundos;
             if (restante >= 0) {
               const s = String(restante).padStart(2, '0');
               textoTimer = `🖐️ ¡MANOS! 00:${s}`;
@@ -765,6 +941,7 @@
 
     let audioReproduciendose = false;
     function dispararAlarmaSonora() {
+      if (!alarmaHabilitada) return;
       if (audioReproduciendose) return;
       audioReproduciendose = true;
       const audio = document.getElementById('alarmaSonora');
@@ -805,7 +982,7 @@
 
       const cmd = comandasActivas[mesaSeleccionadaId];
       cmd.estado = nuevoEstado;
-      cmd.tiempoInicio = Date.now(); // Reinicia el temporizador para el nuevo estado
+      cmd.tiempoInicio = Date.now();
 
       guardarStorage();
       renderizarPlanoYLateral();
