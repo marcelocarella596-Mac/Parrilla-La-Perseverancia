@@ -20,7 +20,7 @@
     }
 
     body {
-      background-color: #0e0e0e;
+      background-color: #0b0b0b;
       color: #ffffff;
       padding: 10px;
     }
@@ -32,12 +32,12 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
     }
 
     header h1 {
-      font-size: 17px;
+      font-size: 18px;
       font-weight: bold;
       text-transform: uppercase;
       letter-spacing: 1px;
@@ -52,7 +52,6 @@
       gap: 8px;
     }
 
-    /* BOTONES DE ACCIÓN EN HEADER */
     .btn-hdr {
       background-color: #1c2833;
       color: #fff;
@@ -80,13 +79,6 @@
     }
     .btn-hdr.btn-resumen:hover { background-color: #21618c; color: #fff; }
 
-    .btn-hdr.btn-undo {
-      background-color: #7d6608;
-      border-color: #b7950b;
-      color: #f9e79f;
-    }
-    .btn-hdr.btn-undo:hover { background-color: #9a7d0a; color: #fff; }
-
     .btn-hdr.btn-agotados {
       background-color: #78281f;
       border-color: #b03a2e;
@@ -102,7 +94,6 @@
       border-radius: 5px;
       font-size: 12px;
       font-weight: bold;
-      cursor: pointer;
       display: flex;
       align-items: center;
       gap: 6px;
@@ -118,132 +109,65 @@
       border: 1px solid #ff9900;
     }
 
-    /* LAYOUT PRINCIPAL */
+    /* LAYOUT PRINCIPAL: PLANO DE MESAS AMPLIADO COMO CENTRO DE COMANDAS */
     .layout-cocina {
       display: grid;
-      grid-template-columns: 360px 1fr;
-      gap: 12px;
+      grid-template-columns: 320px 1fr;
+      gap: 14px;
     }
 
     .panel-box {
-      background-color: #161616;
-      border: 1px solid #2a2a2a;
+      background-color: #141414;
+      border: 1px solid #222;
       border-radius: 8px;
       padding: 14px;
     }
 
     .seccion-titulo {
-      font-size: 12px;
+      font-size: 13px;
       font-weight: bold;
       color: #ff9900;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
-    /* TICKETS EN COCINA (MEJOR LEÍDOS) */
-    .contenedor-tickets {
+    /* LISTA LATERAL DE RESUMEN RÁPIDO */
+    .contenedor-tickets-lateral {
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      max-height: calc(100vh - 110px);
+      gap: 8px;
+      max-height: calc(100vh - 120px);
       overflow-y: auto;
       padding-right: 4px;
     }
 
-    .ticket-card {
+    .ticket-miniatura {
       background-color: #1c1c1c;
-      border-left: 5px solid #e74c3c;
-      border-radius: 6px;
-      padding: 10px 12px;
-      cursor: pointer;
-      transition: transform 0.1s, border-color 0.2s;
-      position: relative;
-    }
-
-    .ticket-card:hover {
-      transform: scale(1.01);
-      border-color: #ff6600;
-    }
-
-    .ticket-card.prioridad-urgente {
-      border: 2px solid #e74c3c !important;
-      border-left: 7px solid #ff0000 !important;
-      animation: pulsoUrgente 1.2s infinite;
-    }
-
-    @keyframes pulsoUrgente {
-      0% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.5); }
-      70% { box-shadow: 0 0 0 10px rgba(231, 76, 60, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
-    }
-
-    .ticket-hdr {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-weight: bold;
-      font-size: 13px;
-      margin-bottom: 6px;
-      padding-bottom: 6px;
-      border-bottom: 1px solid #333;
-    }
-
-    .ticket-items {
+      border-left: 4px solid #e74c3c;
+      border-radius: 5px;
+      padding: 8px 10px;
       font-size: 12px;
-      color: #eee;
-      list-style: none;
-      padding: 0;
     }
 
-    .ticket-items li {
-      padding: 3px 0;
-      display: flex;
-      justify-content: space-between;
-      font-weight: 500;
-    }
-
-    .item-agotado-texto {
-      text-decoration: line-through;
-      color: #888;
-    }
-
-    .badge-agotado-tag {
-      background-color: #900;
-      color: #fff;
-      font-size: 10px;
-      padding: 1px 5px;
-      border-radius: 3px;
-      margin-left: 4px;
-    }
-
-    .badge-urgente-tag {
-      background-color: #e74c3c;
-      color: #fff;
-      font-size: 10px;
-      font-weight: bold;
-      padding: 2px 6px;
-      border-radius: 3px;
-      text-transform: uppercase;
-    }
-
-    /* MAPA CONTENEDOR AMPLIADO Y ESPACIADO */
+    /* MAPA DE MESAS: TARJETAS RECTANGULARES GRANDES CON COMANDAS ADENTRO */
     .mapa-contenedor {
-      background-color: #0b0b0b;
+      background-color: #0d0d0d;
       border: 1px dashed #333;
       border-radius: 8px;
       padding: 16px;
       display: flex;
       flex-direction: column;
       gap: 16px;
-      min-height: calc(100vh - 110px);
+      min-height: calc(100vh - 120px);
+      overflow-y: auto;
     }
 
     .grupo-zona {
-      background: #121212;
+      background: #111;
       border: 1px solid #222;
       border-radius: 8px;
       padding: 12px;
@@ -252,7 +176,7 @@
     .etiqueta-zona {
       font-size: 12px;
       font-weight: bold;
-      color: #aaa;
+      color: #888;
       margin-bottom: 10px;
       display: block;
       text-transform: uppercase;
@@ -260,54 +184,111 @@
     }
 
     .grilla-mesas {
-      display: flex;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
       gap: 12px;
     }
 
-    /* TARJETAS DE MESAS RECTANGULARES MÁS GRANDES */
-    .mesa {
-      background-color: #222;
-      border: 2px solid #444;
+    /* TARJETAS DE MESA AMPLIADAS CON LA COMANDA DENTRO */
+    .mesa-tarjeta {
+      background-color: #1a1a1a;
+      border: 2px solid #333;
       border-radius: 8px;
-      padding: 10px;
+      padding: 12px;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      justify-content: space-between;
       cursor: pointer;
       user-select: none;
       transition: all 0.2s;
-      min-width: 140px;
-      height: 75px;
+      min-height: 130px;
       position: relative;
     }
 
-    .mesa:hover { border-color: #ff6600; transform: translateY(-2px); }
-    .mesa .nombre { font-size: 13px; font-weight: bold; text-align: center; color: #fff; }
+    .mesa-tarjeta:hover {
+      border-color: #ff6600;
+      transform: translateY(-2px);
+    }
 
-    .mesa.ocupada { background-color: #7b241c; border-color: #e74c3c; }
-    .mesa.express { border-style: dashed; }
-    .mesa.urgente { border: 2px solid #ff0000; animation: pulsoUrgente 1.2s infinite; }
+    .mesa-tarjeta.ocupada {
+      background-color: #241414;
+      border-color: #c0392b;
+    }
 
-    /* BADGES DE TEMPORIZADOR AMPLIADOS */
+    .mesa-tarjeta.urgente {
+      border: 2px solid #ff0000 !important;
+      animation: pulsoUrgente 1.2s infinite;
+    }
+
+    @keyframes pulsoUrgente {
+      0% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.6); }
+      70% { box-shadow: 0 0 0 10px rgba(255, 0, 0, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0); }
+    }
+
+    .mesa-hdr-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #333;
+      padding-bottom: 6px;
+      margin-bottom: 6px;
+    }
+
+    .mesa-nombre {
+      font-size: 13px;
+      font-weight: bold;
+      color: #fff;
+      letter-spacing: 0.5px;
+    }
+
+    /* ITEMS DE LA COMANDA DENTRO DE LA MESA */
+    .mesa-items-lista {
+      list-style: none;
+      font-size: 12px;
+      color: #ddd;
+      margin-bottom: 8px;
+      flex-grow: 1;
+    }
+
+    .mesa-items-lista li {
+      display: flex;
+      justify-content: space-between;
+      padding: 2px 0;
+    }
+
+    .item-agotado-texto {
+      text-decoration: line-through;
+      color: #777;
+    }
+
+    .badge-agotado-tag {
+      background-color: #900;
+      color: #fff;
+      font-size: 9px;
+      padding: 1px 4px;
+      border-radius: 3px;
+      margin-left: 4px;
+    }
+
+    /* TEMPORIZADORES ESTRICTOS EN CADA MESA */
     .timer-badge {
-      margin-top: 5px;
       background-color: #000;
       color: #00ffcc;
       font-family: monospace;
       font-size: 11px;
       font-weight: bold;
-      padding: 2px 6px;
+      padding: 4px 8px;
       border-radius: 4px;
       border: 1px solid #00ffcc;
       text-align: center;
+      width: 100%;
     }
 
     .timer-badge.alerta-roja {
       background-color: #900;
       color: #fff;
-      border-color: #f00;
+      border-color: #ff0000;
       animation: pulsoAlarma 0.8s infinite;
     }
 
@@ -324,7 +305,13 @@
       animation: pulsoAlarma 0.5s infinite;
     }
 
-    /* MODALES */
+    @keyframes pulsoAlarma {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.03); opacity: 0.75; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* MODAL DE GESTIÓN DE ESTADOS (SIN CIERRE DE MESA) */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -341,9 +328,7 @@
       border-radius: 8px;
       padding: 20px;
       width: 90%;
-      max-width: 480px;
-      max-height: 90vh;
-      overflow-y: auto;
+      max-width: 450px;
       box-shadow: 0 5px 20px rgba(0,0,0,0.8);
     }
 
@@ -380,23 +365,25 @@
       transition: background 0.2s;
     }
 
-    .btn-preparacion { background-color: #2980b9; color: white; }
-    .btn-preparacion:hover { background-color: #1f618d; }
+    .btn-recibido { background-color: #2980b9; color: white; }
+    .btn-recibido:hover { background-color: #1f618d; }
+
+    .btn-preparacion { background-color: #d35400; color: white; }
+    .btn-preparacion:hover { background-color: #a04000; }
 
     .btn-manos { background-color: #27ae60; color: white; }
     .btn-manos:hover { background-color: #1e8449; }
 
-    .btn-urgente-toggle { background-color: #c0392b; color: white; }
-    .btn-urgente-toggle:hover { background-color: #962d22; }
+    .btn-urgente { background-color: #c0392b; color: white; }
+    .btn-urgente:hover { background-color: #962d22; }
 
-    .btn-despachar-modal { background-color: #d35400; color: white; }
-    .btn-despachar-modal:hover { background-color: #a04000; }
-
-    /* ESTILOS DE LISTA EN MODAL AGOTADOS Y RESUMEN */
+    /* ESTILOS MODAL AGOTADOS Y RESUMEN */
     .lista-agotados-grid {
       display: flex;
       flex-direction: column;
       gap: 6px;
+      max-height: 250px;
+      overflow-y: auto;
       margin-bottom: 12px;
     }
 
@@ -434,12 +421,6 @@
       padding: 8px 4px;
       border-bottom: 1px solid #222;
     }
-
-    @keyframes pulsoAlarma {
-      0% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.05); opacity: 0.7; }
-      100% { transform: scale(1); opacity: 1; }
-    }
   </style>
 </head>
 <body>
@@ -449,617 +430,441 @@
     <h1>🔥 LA PERSEVERANCIA <span style="font-size: 12px; opacity: 0.85; font-weight: normal;">| Vista Cocina (Hernán)</span></h1>
     
     <div class="acciones-header">
-      <!-- BOTÓN CONSOLIDADO RESUMEN -->
       <button class="btn-hdr btn-resumen" onclick="abrirResumenAcumulado()">
         <i class="fa-solid fa-list-check"></i> RESUMEN
       </button>
 
-      <!-- BOTÓN DESHACER / UNDO -->
-      <button class="btn-hdr btn-undo" onclick="deshacerUltimaAccion()">
-        <i class="fa-solid fa-rotate-left"></i> DESHACER
-      </button>
-
-      <!-- BOTÓN 86 AGOTADOS -->
       <button class="btn-hdr btn-agotados" onclick="abrirAgotadosModal()">
         <i class="fa-solid fa-ban"></i> AGOTAR (86)
       </button>
 
-      <!-- MÓDULO DE CAJA / ARQUEO -->
-      <div class="badge-caja" onclick="verArqueoCaja()">
+      <div class="badge-caja">
         💰 CAJA: <span id="montoCaja">$0</span>
       </div>
 
-      <span class="badge-live">• COCINA EN LINEA</span>
+      <span class="badge-live">• COCINA ACTIVA</span>
     </div>
   </header>
 
-  <!-- LAYOUT COCINA -->
+  <!-- LAYOUT PRINCIPAL -->
   <div class="layout-cocina">
 
-    <!-- PANEL IZQUIERDO: TICKETS EN COCINA -->
+    <!-- PANEL IZQUIERDO: RESUMEN RÁPIDO DE COMANDAS ACTIVAS -->
     <aside class="panel-box">
       <div class="seccion-titulo">
-        <span>📋 COMANDAS EN COCINA</span>
+        <span>📋 ESTADO GENERAL</span>
         <span id="cantComandas" style="color: #00ff66; font-size: 13px;">0</span>
       </div>
-
-      <div class="contenedor-tickets" id="contenedorTickets">
-        <p id="sinComandasTexto" style="color: #666; font-size: 12px; text-align: center; margin-top: 30px;">
-          Sincronizando comandas desde Firebase...
+      <div class="contenedor-tickets-lateral" id="contenedorTicketsLateral">
+        <p style="color: #666; font-size: 12px; text-align: center; margin-top: 20px;">
+          Sincronizando comandas...
         </p>
       </div>
     </aside>
 
-    <!-- PANEL DERECHO: PLANO AMPLIADO DE MESAS, MOSTRADOR, DELIVERY Y PICKUP -->
+    <!-- PANEL DERECHO: PLANO DE MESAS CON COMANDAS VISIBLES ADENTRO Y TIEMPOS ESTRICTOS -->
     <main class="panel-box">
       <div class="seccion-titulo">
-        <span>📍 PLANO DE MESAS Y CANALES DIRECTOS</span>
+        <span>📍 PLANO DE COCINA (COMANDAS EN TIEMPO REAL)</span>
       </div>
 
       <div class="mapa-contenedor">
         <!-- ZONA 1: SALÓN -->
         <div class="grupo-zona">
           <span class="etiqueta-zona">🍷 SALÓN PRINCIPAL</span>
-          <div class="grilla-mesas">
-            <div class="mesa" data-id="Mesa 1" onclick="clickMesaCocina('Mesa 1')"><span class="nombre">MESA 1</span></div>
-            <div class="mesa" data-id="Mesa 2" onclick="clickMesaCocina('Mesa 2')"><span class="nombre">MESA 2</span></div>
-            <div class="mesa" data-id="Mesa 3" onclick="clickMesaCocina('Mesa 3')"><span class="nombre">MESA 3</span></div>
-            <div class="mesa" data-id="Mesa 4" onclick="clickMesaCocina('Mesa 4')"><span class="nombre">MESA 4</span></div>
+          <div class="grilla-mesas" id="grillaSalon">
+            <!-- Se generan dinámicamente o se mapean -->
+            <div class="mesa-tarjeta" data-id="Mesa 1" onclick="abrirModalEstado('Mesa 1')">
+              <div class="mesa-hdr-info"><span class="mesa-nombre">MESA 1</span><small style="color:#666;">Libre</small></div>
+              <p style="color:#555; font-size:12px; text-align:center; margin:auto;">Sin comanda</p>
+            </div>
+            <div class="mesa-tarjeta" data-id="Mesa 2" onclick="abrirModalEstado('Mesa 2')">
+              <div class="mesa-hdr-info"><span class="mesa-nombre">MESA 2</span><small style="color:#666;">Libre</small></div>
+              <p style="color:#555; font-size:12px; text-align:center; margin:auto;">Sin comanda</p>
+            </div>
+            <div class="mesa-tarjeta" data-id="Mesa 3" onclick="abrirModalEstado('Mesa 3')">
+              <div class="mesa-hdr-info"><span class="mesa-nombre">MESA 3</span><small style="color:#666;">Libre</small></div>
+              <p style="color:#555; font-size:12px; text-align:center; margin:auto;">Sin comanda</p>
+            </div>
+            <div class="mesa-tarjeta" data-id="Mesa 4" onclick="abrirModalEstado('Mesa 4')">
+              <div class="mesa-hdr-info"><span class="mesa-nombre">MESA 4</span><small style="color:#666;">Libre</small></div>
+              <p style="color:#555; font-size:12px; text-align:center; margin:auto;">Sin comanda</p>
+            </div>
           </div>
         </div>
 
         <!-- ZONA 2: VEREDA -->
         <div class="grupo-zona">
           <span class="etiqueta-zona">⛱️ VEREDA</span>
-          <div class="grilla-mesas">
-            <div class="mesa" data-id="Mesa 5 Vereda" onclick="clickMesaCocina('Mesa 5 Vereda')"><span class="nombre">MESA 5 VEREDA</span></div>
-            <div class="mesa" data-id="Mesa 6 Vereda" onclick="clickMesaCocina('Mesa 6 Vereda')"><span class="nombre">MESA 6 VEREDA</span></div>
-            <div class="mesa" data-id="Mesa 7 Vereda" onclick="clickMesaCocina('Mesa 7 Vereda')"><span class="nombre">MESA 7 VEREDA</span></div>
+          <div class="grilla-mesas" id="grillaVereda">
+            <div class="mesa-tarjeta" data-id="Mesa 5 Vereda" onclick="abrirModalEstado('Mesa 5 Vereda')">
+              <div class="mesa-hdr-info"><span class="mesa-nombre">MESA 5 VEREDA</span><small style="color:#666;">Libre</small></div>
+              <p style="color:#555; font-size:12px; text-align:center; margin:auto;">Sin comanda</p>
+            </div>
+            <div class="mesa-tarjeta" data-id="Mesa 6 Vereda" onclick="abrirModalEstado('Mesa 6 Vereda')">
+              <div class="mesa-hdr-info"><span class="mesa-nombre">MESA 6 VEREDA</span><small style="color:#666;">Libre</small></div>
+              <p style="color:#555; font-size:12px; text-align:center; margin:auto;">Sin comanda</p>
+            </div>
+            <div class="mesa-tarjeta" data-id="Mesa 7 Vereda" onclick="abrirModalEstado('Mesa 7 Vereda')">
+              <div class="mesa-hdr-info"><span class="mesa-nombre">MESA 7 VEREDA</span><small style="color:#666;">Libre</small></div>
+              <p style="color:#555; font-size:12px; text-align:center; margin:auto;">Sin comanda</p>
+            </div>
           </div>
         </div>
 
         <!-- ZONA 3: MOSTRADOR / DELIVERY / PICKUP -->
         <div class="grupo-zona">
           <span class="etiqueta-zona">📦 MOSTRADOR / DELIVERY / PICKUP</span>
-          <div class="grilla-mesas">
-            <div class="mesa express" data-id="Mostrador" onclick="clickMesaCocina('Mostrador')"><span class="nombre">🛍️ MOSTRADOR</span></div>
-            <div class="mesa express" data-id="Pickup" onclick="clickMesaCocina('Pickup')"><span class="nombre">🏃 PICKUP</span></div>
-            <div class="mesa express" data-id="Delivery" onclick="clickMesaCocina('Delivery')"><span class="nombre">🛵 DELIVERY</span></div>
+          <div class="grilla-mesas" id="grillaExpress">
+            <div class="mesa-tarjeta" data-id="Mostrador" onclick="abrirModalEstado('Mostrador')">
+              <div class="mesa-hdr-info"><span class="mesa-nombre">🛍️ MOSTRADOR</span><small style="color:#666;">Libre</small></div>
+              <p style="color:#555; font-size:12px; text-align:center; margin:auto;">Sin comanda</p>
+            </div>
+            <div class="mesa-tarjeta" data-id="Pickup" onclick="abrirModalEstado('Pickup')">
+              <div class="mesa-hdr-info"><span class="mesa-nombre">🏃 PICKUP</span><small style="color:#666;">Libre</small></div>
+              <p style="color:#555; font-size:12px; text-align:center; margin:auto;">Sin comanda</p>
+            </div>
+            <div class="mesa-tarjeta" data-id="Delivery" onclick="abrirModalEstado('Delivery')">
+              <div class="mesa-hdr-info"><span class="mesa-nombre">🛵 DELIVERY</span><small style="color:#666;">Libre</small></div>
+              <p style="color:#555; font-size:12px; text-align:center; margin:auto;">Sin comanda</p>
+            </div>
           </div>
         </div>
       </div>
     </main>
-
   </div>
 
-  <!-- MODAL DE ACCIÓN DE COCINA -->
-  <div class="modal-overlay" id="modalAccionCocina">
+  <!-- MODAL DE CAMBIO DE ESTADO (SOLO ESTADOS, NO CIERRE) -->
+  <div class="modal-overlay" id="modalEstadoCocina">
     <div class="modal-contenido">
       <div class="modal-hdr">
-        <h3 id="tituloMesaCocina" style="color: #ff9900;">Ubicación Seleccionada</h3>
-        <button class="btn-cerrar-modal" onclick="cerrarModal('modalAccionCocina')">✕</button>
+        <h3 id="tituloModalMesa" style="color: #ff9900;">Ubicación</h3>
+        <button class="btn-cerrar-modal" onclick="cerrarModal('modalEstadoCocina')">✕</button>
       </div>
 
-      <!-- DETALLE DE PLATOS -->
-      <div id="detallePlatosCocina" style="background: #111; padding: 12px; border-radius: 6px; border: 1px solid #333; margin-bottom: 14px;"></div>
+      <div id="detallePlatosModal" style="background: #111; padding: 10px; border-radius: 6px; border: 1px solid #333; margin-bottom: 12px; font-size: 13px;"></div>
 
-      <p style="font-size: 12px; color: #aaa; margin-bottom: 10px; text-align: center; font-weight: bold;">ACCIONES Y CAMBIO DE ESTADO:</p>
+      <p style="font-size: 11px; color: #aaa; margin-bottom: 10px; text-align: center; font-weight: bold;">SELECCIONAR ESTADO DE COCINA:</p>
 
-      <button class="btn-accion-cocina btn-preparacion" onclick="cambiarEstadoMesa('PREPARACION')">
-        🔥 PASAR A PREPARACIÓN (5-10 min)
+      <button class="btn-accion-cocina btn-recibido" onclick="cambiarEstadoCocina('RECIBIDO')">
+        📥 1. RECIBIDO (Máx 5 min)
       </button>
 
-      <button class="btn-accion-cocina btn-manos" onclick="cambiarEstadoMesa('MANOS')">
-        🖐️ ¡MANOS! / LISTO PARA SERVIR (1 min)
+      <button class="btn-accion-cocina btn-preparacion" onclick="cambiarEstadoCocina('PREPARACION')">
+        🔥 2. EN PREPARACIÓN (7 a 15 min)
       </button>
 
-      <button class="btn-accion-cocina btn-urgente-toggle" onclick="toggleUrgenteMesa()">
-        🚨 MARCAR / DESMARCAR URGENTE (RE-MARCHA)
+      <button class="btn-accion-cocina btn-manos" onclick="cambiarEstadoCocina('MANOS')">
+        🖐️ 3. ¡MANOS! (1 min para retirar)
       </button>
 
-      <button class="btn-accion-cocina btn-despachar-modal" onclick="despacharComanda()">
-        ✅ DESPACHAR / LISTO COMPLETO
+      <button class="btn-accion-cocina btn-urgente" onclick="toggleUrgente()">
+        🚨 MARCAR / DESMARCAR URGENTE
       </button>
 
-      <button class="btn-accion-cocina" style="background-color: #444; color: white;" onclick="cerrarModal('modalAccionCocina')">
-        CERRAR
+      <button class="btn-accion-cocina" style="background-color: #444; color: white;" onclick="cerrarModal('modalEstadoCocina')">
+        VOLVER
       </button>
     </div>
   </div>
 
   <!-- MODAL DE RESUMEN ACUMULADO -->
-  <div class="modal-overlay" id="modalResumenAcumulado">
+  <div class="modal-overlay" id="modalResumen">
     <div class="modal-contenido">
       <div class="modal-hdr">
-        <h3 style="color: #2980b9;"><i class="fa-solid fa-list-check"></i> Consolidado Total de Platos</h3>
-        <button class="btn-cerrar-modal" onclick="cerrarModal('modalResumenAcumulado')">✕</button>
+        <h3 style="color: #2980b9;"><i class="fa-solid fa-list-check"></i> Resumen Acumulado de Platos</h3>
+        <button class="btn-cerrar-modal" onclick="cerrarModal('modalResumen')">✕</button>
       </div>
-
-      <div id="contenidoResumenAcumulado" style="background: #111; padding: 12px; border-radius: 6px; border: 1px solid #333; margin-bottom: 14px;">
-        <!-- Se genera dinámicamente -->
-      </div>
-
-      <button class="btn-accion-cocina" style="background-color: #444; color: white;" onclick="cerrarModal('modalResumenAcumulado')">
-        CERRAR
-      </button>
+      <div id="contenidoResumen" style="background: #111; padding: 12px; border-radius: 6px; border: 1px solid #333; margin-bottom: 12px;"></div>
+      <button class="btn-accion-cocina" style="background-color: #444; color: white;" onclick="cerrarModal('modalResumen')">CERRAR</button>
     </div>
   </div>
 
-  <!-- MODAL DE AGOTADOS (STOCK 86) -->
+  <!-- MODAL AGOTADOS 86 -->
   <div class="modal-overlay" id="modalAgotados">
     <div class="modal-contenido">
       <div class="modal-hdr">
         <h3 style="color: #e74c3c;"><i class="fa-solid fa-ban"></i> Control de Agotados (86)</h3>
         <button class="btn-cerrar-modal" onclick="cerrarModal('modalAgotados')">✕</button>
       </div>
-
-      <p style="font-size: 12px; color: #aaa; margin-bottom: 12px;">
-        Seleccione los platos sin stock para tacharlos en las comandas:
-      </p>
-
-      <div class="lista-agotados-grid" id="listaAgotadosContenedor">
-        <!-- Generado dinámicamente -->
-      </div>
-
-      <button class="btn-accion-cocina" style="background-color: #27ae60; color: white; margin-top: 10px;" onclick="cerrarModal('modalAgotados')">
-        GUARDAR Y CERRAR
-      </button>
+      <div class="lista-agotados-grid" id="listaAgotadosContenedor"></div>
+      <button class="btn-accion-cocina" style="background-color: #27ae60; color: white;" onclick="cerrarModal('modalAgotados')">GUARDAR</button>
     </div>
   </div>
 
-  <!-- MODAL DE CAJA / ARQUEO -->
-  <div class="modal-overlay" id="modalArqueoCaja">
-    <div class="modal-contenido">
-      <div class="modal-hdr">
-        <h3 style="color: #00ff66;">💰 Resumen de Caja / Arqueo</h3>
-        <button class="btn-cerrar-modal" onclick="cerrarModal('modalArqueoCaja')">✕</button>
-      </div>
-
-      <div style="background: #111; padding: 14px; border-radius: 6px; border: 1px solid #333; font-size: 13px; display: flex; flex-direction: column; gap: 10px;">
-        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #222; padding-bottom: 6px;">
-          <span style="color:#aaa;">Total Recaudado (Caja General):</span>
-          <strong style="color:#00ff66;" id="totalArqueoModal">$0</strong>
-        </div>
-        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #222; padding-bottom: 6px;">
-          <span style="color:#aaa;">Total Propinas:</span>
-          <strong style="color:#ff9900;" id="totalPropinasModal">$0</strong>
-        </div>
-        <div style="display: flex; justify-content: space-between; font-size: 14px; padding-top: 4px;">
-          <span style="color:#3498db; font-weight: bold;">CANTIDAD DE TICKETS COBRADOS:</span>
-          <strong style="color:#3498db;" id="totalTicketsModal">0</strong>
-        </div>
-      </div>
-
-      <button class="btn-accion-cocina" style="background-color: #444; color: white; margin-top: 14px;" onclick="cerrarModal('modalArqueoCaja')">
-        CERRAR
-      </button>
-    </div>
-  </div>
+  <audio id="alarmaSonora" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 
   <script>
-    // CONFIGURACIÓN DE FIREBASE Y ESTADO
     const firebaseConfig = {
       databaseURL: "https://parrilla-la-perseveranci-f3f54-default-rtdb.firebaseio.com"
     };
-
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
     let comandasActivas = {};
-    const historialAcciones = []; // Pila para Undo
-    const platosAgotados = new Set(); // Conjunto de ítems agotados (86)
-    let catalogoPlatos = []; // Se cargará dinámicamente desde el menú de Firebase
-    let idMesaSeleccionada = null;
+    const platosAgotados = new Set();
+    let catalogoPlatos = [];
+    let mesaSeleccionadaId = null;
 
     window.onload = () => {
-      sincronizarDatosFirebase();
+      sincronizarFirebase();
     };
 
-    function sincronizarDatosFirebase() {
+    function sincronizarFirebase() {
       db.ref('menu').on('value', (snapshot) => {
         const data = snapshot.val();
         if (data) {
-          if (Array.isArray(data)) {
-            catalogoPlatos = data.filter(item => item !== null).map(i => i.nombre || i.titulo || 'Sin Nombre');
-          } else {
-            catalogoPlatos = Object.values(data).map(i => i.nombre || i.titulo || 'Sin Nombre');
-          }
-        }
-      });
-
-      window.addEventListener('storage', (e) => {
-        if (e.key === 'comandasActivas' || e.key === 'historialCaja') {
-          actualizarDatosLocales();
+          catalogoPlatos = Array.isArray(data) ? data.filter(i => i !== null).map(i => i.nombre || i.titulo) : Object.values(data).map(i => i.nombre || i.titulo);
         }
       });
 
       actualizarDatosLocales();
-      setInterval(actualizarDatosLocales, 2000);
+      setInterval(actualizarDatosLocales, 1000);
     }
 
     function actualizarDatosLocales() {
-      const storedComandas = JSON.parse(localStorage.getItem('comandasActivas')) || {};
+      const stored = JSON.parse(localStorage.getItem('comandasActivas')) || {};
       
-      Object.keys(storedComandas).forEach(id => {
+      // Sincronizar altas y cambios
+      Object.keys(stored).forEach(id => {
         if (!comandasActivas[id]) {
-          comandasActivas[id] = storedComandas[id];
-          iniciarIntervaloComanda(id);
+          comandasActivas[id] = {
+            ...stored[id],
+            estado: stored[id].estado || 'RECIBIDO',
+            tiempoInicio: stored[id].tiempoInicio || Date.now()
+          };
         } else {
-          comandasActivas[id].items = storedComandas[id].items;
-          if(storedComandas[id].estado && storedComandas[id].estado !== comandasActivas[id].estado) {
-            comandasActivas[id].estado = storedComandas[id].estado;
-          }
+          comandasActivas[id].items = stored[id].items;
         }
       });
 
+      // Sincronizar bajas (si se cerró desde salón)
       Object.keys(comandasActivas).forEach(id => {
-        if (!storedComandas[id]) {
-          if (comandasActivas[id].intervalo) clearInterval(comandasActivas[id].intervalo);
+        if (!stored[id]) {
           delete comandasActivas[id];
-          const mesaEl = document.querySelector(`.mesa[data-id="${id}"]`);
-          if (mesaEl) {
-            mesaEl.classList.remove('ocupada', 'urgente');
-            const badge = mesaEl.querySelector('.timer-badge');
-            if (badge) badge.remove();
-          }
         }
       });
 
-      Object.keys(comandasActivas).forEach(id => {
-        const mesaEl = document.querySelector(`.mesa[data-id="${id}"]`);
-        if (mesaEl) {
-          mesaEl.classList.add('ocupada');
-          if (!mesaEl.querySelector('.timer-badge')) {
-            let timerBadge = document.createElement('div');
-            timerBadge.className = 'timer-badge';
-            timerBadge.textContent = comandasActivas[id].estado || 'INGRESO';
-            mesaEl.appendChild(timerBadge);
-            comandasActivas[id].badge = timerBadge;
-          }
-        }
-      });
-
+      // Actualizar caja
       const historialCaja = JSON.parse(localStorage.getItem('historialCaja')) || [];
       let totalCaja = 0;
       historialCaja.forEach(h => totalCaja += h.total);
       document.getElementById('montoCaja').textContent = `$${totalCaja.toLocaleString('es-AR')}`;
 
-      renderTicketsCocina();
+      renderizarPlanoYLateral();
     }
 
-    function guardarDatosStorage() {
-      const storageObj = {};
+    function guardarStorage() {
+      const obj = {};
       Object.keys(comandasActivas).forEach(id => {
-        storageObj[id] = {
+        obj[id] = {
           id: comandasActivas[id].id,
           items: comandasActivas[id].items,
           estado: comandasActivas[id].estado,
           urgente: comandasActivas[id].urgente || false,
-          tiempoInicioEstado: comandasActivas[id].tiempoInicioEstado
+          tiempoInicio: comandasActivas[id].tiempoInicio
         };
       });
-      localStorage.setItem('comandasActivas', JSON.stringify(storageObj));
+      localStorage.setItem('comandasActivas', JSON.stringify(obj));
     }
 
-    function iniciarIntervaloComanda(id) {
-      const cmd = comandasActivas[id];
-      if (!cmd) return;
-      if (!cmd.tiempoInicioEstado) cmd.tiempoInicioEstado = Date.now();
-      if (cmd.intervalo) clearInterval(cmd.intervalo);
-
-      cmd.intervalo = setInterval(() => {
-        const segsTranscurridos = Math.floor((Date.now() - cmd.tiempoInicioEstado) / 1000);
-        const mesaEl = document.querySelector(`.mesa[data-id="${id}"]`);
-        let b = cmd.badge;
-        if (!b && mesaEl) {
-          b = document.createElement('div');
-          b.className = 'timer-badge';
-          mesaEl.appendChild(b);
-          cmd.badge = b;
-        }
-        if (!b) return;
-
-        if (cmd.estado === 'INGRESO') {
-          const rest = 120 - segsTranscurridos;
-          if (rest >= 0) {
-            const m = String(Math.floor(rest / 60)).padStart(2, '0');
-            const s = String(rest % 60).padStart(2, '0');
-            b.textContent = `📥 ${m}:${s}`;
-            b.className = 'timer-badge';
-          } else {
-            b.textContent = `🚨 DEMORADO`;
-            b.className = 'timer-badge alerta-roja';
-          }
-        } 
-        else if (cmd.estado === 'PREPARACION') {
-          const m = String(Math.floor(segsTranscurridos / 60)).padStart(2, '0');
-          const s = String(segsTranscurridos % 60).padStart(2, '0');
-          b.textContent = `🔥 ${m}:${s}`;
-
-          if (segsTranscurridos < 300) {
-            b.className = 'timer-badge';
-          } else if (segsTranscurridos >= 300 && segsTranscurridos <= 600) {
-            b.className = 'timer-badge alerta-naranja';
-          } else {
-            b.className = 'timer-badge alerta-roja';
-          }
-        } 
-        else if (cmd.estado === 'MANOS') {
-          const rest = 60 - segsTranscurridos;
-          if (rest >= 0) {
-            const s = String(rest).padStart(2, '0');
-            b.textContent = `🖐️ ¡MANOS! 00:${s}`;
-            b.className = 'timer-badge alerta-manos';
-          } else {
-            b.textContent = `🚨 MANOS DEMORADO`;
-            b.className = 'timer-badge alerta-roja';
-          }
-        }
-      }, 1000);
-    }
-
-    function renderTicketsCocina() {
-      const contenedor = document.getElementById('contenedorTickets');
-      const sinComandas = document.getElementById('sinComandasTexto');
-      const cantEl = document.getElementById('cantComandas');
-
+    function renderizarPlanoYLateral() {
       const ids = Object.keys(comandasActivas);
-      cantEl.textContent = ids.length;
+      document.getElementById('cantComandas').textContent = ids.length;
 
+      // Actualizar lateral rápido
+      const contenedorLateral = document.getElementById('contenedorTicketsLateral');
       if (ids.length === 0) {
-        contenedor.innerHTML = '';
-        sinComandas.textContent = 'No hay comandas activas en cocina.';
-        contenedor.appendChild(sinComandas);
-        return;
-      }
-
-      contenedor.innerHTML = '';
-      ids.forEach(id => {
-        const cmd = comandasActivas[id];
-        const card = document.createElement('div');
-        card.className = `ticket-card ${cmd.urgente ? 'prioridad-urgente' : ''}`;
-        card.onclick = () => clickMesaCocina(id);
-
-        let itemsList = '<ul class="ticket-items">';
-        if(cmd.items && Array.isArray(cmd.items)) {
-          cmd.items.forEach(i => {
-            const esAgotado = platosAgotados.has(i.nombre);
-            itemsList += `<li>
-              <span class="${esAgotado ? 'item-agotado-texto' : ''}">• ${i.nombre}${esAgotado ? ' <span class="badge-agotado-tag">86</span>' : ''}</span> 
-              <strong style="font-size: 13px; color: #00ff66;">x${i.cantidad}</strong>
-            </li>`;
-          });
-        }
-        itemsList += '</ul>';
-
-        card.innerHTML = `
-          <div class="ticket-hdr">
-            <span>📍 ${cmd.id} ${cmd.urgente ? '<span class="badge-urgente-tag">URGENTE</span>' : ''}</span>
-            <small style="color:#ff9900; font-size:12px;">${cmd.estado || 'INGRESO'}</small>
-          </div>
-          ${itemsList}
-        `;
-        contenedor.appendChild(card);
-      });
-    }
-
-    function clickMesaCocina(id) {
-      if (!comandasActivas[id]) {
-        alert(`La ubicación [${id}] no posee comandas activas en cocina.`);
-        return;
-      }
-
-      idMesaSeleccionada = id;
-      const cmd = comandasActivas[id];
-
-      document.getElementById('tituloMesaCocina').textContent = `📍 ${id} ${cmd.urgente ? '(URGENTE)' : ''}`;
-
-      let detalleHtml = '<ul style="list-style:none; padding:0; font-size:13px;">';
-      if(cmd.items) {
-        cmd.items.forEach(i => {
-          const esAgotado = platosAgotados.has(i.nombre);
-          detalleHtml += `<li style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px dashed #333;">
-            <span style="color:#fff;" class="${esAgotado ? 'item-agotado-texto' : ''}">
-              ${i.nombre} ${esAgotado ? '<span class="badge-agotado-tag">AGOTADO</span>' : ''}
-            </span>
-            <strong style="color:#00ff66; font-size:14px;">x${i.cantidad}</strong>
-          </li>`;
+        contenedorLateral.innerHTML = '<p style="color:#666; font-size:12px; text-align:center; margin-top:20px;">Sin comandas pendientes.</p>';
+      } else {
+        contenedorLateral.innerHTML = '';
+        ids.forEach(id => {
+          const cmd = comandasActivas[id];
+          const div = document.createElement('div');
+          div.className = 'ticket-miniatura';
+          div.style.borderLeftColor = cmd.urgente ? '#ff0000' : '#e74c3c';
+          div.innerHTML = `<strong>📍 ${cmd.id}</strong> <span style="color:#ff9900; float:right;">${cmd.estado}</span>`;
+          contenedorLateral.appendChild(div);
         });
       }
-      detalleHtml += '</ul>';
 
-      document.getElementById('detallePlatosCocina').innerHTML = detalleHtml;
-      document.getElementById('modalAccionCocina').style.display = 'flex';
-    }
+      // Actualizar todas las tarjetas de mesas en el plano
+      const todasLasTarjetas = document.querySelectorAll('.mesa-tarjeta');
+      todasLasTarjetas.forEach(tarjeta => {
+        const idMesa = tarjeta.getAttribute('data-id');
+        const cmd = comandasActivas[idMesa];
+        const nombreMesa = tarjeta.querySelector('.mesa-nombre').textContent;
 
-    function cambiarEstadoMesa(nuevoEstado) {
-      if (!idMesaSeleccionada || !comandasActivas[idMesaSeleccionada]) return;
+        tarjeta.className = `mesa-tarjeta ${cmd ? 'ocupada' : ''} ${cmd && cmd.urgente ? 'urgente' : ''}`;
 
-      const cmd = comandasActivas[idMesaSeleccionada];
-      
-      historialAcciones.push({
-        id: idMesaSeleccionada,
-        estadoAnterior: cmd.estado,
-        urgenteAnterior: cmd.urgente,
-        tiempoAnterior: cmd.tiempoInicioEstado,
-        comandaCompleta: JSON.parse(JSON.stringify(cmd))
+        if (!cmd) {
+          tarjeta.innerHTML = `
+            <div class="mesa-hdr-info"><span class="mesa-nombre">${nombreMesa}</span><small style="color:#666;">Libre</small></div>
+            <p style="color:#555; font-size:12px; text-align:center; margin:auto;">Sin comanda</p>
+          `;
+        } else {
+          // Calcular tiempo transcurrido para temporizadores estrictos
+          const segundos = Math.floor((Date.now() - cmd.tiempoInicio) / 1000);
+          let badgeClass = 'timer-badge';
+          let textoTimer = '';
+
+          if (cmd.estado === 'RECIBIDO') {
+            const restante = 300 - segundos; // 5 min máx
+            if (restante >= 0) {
+              const m = String(Math.floor(restante / 60)).padStart(2, '0');
+              const s = String(restante % 60).padStart(2, '0');
+              textoTimer = `📥 Recibido ${m}:${s}`;
+            } else {
+              textoTimer = `🚨 RECIBIDO VENCIDO (00:00)`;
+              badgeClass += ' alerta-roja';
+              dispararAlarmaSonora();
+            }
+          } else if (cmd.estado === 'PREPARACION') {
+            // Entre 7 a 15 min (420 a 900 segs)
+            const m = String(Math.floor(segundos / 60)).padStart(2, '0');
+            const s = String(segundos % 60).padStart(2, '0');
+            textoTimer = `🔥 Prep. ${m}:${s}`;
+            if (segundos > 900) {
+              textoTimer = `🚨 PREP. DEMORADA (${m}:${s})`;
+              badgeClass += ' alerta-roja';
+              dispararAlarmaSonora();
+            } else if (segundos >= 420) {
+              badgeClass += ' alerta-naranja';
+            }
+          } else if (cmd.estado === 'MANOS') {
+            const restante = 60 - segundos; // 1 min para retirar
+            if (restante >= 0) {
+              const s = String(restante).padStart(2, '0');
+              textoTimer = `🖐️ ¡MANOS! 00:${s}`;
+              badgeClass += ' alerta-manos';
+            } else {
+              textoTimer = `🚨 ¡RETIRO VENCIDO (00:00)!`;
+              badgeClass += ' alerta-roja';
+              dispararAlarmaSonora();
+            }
+          }
+
+          let listaHtml = '<ul class="mesa-items-lista">';
+          cmd.items.forEach(i => {
+            const agotado = platosAgotados.has(i.nombre);
+            listaHtml += `<li><span class="${agotado ? 'item-agotado-texto' : ''}">• ${i.nombre}${agotado ? '<span class="badge-agotado-tag">86</span>' : ''}</span><strong style="color:#00ff66;">x${i.cantidad}</strong></li>`;
+          });
+          listaHtml += '</ul>';
+
+          tarjeta.innerHTML = `
+            <div class="mesa-hdr-info">
+              <span class="mesa-nombre">${nombreMesa}</span>
+              <small style="color:${cmd.urgente?'#ff0000':'#ff9900'}; font-weight:bold;">${cmd.urgente ? 'URGENTE' : cmd.estado}</small>
+            </div>
+            ${listaHtml}
+            <div class="${badgeClass}">${textoTimer}</div>
+          `;
+        }
       });
-
-      cmd.estado = nuevoEstado;
-      cmd.tiempoInicioEstado = Date.now();
-
-      guardarDatosStorage();
-      iniciarIntervaloComanda(idMesaSeleccionada);
-      renderTicketsCocina();
-      cerrarModal('modalAccionCocina');
     }
 
-    function toggleUrgenteMesa() {
-      if (!idMesaSeleccionada || !comandasActivas[idMesaSeleccionada]) return;
+    let audioReproduciendose = false;
+    function dispararAlarmaSonora() {
+      if (audioReproduciendose) return;
+      audioReproduciendose = true;
+      const audio = document.getElementById('alarmaSonora');
+      audio.play().catch(e => console.log("Audio bloqueado por navegador", e));
+      setTimeout(() => { audioReproduciendose = false; }, 10000);
+    }
 
-      const cmd = comandasActivas[idMesaSeleccionada];
-      cmd.urgente = !cmd.urgente;
+    function abrirModalEstado(idMesa) {
+      mesaSeleccionadaId = idMesa;
+      const cmd = comandasActivas[idMesa];
+      document.getElementById('tituloModalMesa').textContent = `📍 ${idMesa}`;
 
-      const mesaEl = document.querySelector(`.mesa[data-id="${idMesaSeleccionada}"]`);
-      if (mesaEl) {
-        mesaEl.classList.toggle('urgente', cmd.urgente);
+      const detalleDiv = document.getElementById('detallePlatosModal');
+      if (!cmd) {
+        detalleDiv.innerHTML = '<p style="color:#777; text-align:center;">Esta ubicación no tiene comanda activa en este momento.</p>';
+      } else {
+        let html = '<ul style="list-style:none; padding:0;">';
+        cmd.items.forEach(i => {
+          const agotado = platosAgotados.has(i.nombre);
+          html += `<li style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px dashed #333;">
+            <span class="${agotado ? 'item-agotado-texto' : ''}">${i.nombre}</span>
+            <strong style="color:#00ff66;">x${i.cantidad}</strong>
+          </li>`;
+        });
+        html += '</ul>';
+        detalleDiv.innerHTML = html;
       }
 
-      guardarDatosStorage();
-      renderTicketsCocina();
-      cerrarModal('modalAccionCocina');
+      document.getElementById('modalEstadoCocina').style.display = 'flex';
     }
 
-    function despacharComanda() {
-      if (!idMesaSeleccionada || !comandasActivas[idMesaSeleccionada]) return;
-
-      const cmd = comandasActivas[idMesaSeleccionada];
-      
-      historialAcciones.push({
-        accion: 'DESPACHAR',
-        id: idMesaSeleccionada,
-        comandaCompleta: JSON.parse(JSON.stringify(cmd))
-      });
-
-      if (cmd.intervalo) clearInterval(cmd.intervalo);
-      delete comandasActivas[idMesaSeleccionada];
-      guardarDatosStorage();
-
-      const mesaEl = document.querySelector(`.mesa[data-id="${idMesaSeleccionada}"]`);
-      if (mesaEl) {
-        mesaEl.classList.remove('ocupada', 'urgente');
-        const badge = mesaEl.querySelector('.timer-badge');
-        if (badge) badge.remove();
-      }
-
-      renderTicketsCocina();
-      cerrarModal('modalAccionCocina');
-    }
-
-    function deshacerUltimaAccion() {
-      if (historialAcciones.length === 0) {
-        alert("No hay acciones recientes para deshacer.");
+    function cambiarEstadoCocina(nuevoEstado) {
+      if (!mesaSeleccionadaId || !comandasActivas[mesaSeleccionadaId]) {
+        alert("No hay comanda activa en esta mesa para cambiar estado.");
+        cerrarModal('modalEstadoCocina');
         return;
       }
 
-      const ultimaAccion = historialAcciones.pop();
+      const cmd = comandasActivas[mesaSeleccionadaId];
+      cmd.estado = nuevoEstado;
+      cmd.tiempoInicio = Date.now(); // Reinicia el temporizador para el nuevo estado
 
-      if (ultimaAccion.accion === 'DESPACHAR') {
-        const restoredCmd = ultimaAccion.comandaCompleta;
-        const mesaEl = document.querySelector(`.mesa[data-id="${restoredCmd.id}"]`);
-        
-        if (mesaEl) {
-          mesaEl.classList.add('ocupada');
-          if (restoredCmd.urgente) mesaEl.classList.add('urgente');
-          
-          let timerBadge = document.createElement('div');
-          timerBadge.className = 'timer-badge';
-          mesaEl.appendChild(timerBadge);
-          restoredCmd.badge = timerBadge;
-        }
+      guardarStorage();
+      renderizarPlanoYLateral();
+      cerrarModal('modalEstadoCocina');
+    }
 
-        comandasActivas[restoredCmd.id] = restoredCmd;
-        guardarDatosStorage();
-        iniciarIntervaloComanda(restoredCmd.id);
-      } else {
-        const cmd = comandasActivas[ultimaAccion.id];
-        if (cmd) {
-          cmd.estado = ultimaAccion.estadoAnterior;
-          cmd.urgente = ultimaAccion.urgenteAnterior;
-          cmd.tiempoInicioEstado = ultimaAccion.tiempoAnterior;
-          guardarDatosStorage();
-          iniciarIntervaloComanda(cmd.id);
-        }
-      }
-
-      renderTicketsCocina();
+    function toggleUrgente() {
+      if (!mesaSeleccionadaId || !comandasActivas[mesaSeleccionadaId]) return;
+      const cmd = comandasActivas[mesaSeleccionadaId];
+      cmd.urgente = !cmd.urgente;
+      guardarStorage();
+      renderizarPlanoYLateral();
+      cerrarModal('modalEstadoCocina');
     }
 
     function abrirResumenAcumulado() {
-      const contenedor = document.getElementById('contenidoResumenAcumulado');
+      const contenedor = document.getElementById('contenidoResumen');
       const acumulado = {};
-
       Object.values(comandasActivas).forEach(cmd => {
-        if(cmd.items) {
-          cmd.items.forEach(i => {
-            if (acumulado[i.nombre]) {
-              acumulado[i.nombre] += i.cantidad;
-            } else {
-              acumulado[i.nombre] = i.cantidad;
-            }
-          });
-        }
+        cmd.items.forEach(i => {
+          acumulado[i.nombre] = (acumulado[i.nombre] || 0) + i.cantidad;
+        });
       });
 
       const keys = Object.keys(acumulado);
       if (keys.length === 0) {
-        contenedor.innerHTML = '<p style="color:#aaa; font-size:13px; text-align:center;">No hay ítems en preparación.</p>';
+        contenedor.innerHTML = '<p style="color:#888; text-align:center; font-size:13px;">No hay platos activos.</p>';
       } else {
-        let html = `<table class="tabla-resumen-acumulado">
-          <thead>
-            <tr>
-              <th>PLATO / CORTES</th>
-              <th style="text-align:right;">TOTAL</th>
-            </tr>
-          </thead>
-          <tbody>`;
-        keys.forEach(plato => {
-          html += `<tr>
-            <td>${plato}</td>
-            <td style="text-align:right; font-weight:bold; color:#00ff66; font-size:14px;">x${acumulado[plato]}</td>
-          </tr>`;
+        let html = '<table class="tabla-resumen-acumulado"><thead><tr><th>PLATO</th><th style="text-align:right;">TOTAL</th></tr></thead><tbody>';
+        keys.forEach(p => {
+          html += `<tr><td>${p}</td><td style="text-align:right; color:#00ff66; font-weight:bold;">x${acumulado[p]}</td></tr>`;
         });
         html += '</tbody></table>';
         contenedor.innerHTML = html;
       }
-
-      document.getElementById('modalResumenAcumulado').style.display = 'flex';
+      document.getElementById('modalResumen').style.display = 'flex';
     }
 
     function abrirAgotadosModal() {
       const contenedor = document.getElementById('listaAgotadosContenedor');
       contenedor.innerHTML = '';
-
       if (catalogoPlatos.length === 0) {
-        contenedor.innerHTML = '<p style="color:#888; font-size:12px; text-align:center;">Cargando catálogo desde Firebase...</p>';
+        contenedor.innerHTML = '<p style="color:#888; font-size:12px; text-align:center;">Cargando catálogo...</p>';
       } else {
         catalogoPlatos.forEach(plato => {
           const checked = platosAgotados.has(plato) ? 'checked' : '';
           const row = document.createElement('div');
           row.className = 'item-agotado-row';
-          row.innerHTML = `
-            <span style="font-size:13px;">${plato}</span>
-            <input type="checkbox" ${checked} onchange="toggleAgotadoPlato('${plato}')">
-          `;
+          row.innerHTML = `<span>${plato}</span><input type="checkbox" ${checked} onchange="toggleAgotado('${plato}')">`;
           contenedor.appendChild(row);
         });
       }
-
       document.getElementById('modalAgotados').style.display = 'flex';
     }
 
-    function toggleAgotadoPlato(nombrePlato) {
-      if (platosAgotados.has(nombrePlato)) {
-        platosAgotados.delete(nombrePlato);
-      } else {
-        platosAgotados.add(nombrePlato);
-      }
-      renderTicketsCocina();
-    }
-
-    function verArqueoCaja() {
-      const historialCaja = JSON.parse(localStorage.getItem('historialCaja')) || [];
-      let totFacturado = 0, totPropinas = 0;
-      historialCaja.forEach(h => {
-        totFacturado += h.total;
-        totPropinas += h.propina;
-      });
-
-      document.getElementById('totalArqueoModal').textContent = `$${totFacturado.toLocaleString('es-AR')}`;
-      document.getElementById('totalPropinasModal').textContent = `$${totPropinas.toLocaleString('es-AR')}`;
-      document.getElementById('totalTicketsModal').textContent = historialCaja.length;
-
-      document.getElementById('modalArqueoCaja').style.display = 'flex';
+    function toggleAgotado(plato) {
+      if (platosAgotados.has(plato)) platosAgotados.delete(plato);
+      else platosAgotados.add(plato);
+      renderizarPlanoYLateral();
     }
 
     function cerrarModal(id) {
