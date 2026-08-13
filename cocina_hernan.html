@@ -27,17 +27,17 @@
 
     header {
       background: linear-gradient(90deg, #b03a2e, #d35400);
-      padding: 8px 16px;
+      padding: 10px 16px;
       border-radius: 6px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
     }
 
     header h1 {
-      font-size: 16px;
+      font-size: 17px;
       font-weight: bold;
       text-transform: uppercase;
       letter-spacing: 1px;
@@ -57,9 +57,9 @@
       background-color: #1c2833;
       color: #fff;
       border: 1px solid #34495e;
-      padding: 6px 12px;
+      padding: 8px 14px;
       border-radius: 5px;
-      font-size: 11px;
+      font-size: 12px;
       font-weight: bold;
       cursor: pointer;
       display: flex;
@@ -98,9 +98,9 @@
       background-color: #1c2833;
       color: #00ff66;
       border: 1px solid #27ae60;
-      padding: 6px 12px;
+      padding: 8px 14px;
       border-radius: 5px;
-      font-size: 11px;
+      font-size: 12px;
       font-weight: bold;
       cursor: pointer;
       display: flex;
@@ -111,9 +111,9 @@
     .badge-live {
       background-color: #000;
       color: #ff9900;
-      font-size: 11px;
+      font-size: 12px;
       font-weight: bold;
-      padding: 4px 8px;
+      padding: 6px 10px;
       border-radius: 12px;
       border: 1px solid #ff9900;
     }
@@ -121,43 +121,44 @@
     /* LAYOUT PRINCIPAL */
     .layout-cocina {
       display: grid;
-      grid-template-columns: 320px 1fr;
-      gap: 10px;
+      grid-template-columns: 360px 1fr;
+      gap: 12px;
     }
 
     .panel-box {
       background-color: #161616;
       border: 1px solid #2a2a2a;
       border-radius: 8px;
-      padding: 12px;
+      padding: 14px;
     }
 
     .seccion-titulo {
-      font-size: 11px;
+      font-size: 12px;
       font-weight: bold;
       color: #ff9900;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
-    /* TICKETS EN COCINA */
+    /* TICKETS EN COCINA (MEJOR LEÍDOS) */
     .contenedor-tickets {
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      max-height: calc(100vh - 100px);
+      gap: 10px;
+      max-height: calc(100vh - 110px);
       overflow-y: auto;
+      padding-right: 4px;
     }
 
     .ticket-card {
       background-color: #1c1c1c;
-      border-left: 4px solid #e74c3c;
-      border-radius: 5px;
-      padding: 8px 10px;
+      border-left: 5px solid #e74c3c;
+      border-radius: 6px;
+      padding: 10px 12px;
       cursor: pointer;
       transition: transform 0.1s, border-color 0.2s;
       position: relative;
@@ -170,13 +171,13 @@
 
     .ticket-card.prioridad-urgente {
       border: 2px solid #e74c3c !important;
-      border-left: 6px solid #ff0000 !important;
+      border-left: 7px solid #ff0000 !important;
       animation: pulsoUrgente 1.2s infinite;
     }
 
     @keyframes pulsoUrgente {
       0% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.5); }
-      70% { box-shadow: 0 0 0 8px rgba(231, 76, 60, 0); }
+      70% { box-shadow: 0 0 0 10px rgba(231, 76, 60, 0); }
       100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
     }
 
@@ -185,23 +186,24 @@
       justify-content: space-between;
       align-items: center;
       font-weight: bold;
-      font-size: 12px;
-      margin-bottom: 4px;
-      padding-bottom: 4px;
+      font-size: 13px;
+      margin-bottom: 6px;
+      padding-bottom: 6px;
       border-bottom: 1px solid #333;
     }
 
     .ticket-items {
-      font-size: 11px;
-      color: #ddd;
+      font-size: 12px;
+      color: #eee;
       list-style: none;
       padding: 0;
     }
 
     .ticket-items li {
-      padding: 2px 0;
+      padding: 3px 0;
       display: flex;
       justify-content: space-between;
+      font-weight: 500;
     }
 
     .item-agotado-texto {
@@ -212,8 +214,8 @@
     .badge-agotado-tag {
       background-color: #900;
       color: #fff;
-      font-size: 9px;
-      padding: 1px 4px;
+      font-size: 10px;
+      padding: 1px 5px;
       border-radius: 3px;
       margin-left: 4px;
     }
@@ -221,53 +223,54 @@
     .badge-urgente-tag {
       background-color: #e74c3c;
       color: #fff;
-      font-size: 9px;
+      font-size: 10px;
       font-weight: bold;
-      padding: 1px 5px;
+      padding: 2px 6px;
       border-radius: 3px;
       text-transform: uppercase;
     }
 
-    /* MAPA CONTENEDOR REDUCIDO Y OPTIMIZADO */
+    /* MAPA CONTENEDOR AMPLIADO Y ESPACIADO */
     .mapa-contenedor {
       background-color: #0b0b0b;
       border: 1px dashed #333;
       border-radius: 8px;
-      padding: 12px;
-      display: grid;
-      grid-template-rows: auto auto 1fr;
-      gap: 12px;
-      min-height: calc(100vh - 100px);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      min-height: calc(100vh - 110px);
     }
 
     .grupo-zona {
       background: #121212;
       border: 1px solid #222;
-      border-radius: 6px;
-      padding: 8px;
+      border-radius: 8px;
+      padding: 12px;
     }
 
     .etiqueta-zona {
-      font-size: 11px;
+      font-size: 12px;
       font-weight: bold;
-      color: #888;
-      margin-bottom: 8px;
+      color: #aaa;
+      margin-bottom: 10px;
       display: block;
       text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .grilla-mesas {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 12px;
     }
 
-    /* TARJETAS DE MESAS */
+    /* TARJETAS DE MESAS RECTANGULARES MÁS GRANDES */
     .mesa {
       background-color: #222;
-      border: 1px solid #444;
-      border-radius: 5px;
-      padding: 6px;
+      border: 2px solid #444;
+      border-radius: 8px;
+      padding: 10px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -275,28 +278,28 @@
       cursor: pointer;
       user-select: none;
       transition: all 0.2s;
-      min-width: 105px;
-      height: 52px;
+      min-width: 140px;
+      height: 75px;
       position: relative;
     }
 
-    .mesa:hover { border-color: #ff6600; }
-    .mesa .nombre { font-size: 11px; font-weight: bold; text-align: center; }
+    .mesa:hover { border-color: #ff6600; transform: translateY(-2px); }
+    .mesa .nombre { font-size: 13px; font-weight: bold; text-align: center; color: #fff; }
 
     .mesa.ocupada { background-color: #7b241c; border-color: #e74c3c; }
     .mesa.express { border-style: dashed; }
     .mesa.urgente { border: 2px solid #ff0000; animation: pulsoUrgente 1.2s infinite; }
 
-    /* BADGES DE TEMPORIZADOR */
+    /* BADGES DE TEMPORIZADOR AMPLIADOS */
     .timer-badge {
-      margin-top: 2px;
+      margin-top: 5px;
       background-color: #000;
       color: #00ffcc;
       font-family: monospace;
-      font-size: 10px;
+      font-size: 11px;
       font-weight: bold;
-      padding: 1px 4px;
-      border-radius: 3px;
+      padding: 2px 6px;
+      border-radius: 4px;
       border: 1px solid #00ffcc;
       text-align: center;
     }
@@ -336,9 +339,9 @@
       background-color: #181818;
       border: 1px solid #444;
       border-radius: 8px;
-      padding: 18px;
+      padding: 20px;
       width: 90%;
-      max-width: 460px;
+      max-width: 480px;
       max-height: 90vh;
       overflow-y: auto;
       box-shadow: 0 5px 20px rgba(0,0,0,0.8);
@@ -363,12 +366,12 @@
 
     .btn-accion-cocina {
       width: 100%;
-      padding: 10px;
+      padding: 12px;
       margin-bottom: 8px;
       border: none;
-      border-radius: 5px;
+      border-radius: 6px;
       font-weight: bold;
-      font-size: 12px;
+      font-size: 13px;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -417,18 +420,18 @@
     .tabla-resumen-acumulado {
       width: 100%;
       border-collapse: collapse;
-      font-size: 12px;
+      font-size: 13px;
     }
 
     .tabla-resumen-acumulado th {
       text-align: left;
       color: #ff9900;
       border-bottom: 1px solid #333;
-      padding: 6px 4px;
+      padding: 8px 4px;
     }
 
     .tabla-resumen-acumulado td {
-      padding: 6px 4px;
+      padding: 8px 4px;
       border-bottom: 1px solid #222;
     }
 
@@ -443,7 +446,7 @@
 
   <!-- HEADER HERNÁN COCINA -->
   <header>
-    <h1>🔥 LA PERSEVERANCIA <span style="font-size: 11px; opacity: 0.85; font-weight: normal;">| Vista Cocina (Hernán)</span></h1>
+    <h1>🔥 LA PERSEVERANCIA <span style="font-size: 12px; opacity: 0.85; font-weight: normal;">| Vista Cocina (Hernán)</span></h1>
     
     <div class="acciones-header">
       <!-- BOTÓN CONSOLIDADO RESUMEN -->
@@ -477,17 +480,17 @@
     <aside class="panel-box">
       <div class="seccion-titulo">
         <span>📋 COMANDAS EN COCINA</span>
-        <span id="cantComandas" style="color: #00ff66;">0</span>
+        <span id="cantComandas" style="color: #00ff66; font-size: 13px;">0</span>
       </div>
 
       <div class="contenedor-tickets" id="contenedorTickets">
-        <p id="sinComandasTexto" style="color: #666; font-size: 11px; text-align: center; margin-top: 30px;">
+        <p id="sinComandasTexto" style="color: #666; font-size: 12px; text-align: center; margin-top: 30px;">
           Sincronizando comandas desde Firebase...
         </p>
       </div>
     </aside>
 
-    <!-- PANEL DERECHO: PLANO COMPACTO DE MESAS, MOSTRADOR, DELIVERY Y PICKUP -->
+    <!-- PANEL DERECHO: PLANO AMPLIADO DE MESAS, MOSTRADOR, DELIVERY Y PICKUP -->
     <main class="panel-box">
       <div class="seccion-titulo">
         <span>📍 PLANO DE MESAS Y CANALES DIRECTOS</span>
@@ -538,9 +541,9 @@
       </div>
 
       <!-- DETALLE DE PLATOS -->
-      <div id="detallePlatosCocina" style="background: #111; padding: 10px; border-radius: 6px; border: 1px solid #333; margin-bottom: 12px;"></div>
+      <div id="detallePlatosCocina" style="background: #111; padding: 12px; border-radius: 6px; border: 1px solid #333; margin-bottom: 14px;"></div>
 
-      <p style="font-size: 11px; color: #aaa; margin-bottom: 8px; text-align: center;">ACCIONES Y CAMBIO DE ESTADO:</p>
+      <p style="font-size: 12px; color: #aaa; margin-bottom: 10px; text-align: center; font-weight: bold;">ACCIONES Y CAMBIO DE ESTADO:</p>
 
       <button class="btn-accion-cocina btn-preparacion" onclick="cambiarEstadoMesa('PREPARACION')">
         🔥 PASAR A PREPARACIÓN (5-10 min)
@@ -572,7 +575,7 @@
         <button class="btn-cerrar-modal" onclick="cerrarModal('modalResumenAcumulado')">✕</button>
       </div>
 
-      <div id="contenidoResumenAcumulado" style="background: #111; padding: 12px; border-radius: 6px; border: 1px solid #333; margin-bottom: 12px;">
+      <div id="contenidoResumenAcumulado" style="background: #111; padding: 12px; border-radius: 6px; border: 1px solid #333; margin-bottom: 14px;">
         <!-- Se genera dinámicamente -->
       </div>
 
@@ -590,7 +593,7 @@
         <button class="btn-cerrar-modal" onclick="cerrarModal('modalAgotados')">✕</button>
       </div>
 
-      <p style="font-size: 11px; color: #aaa; margin-bottom: 10px;">
+      <p style="font-size: 12px; color: #aaa; margin-bottom: 12px;">
         Seleccione los platos sin stock para tacharlos en las comandas:
       </p>
 
@@ -598,7 +601,7 @@
         <!-- Generado dinámicamente -->
       </div>
 
-      <button class="btn-accion-cocina" style="background-color: #27ae60; color: white; margin-top: 8px;" onclick="cerrarModal('modalAgotados')">
+      <button class="btn-accion-cocina" style="background-color: #27ae60; color: white; margin-top: 10px;" onclick="cerrarModal('modalAgotados')">
         GUARDAR Y CERRAR
       </button>
     </div>
@@ -612,16 +615,16 @@
         <button class="btn-cerrar-modal" onclick="cerrarModal('modalArqueoCaja')">✕</button>
       </div>
 
-      <div style="background: #111; padding: 12px; border-radius: 6px; border: 1px solid #333; font-size: 12px; display: flex; flex-direction: column; gap: 8px;">
-        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #222; padding-bottom: 4px;">
+      <div style="background: #111; padding: 14px; border-radius: 6px; border: 1px solid #333; font-size: 13px; display: flex; flex-direction: column; gap: 10px;">
+        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #222; padding-bottom: 6px;">
           <span style="color:#aaa;">Total Recaudado (Caja General):</span>
           <strong style="color:#00ff66;" id="totalArqueoModal">$0</strong>
         </div>
-        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #222; padding-bottom: 4px;">
+        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #222; padding-bottom: 6px;">
           <span style="color:#aaa;">Total Propinas:</span>
           <strong style="color:#ff9900;" id="totalPropinasModal">$0</strong>
         </div>
-        <div style="display: flex; justify-content: space-between; font-size: 13px; padding-top: 4px;">
+        <div style="display: flex; justify-content: space-between; font-size: 14px; padding-top: 4px;">
           <span style="color:#3498db; font-weight: bold;">CANTIDAD DE TICKETS COBRADOS:</span>
           <strong style="color:#3498db;" id="totalTicketsModal">0</strong>
         </div>
@@ -653,7 +656,6 @@
     };
 
     function sincronizarDatosFirebase() {
-      // 1. Escuchar el menú dinámicamente para el catálogo de Agotados
       db.ref('menu').on('value', (snapshot) => {
         const data = snapshot.val();
         if (data) {
@@ -665,7 +667,6 @@
         }
       });
 
-      // 2. Sincronizar comandas activas desde LocalStorage / sincronizado con la comandera de Caja (mismo motor de almacenamiento local compartido en el navegador o pestaña)
       window.addEventListener('storage', (e) => {
         if (e.key === 'comandasActivas' || e.key === 'historialCaja') {
           actualizarDatosLocales();
@@ -673,19 +674,17 @@
       });
 
       actualizarDatosLocales();
-      setInterval(actualizarDatosLocales, 2000); // Polling de respaldo para asegurar sincronización fluida entre pestañas locales
+      setInterval(actualizarDatosLocales, 2000);
     }
 
     function actualizarDatosLocales() {
       const storedComandas = JSON.parse(localStorage.getItem('comandasActivas')) || {};
       
-      // Actualizar estados conservando intervalos activos si ya existían
       Object.keys(storedComandas).forEach(id => {
         if (!comandasActivas[id]) {
           comandasActivas[id] = storedComandas[id];
           iniciarIntervaloComanda(id);
         } else {
-          // Actualizar ítems o estado si cambiaron desde la otra terminal
           comandasActivas[id].items = storedComandas[id].items;
           if(storedComandas[id].estado && storedComandas[id].estado !== comandasActivas[id].estado) {
             comandasActivas[id].estado = storedComandas[id].estado;
@@ -693,7 +692,6 @@
         }
       });
 
-      // Limpiar eliminadas
       Object.keys(comandasActivas).forEach(id => {
         if (!storedComandas[id]) {
           if (comandasActivas[id].intervalo) clearInterval(comandasActivas[id].intervalo);
@@ -707,7 +705,6 @@
         }
       });
 
-      // Refrescar mapa visual de mesas
       Object.keys(comandasActivas).forEach(id => {
         const mesaEl = document.querySelector(`.mesa[data-id="${id}"]`);
         if (mesaEl) {
@@ -722,7 +719,6 @@
         }
       });
 
-      // Actualizar monto de caja rápido en header
       const historialCaja = JSON.parse(localStorage.getItem('historialCaja')) || [];
       let totalCaja = 0;
       historialCaja.forEach(h => totalCaja += h.total);
@@ -745,7 +741,6 @@
       localStorage.setItem('comandasActivas', JSON.stringify(storageObj));
     }
 
-    // INTERVALO DE TEMPORIZADORES DE COCINA
     function iniciarIntervaloComanda(id) {
       const cmd = comandasActivas[id];
       if (!cmd) return;
@@ -803,7 +798,6 @@
       }, 1000);
     }
 
-    // RENDERIZAR TICKETS EN COCINA (PANEL IZQUIERDO)
     function renderTicketsCocina() {
       const contenedor = document.getElementById('contenedorTickets');
       const sinComandas = document.getElementById('sinComandasTexto');
@@ -832,7 +826,7 @@
             const esAgotado = platosAgotados.has(i.nombre);
             itemsList += `<li>
               <span class="${esAgotado ? 'item-agotado-texto' : ''}">• ${i.nombre}${esAgotado ? ' <span class="badge-agotado-tag">86</span>' : ''}</span> 
-              <strong>x${i.cantidad}</strong>
+              <strong style="font-size: 13px; color: #00ff66;">x${i.cantidad}</strong>
             </li>`;
           });
         }
@@ -841,7 +835,7 @@
         card.innerHTML = `
           <div class="ticket-hdr">
             <span>📍 ${cmd.id} ${cmd.urgente ? '<span class="badge-urgente-tag">URGENTE</span>' : ''}</span>
-            <small style="color:#ff9900;">${cmd.estado || 'INGRESO'}</small>
+            <small style="color:#ff9900; font-size:12px;">${cmd.estado || 'INGRESO'}</small>
           </div>
           ${itemsList}
         `;
@@ -860,15 +854,15 @@
 
       document.getElementById('tituloMesaCocina').textContent = `📍 ${id} ${cmd.urgente ? '(URGENTE)' : ''}`;
 
-      let detalleHtml = '<ul style="list-style:none; padding:0; font-size:12px;">';
+      let detalleHtml = '<ul style="list-style:none; padding:0; font-size:13px;">';
       if(cmd.items) {
         cmd.items.forEach(i => {
           const esAgotado = platosAgotados.has(i.nombre);
-          detalleHtml += `<li style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px dashed #222;">
+          detalleHtml += `<li style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px dashed #333;">
             <span style="color:#fff;" class="${esAgotado ? 'item-agotado-texto' : ''}">
               ${i.nombre} ${esAgotado ? '<span class="badge-agotado-tag">AGOTADO</span>' : ''}
             </span>
-            <strong style="color:#00ff66;">x${i.cantidad}</strong>
+            <strong style="color:#00ff66; font-size:14px;">x${i.cantidad}</strong>
           </li>`;
         });
       }
@@ -878,13 +872,11 @@
       document.getElementById('modalAccionCocina').style.display = 'flex';
     }
 
-    // GESTIÓN DE ESTADOS Y DESHACER
     function cambiarEstadoMesa(nuevoEstado) {
       if (!idMesaSeleccionada || !comandasActivas[idMesaSeleccionada]) return;
 
       const cmd = comandasActivas[idMesaSeleccionada];
       
-      // Guardar en historial para UNDO
       historialAcciones.push({
         id: idMesaSeleccionada,
         estadoAnterior: cmd.estado,
@@ -983,7 +975,6 @@
       renderTicketsCocina();
     }
 
-    // CONSOLIDADO RESUMEN ACUMULADO
     function abrirResumenAcumulado() {
       const contenedor = document.getElementById('contenidoResumenAcumulado');
       const acumulado = {};
@@ -1002,7 +993,7 @@
 
       const keys = Object.keys(acumulado);
       if (keys.length === 0) {
-        contenedor.innerHTML = '<p style="color:#aaa; font-size:12px; text-align:center;">No hay ítems en preparación.</p>';
+        contenedor.innerHTML = '<p style="color:#aaa; font-size:13px; text-align:center;">No hay ítems en preparación.</p>';
       } else {
         let html = `<table class="tabla-resumen-acumulado">
           <thead>
@@ -1015,7 +1006,7 @@
         keys.forEach(plato => {
           html += `<tr>
             <td>${plato}</td>
-            <td style="text-align:right; font-weight:bold; color:#00ff66;">x${acumulado[plato]}</td>
+            <td style="text-align:right; font-weight:bold; color:#00ff66; font-size:14px;">x${acumulado[plato]}</td>
           </tr>`;
         });
         html += '</tbody></table>';
@@ -1025,20 +1016,19 @@
       document.getElementById('modalResumenAcumulado').style.display = 'flex';
     }
 
-    // CONTROL DE AGOTADOS (86)
     function abrirAgotadosModal() {
       const contenedor = document.getElementById('listaAgotadosContenedor');
       contenedor.innerHTML = '';
 
       if (catalogoPlatos.length === 0) {
-        contenedor.innerHTML = '<p style="color:#888; font-size:11px; text-align:center;">Cargando catálogo desde Firebase...</p>';
+        contenedor.innerHTML = '<p style="color:#888; font-size:12px; text-align:center;">Cargando catálogo desde Firebase...</p>';
       } else {
         catalogoPlatos.forEach(plato => {
           const checked = platosAgotados.has(plato) ? 'checked' : '';
           const row = document.createElement('div');
           row.className = 'item-agotado-row';
           row.innerHTML = `
-            <span>${plato}</span>
+            <span style="font-size:13px;">${plato}</span>
             <input type="checkbox" ${checked} onchange="toggleAgotadoPlato('${plato}')">
           `;
           contenedor.appendChild(row);
