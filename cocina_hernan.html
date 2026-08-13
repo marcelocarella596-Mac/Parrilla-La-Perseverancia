@@ -161,7 +161,7 @@
     /* LAYOUT PRINCIPAL */
     .layout-cocina {
       display: grid;
-      grid-template-columns: 360px 1fr;
+      grid-template-columns: 380px 1fr;
       gap: 14px;
     }
 
@@ -184,11 +184,11 @@
       align-items: center;
     }
 
-    /* MARGEN IZQUIERDO: ÍTEMS DE COCINA */
+    /* MARGEN IZQUIERDO: ÍTEMS DE COCINA RESALTADOS Y BOTÓN DE LIMPIAR */
     .contenedor-tickets-lateral {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
       max-height: calc(100vh - 120px);
       overflow-y: auto;
       padding-right: 4px;
@@ -197,15 +197,34 @@
     .item-cocina-card {
       background-color: #1c1c1c;
       border: 2px solid #e74c3c;
+      border-left: 6px solid #e74c3c; /* Resaltado fuerte en el margen izquierdo */
       border-radius: 6px;
       padding: 12px;
       display: flex;
       flex-direction: column;
-      gap: 6px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      transition: all 0.2s;
+    }
+
+    .item-cocina-card.estado-recibido {
+      border-left-color: #2980b9;
+      border-color: #2980b9;
+    }
+
+    .item-cocina-card.estado-preparacion {
+      border-left-color: #d35400;
+      border-color: #d35400;
+    }
+
+    .item-cocina-card.estado-manos {
+      border-left-color: #27ae60;
+      border-color: #27ae60;
+      background-color: #112218;
     }
 
     .item-cocina-card.urgente-card {
+      border-left-color: #ff0000 !important;
       border-color: #ff0000 !important;
       background-color: #2b1111;
       animation: pulsoUrgenteCard 1s infinite;
@@ -222,7 +241,7 @@
       justify-content: space-between;
       align-items: center;
       border-bottom: 1px solid #333;
-      padding-bottom: 4px;
+      padding-bottom: 6px;
     }
 
     .item-cocina-mesa {
@@ -240,24 +259,51 @@
       color: #fff;
     }
 
+    .item-cocina-cuerpo {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
     .item-cocina-nombre {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: bold;
       color: #ffffff;
-      padding: 4px 0;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
     .item-cocina-cant {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: bold;
       color: #00ff66;
       background: #000;
-      padding: 2px 10px;
+      padding: 2px 8px;
       border-radius: 4px;
       border: 1px solid #00ff66;
+    }
+
+    /* BOTÓN LIMPIAR COMANDA (VISIBLE SÓLO EN ESTADO ¡MANOS!) */
+    .btn-limpiar-comanda {
+      background-color: #27ae60;
+      color: white;
+      border: none;
+      padding: 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 4px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+      transition: background 0.2s;
+    }
+    .btn-limpiar-comanda:hover {
+      background-color: #219653;
     }
 
     /* MAPA DE MESAS */
@@ -566,7 +612,7 @@
   <!-- LAYOUT PRINCIPAL -->
   <div class="layout-cocina">
 
-    <!-- PANEL IZQUIERDO: ÍTEMS DE COCINA AMPLIADOS Y RESALTADOS -->
+    <!-- PANEL IZQUIERDO: ÍTEMS DE COCINA RESALTADOS Y BOTÓN DE LIMPIAR -->
     <aside class="panel-box">
       <div class="seccion-titulo">
         <span>🍳 ÍTEMS DE COCINA (FIFO)</span>
@@ -727,7 +773,6 @@
       sincronizarFirebase();
       iniciarReloj();
       obtenerClimaYDolar();
-      // Actualizar clima y dólar cada 10 minutos
       setInterval(obtenerClimaYDolar, 600000);
     };
 
@@ -741,7 +786,6 @@
     }
 
     async function obtenerClimaYDolar() {
-      // 1. Obtener Dólar Blue desde API pública (DolarAPI Argentina)
       try {
         const resDolar = await fetch('https://dolarapi.com/v1/dolares/blue');
         const dataDolar = await resDolar.json();
@@ -752,7 +796,6 @@
         document.getElementById('dolarHeader').textContent = 'USD: N/D';
       }
 
-      // 2. Obtener Temperatura de Buenos Aires (Open-Meteo API libre sin API key)
       try {
         const resClima = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-34.6132&longitude=-58.3772&current=temperature_2m');
         const dataClima = await resClima.json();
@@ -847,23 +890,46 @@
         contenedorLateral.innerHTML = '';
         ids.forEach(id => {
           const cmd = comandasActivas[id];
+          const card = document.createElement('div');
+          
+          let claseEstado = 'estado-recibido';
+          if (cmd.estado === 'PREPARACION') claseEstado = 'estado-preparacion';
+          if (cmd.estado === 'MANOS') claseEstado = 'estado-manos';
+
+          card.className = `item-cocina-card ${claseEstado} ${cmd.urgente ? 'urgente-card' : ''}`;
+          
+          let itemsHtml = '';
           cmd.items.forEach(i => {
             const agotado = platosAgotados.has(i.nombre);
-            const card = document.createElement('div');
-            card.className = `item-cocina-card ${cmd.urgente ? 'urgente-card' : ''}`;
-            
-            card.innerHTML = `
-              <div class="item-cocina-header">
-                <span class="item-cocina-mesa">📍 ${cmd.id}</span>
-                <span class="item-cocina-estado" style="background:${cmd.estado==='MANOS'?'#27ae60':cmd.estado==='PREPARACION'?'#d35400':'#2980b9'}">${cmd.urgente ? '🚨 URGENTE' : cmd.estado}</span>
-              </div>
+            itemsHtml += `
               <div class="item-cocina-nombre">
                 <span class="${agotado ? 'item-agotado-texto' : ''}">${i.nombre}${agotado ? '<span class="badge-agotado-tag">86</span>' : ''}</span>
                 <span class="item-cocina-cant">x${i.cantidad}</span>
               </div>
             `;
-            contenedorLateral.appendChild(card);
           });
+
+          // Botón limpiar comanda disponible únicamente cuando el estado es ¡MANOS!
+          let botonLimpiarHtml = '';
+          if (cmd.estado === 'MANOS') {
+            botonLimpiarHtml = `
+              <button class="btn-limpiar-comanda" onclick="limpiarComanda('${id}')">
+                <i class="fa-solid fa-check-double"></i> LIMPIAR / RETIRAR COMANDA
+              </button>
+            `;
+          }
+
+          card.innerHTML = `
+            <div class="item-cocina-header">
+              <span class="item-cocina-mesa">📍 ${cmd.id}</span>
+              <span class="item-cocina-estado" style="background:${cmd.estado==='MANOS'?'#27ae60':cmd.estado==='PREPARACION'?'#d35400':'#2980b9'}">${cmd.urgente ? '🚨 URGENTE' : cmd.estado}</span>
+            </div>
+            <div class="item-cocina-cuerpo">
+              ${itemsHtml}
+            </div>
+            ${botonLimpiarHtml}
+          `;
+          contenedorLateral.appendChild(card);
         });
       }
 
@@ -996,6 +1062,14 @@
       guardarStorage();
       renderizarPlanoYLateral();
       cerrarModal('modalEstadoCocina');
+    }
+
+    function limpiarComanda(idMesa) {
+      if (confirm(`¿Confirma que desea limpiar y dar por retirada la comanda de ${idMesa}?`)) {
+        delete comandasActivas[idMesa];
+        guardarStorage();
+        renderizarPlanoYLateral();
+      }
     }
 
     function abrirResumenAcumulado() {
