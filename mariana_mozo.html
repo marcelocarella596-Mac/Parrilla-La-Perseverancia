@@ -745,6 +745,7 @@
         const data = snapshot.val();
         comandasActivas = {};
         
+        // 1. Resetear visualmente TODAS las mesas a LIBRE primero
         listadoMesasBase.forEach(id => {
           const keyId = id.replace(/\s+/g, '_');
           const card = document.getElementById(`mesa_card_${keyId}`);
@@ -760,11 +761,14 @@
         const listaPendientesKDS = document.getElementById('listaPendientesKDS');
         listaPendientesKDS.innerHTML = '';
         let countPendientes = 0;
-        let mesasOcupadasCount = 0;
+        let mesasOcupadasSet = new Set();
 
         if (data) {
+          // Agrupar órdenes por nombre de mesa para asegurar que si hay múltiples registros, se acumulen o reflejen correctamente
           Object.keys(data).forEach(firebaseKey => {
             const cmd = data[firebaseKey];
+            if (!cmd || !cmd.mesa) return;
+
             const mesaKey = cmd.mesa;
             comandasActivas[firebaseKey] = { ...cmd, firebaseKey };
 
@@ -776,29 +780,28 @@
               listaPendientesKDS.appendChild(div);
             }
 
-            if (mesaKey) {
-              const keyId = mesaKey.replace(/\s+/g, '_');
-              const card = document.getElementById(`mesa_card_${keyId}`);
-              if (card) {
-                if(!card.classList.contains('ocupada')) {
-                  mesasOcupadasCount++;
-                }
-                card.classList.add('ocupada');
-                const badge = document.getElementById(`badge_${keyId}`);
-                if (badge) badge.textContent = cmd.estado || 'ACTIVA';
-                const prev = document.getElementById(`preview_${keyId}`);
-                if (prev) {
-                  prev.innerHTML = (cmd.items || []).map(i => `• ${i.cantidad}x ${i.nombre}`).join('<br>');
-                }
-                const tot = document.getElementById(`total_${keyId}`);
-                if (tot) tot.textContent = `$${(cmd.total || 0).toLocaleString('es-AR')}`;
+            const keyId = mesaKey.replace(/\s+/g, '_');
+            const card = document.getElementById(`mesa_card_${keyId}`);
+            if (card) {
+              mesasOcupadasSet.add(mesaKey);
+              card.classList.add('ocupada');
+              
+              const badge = document.getElementById(`badge_${keyId}`);
+              if (badge) badge.textContent = cmd.estado || 'ACTIVA';
+              
+              const prev = document.getElementById(`preview_${keyId}`);
+              if (prev) {
+                prev.innerHTML = (cmd.items || []).map(i => `• ${i.cantidad}x ${i.nombre}`).join('<br>');
               }
+              
+              const tot = document.getElementById(`total_${keyId}`);
+              if (tot) tot.textContent = `$${(cmd.total || 0).toLocaleString('es-AR')}`;
             }
           });
         }
 
         document.getElementById('contadorPendientes').textContent = countPendientes;
-        document.getElementById('contadorMesasAtendidas').textContent = mesasOcupadasCount;
+        document.getElementById('contadorMesasAtendidas').textContent = mesasOcupadasSet.size;
         
         if (countPendientes === 0) {
           listaPendientesKDS.innerHTML = '<div style="color: #666; text-align: center; padding: 10px;">Sin comandas pendientes.</div>';
