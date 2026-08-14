@@ -248,6 +248,20 @@
       font-size: 14px;
       font-weight: bold;
       color: #ff9900;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* BADGE PARA NRO CORRELATIVO DIARIO */
+    .badge-nro-orden {
+      background-color: #000;
+      color: #f1c40f;
+      border: 1px solid #f1c40f;
+      font-size: 11px;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-family: monospace;
     }
 
     .item-cocina-estado {
@@ -836,13 +850,46 @@
       }
     }
 
+    // GESTIÓN DE CORRELATIVO DIARIO (Se resetea a la medianoche o al cambiar de día)
+    function obtenerSiguienteNroOrdenDiario() {
+      const hoyStr = new Date().toISOString().slice(0, 10); // Formato YYYY-MM-DD
+      let controlDiario = JSON.parse(localStorage.getItem('controlOrdenesDiarias')) || { fecha: hoyStr, contador: 0 };
+      
+      if (controlDiario.fecha !== hoyStr) {
+        controlDiario = { fecha: hoyStr, contador: 0 };
+      }
+      
+      controlDiario.contador += 1;
+      localStorage.setItem('controlOrdenesDiarias', JSON.stringify(controlDiario));
+      return controlDiario.contador;
+    }
+
     function actualizarDatosLocales() {
       const stored = JSON.parse(localStorage.getItem('comandasActivas')) || {};
-      
+      const hoyStr = new Date().toISOString().slice(0, 10);
+
       Object.keys(stored).forEach(id => {
         if (!comandasActivas[id]) {
+          // Asignar número correlativo diario si la comanda es nueva y no lo posee
+          let nroOrden = stored[id].nroOrden;
+          let fechaOrden = stored[id].fechaOrden;
+
+          if (!nroOrden || fechaOrden !== hoyStr) {
+            // Verificar si hay contador diario activo guardado en control o generar uno nuevo
+            let controlDiario = JSON.parse(localStorage.getItem('controlOrdenesDiarias')) || { fecha: hoyStr, contador: 0 };
+            if (controlDiario.fecha !== hoyStr) {
+              controlDiario = { fecha: hoyStr, contador: 0 };
+            }
+            controlDiario.contador += 1;
+            localStorage.setItem('controlOrdenesDiarias', JSON.stringify(controlDiario));
+            nroOrden = controlDiario.contador;
+            fechaOrden = hoyStr;
+          }
+
           comandasActivas[id] = {
             ...stored[id],
+            nroOrden: nroOrden,
+            fechaOrden: fechaOrden,
             estado: stored[id].estado || 'RECIBIDO',
             tiempoInicio: stored[id].tiempoInicio || Date.now()
           };
@@ -873,7 +920,9 @@
           items: comandasActivas[id].items,
           estado: comandasActivas[id].estado,
           urgente: comandasActivas[id].urgente || false,
-          tiempoInicio: comandasActivas[id].tiempoInicio
+          tiempoInicio: comandasActivas[id].tiempoInicio,
+          nroOrden: comandasActivas[id].nroOrden,
+          fechaOrden: comandasActivas[id].fechaOrden
         };
       });
       localStorage.setItem('comandasActivas', JSON.stringify(obj));
@@ -919,9 +968,13 @@
             `;
           }
 
+          const nroOrdenTexto = cmd.nroOrden ? `#${String(cmd.nroOrden).padStart(3, '0')}` : '#--';
+
           card.innerHTML = `
             <div class="item-cocina-header">
-              <span class="item-cocina-mesa">📍 ${cmd.id}</span>
+              <span class="item-cocina-mesa">
+                <span class="badge-nro-orden">${nroOrdenTexto}</span> 📍 ${cmd.id}
+              </span>
               <span class="item-cocina-estado" style="background:${cmd.estado==='MANOS'?'#27ae60':cmd.estado==='PREPARACION'?'#d35400':'#2980b9'}">${cmd.urgente ? '🚨 URGENTE' : cmd.estado}</span>
             </div>
             <div class="item-cocina-cuerpo">
@@ -993,9 +1046,11 @@
           });
           listaHtml += '</ul>';
 
+          const nroOrdenTexto = cmd.nroOrden ? `#${String(cmd.nroOrden).padStart(3, '0')}` : '';
+
           tarjeta.innerHTML = `
             <div class="mesa-hdr-info">
-              <span class="mesa-nombre">${nombreMesa}</span>
+              <span class="mesa-nombre"><span style="color:#f1c40f; font-family:monospace; margin-right:4px;">${nroOrdenTexto}</span>${nombreMesa}</span>
               <small style="color:${cmd.urgente?'#ff0000':'#ff9900'}; font-weight:bold;">${cmd.urgente ? 'URGENTE' : cmd.estado}</small>
             </div>
             ${listaHtml}
@@ -1018,7 +1073,8 @@
     function abrirModalEstado(idMesa) {
       mesaSeleccionadaId = idMesa;
       const cmd = comandasActivas[idMesa];
-      document.getElementById('tituloModalMesa').textContent = `📍 ${idMesa}`;
+      const nroStr = cmd && cmd.nroOrden ? `(Orden #${String(cmd.nroOrden).padStart(3, '0')})` : '';
+      document.getElementById('tituloModalMesa').textContent = `📍 ${idMesa} ${nroStr}`;
 
       const detalleDiv = document.getElementById('detallePlatosModal');
       if (!cmd) {
