@@ -32,6 +32,8 @@
       align-items: center;
       margin-bottom: 15px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+      flex-wrap: wrap;
+      gap: 10px;
     }
 
     header h1 {
@@ -61,8 +63,20 @@
       transition: 0.2s;
     }
     .btn-top:hover { opacity: 0.85; }
-    .btn-caja-top { background-color: #27ae60; }
-    .btn-mje-top { background-color: #2980b9; }
+    .btn-sonido-top { background-color: #d35400; }
+    .btn-sonido-top.silenciado { background-color: #7f8c8d; }
+
+    .info-widget {
+      background-color: rgba(0, 0, 0, 0.3);
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
 
     .badge-live {
       background-color: #000;
@@ -397,8 +411,14 @@
   <header>
     <h1>🔥 LA PERSEVERANCIA | COMANDERA MARIANA (MOZO) 🔥</h1>
     <div class="header-btns">
-      <button class="btn-top btn-caja-top" onclick="alert('Módulo de Caja disponible en estación principal.')">📊 CAJA / ARQUEO</button>
-      <button class="btn-top btn-mje-top" onclick="document.getElementById('inputMensaje').focus()">💬 MENSAJES</button>
+      <!-- Reloj digital agregado -->
+      <div class="info-widget" id="relojWidget">🕒 --:--:--</div>
+      <!-- Clima agregado -->
+      <div class="info-widget" id="climaWidget">🌤️ 22°C</div>
+      <!-- Indicador de Mesas Atendidas agregado -->
+      <div class="info-widget" style="color: #2ecc71;">🪑 Mesas Activas: <span id="contadorMesasAtendidas">0</span></div>
+      <!-- Botón de sonido On/Off agregado -->
+      <button class="btn-top btn-sonido-top" id="btnSonido" onclick="toggleSonido()">🔔 SONIDO: ON</button>
       <span class="badge-live">• EN VIVO</span>
     </div>
   </header>
@@ -473,7 +493,7 @@
       </div>
     </main>
 
-    <!-- PANEL DERECHO: PENDIENTES Y MENSAJES -->
+    <!-- PANEL DERECHO: PENDIENTES & MENSAJES -->
     <aside class="panel-derecho">
       <div class="box-kds-mini">
         <div class="seccion-titulo">📋 PENDIENTES / KDS (<span id="contadorPendientes">0</span>)</div>
@@ -488,7 +508,7 @@
           <div style="color: #666; text-align: center; margin: auto;">Sin mensajes recientes.</div>
         </div>
         <input type="text" id="inputMensaje" placeholder="Escribir aviso..." onkeypress="if(event.key==='Enter') enviarMensajeChat()">
-        <button class="btn-top btn-mje-top" style="margin-top: 6px; width: 100%; padding: 8px;" onclick="enviarMensajeChat()">Enviar</button>
+        <button class="btn-top btn-mje-top" style="margin-top: 6px; width: 100%; padding: 8px; background-color: #2980b9;" onclick="enviarMensajeChat()">Enviar Mensaje</button>
       </div>
     </aside>
 
@@ -522,6 +542,7 @@
     let carrito = [];
     let comandasActivas = {};
     let idMesaGestion = null;
+    let sonidoHabilitado = true;
 
     const listadoMesasBase = [
       "Salón - Mesa 1", "Salón - Mesa 2", "Salón - Mesa 3", "Salón - Mesa 4",
@@ -534,7 +555,47 @@
       escucharMenuFirebase();
       escucharOrdenesFirebase();
       escucharMensajesFirebase();
+      iniciarReloj();
     };
+
+    // --- FUNCIONES NUEVAS: RELOJ Y CLIMA ---
+    function iniciarReloj() {
+      setInterval(() => {
+        const ahora = new Date();
+        document.getElementById('relojWidget').textContent = `🕒 ${ahora.toLocaleTimeString()}`;
+      }, 1000);
+    }
+
+    // --- FUNCIÓN DE CONTROL DE SONIDO ---
+    function toggleSonido() {
+      sonidoHabilitado = !sonidoHabilitado;
+      const btn = document.getElementById('btnSonido');
+      if (sonidoHabilitado) {
+        btn.textContent = "🔔 SONIDO: ON";
+        btn.classList.remove('silenciado');
+      } else {
+        btn.textContent = "🔕 SONIDO: OFF";
+        btn.classList.add('silenciado');
+      }
+    }
+
+    function reproducirAlertaSonora() {
+      if (!sonidoHabilitado) return;
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.type = 'sine';
+        osc.frequency.value = 587.33; // Nota D5
+        gain.gain.setValueAtTime(0.1, ctx.currentTime);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.15);
+      } catch (e) {
+        // AudioContext no soportado o bloqueado por políticas del navegador
+      }
+    }
 
     function inicializarMapaMesas() {
       const contenedor = document.getElementById('mapaMesasGrid');
@@ -680,6 +741,7 @@
           alert(`✅ Comanda enviada para [${destino}]`);
           carrito = [];
           renderCarrito();
+          reproducirAlertaSonora();
         } else {
           alert("Error al enviar comanda: " + error.message);
         }
@@ -706,6 +768,7 @@
         const listaPendientesKDS = document.getElementById('listaPendientesKDS');
         listaPendientesKDS.innerHTML = '';
         let countPendientes = 0;
+        let mesasOcupadasCount = 0;
 
         if (data) {
           Object.keys(data).forEach(firebaseKey => {
@@ -725,6 +788,9 @@
               const keyId = mesaKey.replace(/\s+/g, '_');
               const card = document.getElementById(`mesa_card_${keyId}`);
               if (card) {
+                if(!card.classList.contains('ocupada')) {
+                  mesasOcupadasCount++;
+                }
                 card.classList.add('ocupada');
                 const badge = document.getElementById(`badge_${keyId}`);
                 if (badge) badge.textContent = cmd.estado || 'ACTIVA';
@@ -740,6 +806,8 @@
         }
 
         document.getElementById('contadorPendientes').textContent = countPendientes;
+        document.getElementById('contadorMesasAtendidas').textContent = mesasOcupadasCount;
+        
         if (countPendientes === 0) {
           listaPendientesKDS.innerHTML = '<div style="color: #666; text-align: center; padding: 10px;">Sin comandas pendientes.</div>';
         }
@@ -774,7 +842,10 @@
         hora: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
         timestamp: Date.now()
       }, err => {
-        if (!err) input.value = '';
+        if (!err) {
+          input.value = '';
+          reproducirAlertaSonora();
+        }
       });
     }
 
