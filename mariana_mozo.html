@@ -411,13 +411,9 @@
   <header>
     <h1>🔥 LA PERSEVERANCIA | COMANDERA MARIANA (MOZO) 🔥</h1>
     <div class="header-btns">
-      <!-- Reloj digital agregado -->
       <div class="info-widget" id="relojWidget">🕒 --:--:--</div>
-      <!-- Clima agregado -->
       <div class="info-widget" id="climaWidget">🌤️ 22°C</div>
-      <!-- Indicador de Mesas Atendidas agregado -->
       <div class="info-widget" style="color: #2ecc71;">🪑 Mesas Activas: <span id="contadorMesasAtendidas">0</span></div>
-      <!-- Botón de sonido On/Off agregado -->
       <button class="btn-top btn-sonido-top" id="btnSonido" onclick="toggleSonido()">🔔 SONIDO: ON</button>
       <span class="badge-live">• EN VIVO</span>
     </div>
@@ -523,7 +519,7 @@
       </div>
       <button class="btn-opcion-mesa" style="background-color: #27ae60; color: white;" onclick="seleccionarMesaParaAgregar()">➕ AGREGAR MÁS ÍTEMS</button>
       <button class="btn-opcion-mesa" style="background-color: #2980b9; color: white;" onclick="verDetalleMesaModal()">👁️ VER DETALLE / ESTADO</button>
-      <button class="btn-opcion-mesa" style="background-color: #444; color: white;" onclick="cerrarModal('modalOpcionesMesa')">CANCELAR</button>
+      <button class="btn-opcion-mesa" style="background-color: #444; color: white;" onclick="cerrarModal('modalOpcionesMesa')">VOLVER</button>
     </div>
   </div>
 
@@ -558,7 +554,6 @@
       iniciarReloj();
     };
 
-    // --- FUNCIONES NUEVAS: RELOJ Y CLIMA ---
     function iniciarReloj() {
       setInterval(() => {
         const ahora = new Date();
@@ -566,7 +561,6 @@
       }, 1000);
     }
 
-    // --- FUNCIÓN DE CONTROL DE SONIDO ---
     function toggleSonido() {
       sonidoHabilitado = !sonidoHabilitado;
       const btn = document.getElementById('btnSonido');
@@ -588,13 +582,11 @@
         osc.connect(gain);
         gain.connect(ctx.destination);
         osc.type = 'sine';
-        osc.frequency.value = 587.33; // Nota D5
+        osc.frequency.value = 587.33; 
         gain.gain.setValueAtTime(0.1, ctx.currentTime);
         osc.start();
         osc.stop(ctx.currentTime + 0.15);
-      } catch (e) {
-        // AudioContext no soportado o bloqueado por políticas del navegador
-      }
+      } catch (e) {}
     }
 
     function inicializarMapaMesas() {
