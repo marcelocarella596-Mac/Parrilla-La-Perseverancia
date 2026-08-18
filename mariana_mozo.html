@@ -539,7 +539,7 @@
     let comandasActivas = {};
     let idMesaGestion = null;
     let sonidoHabilitado = true;
-    let mesasDOM = {}; // Caché del DOM para optimizar renderizado
+    let mesasDOM = {};
 
     const listadoMesasBase = [
       "Salón - Mesa 1", "Salón - Mesa 2", "Salón - Mesa 3", "Salón - Mesa 4",
@@ -590,9 +590,7 @@
         gain.gain.setValueAtTime(0.1, ctx.currentTime);
         osc.start();
         osc.stop(ctx.currentTime + 0.15);
-      } catch (e) {
-        // Silenciar errores de política de audio del navegador
-      }
+      } catch (e) {}
     }
 
     function inicializarMapaMesas() {
@@ -620,7 +618,6 @@
         `;
         contenedor.appendChild(card);
 
-        // Guardamos referencias directas en caché
         mesasDOM[id] = {
           card,
           badge: document.getElementById(`badge_${keyId}`),
@@ -768,7 +765,7 @@
           const data = snapshot.val();
           comandasActivas = {};
           
-          // Reset visual rápido usando el caché del DOM
+          // 1. Resetear interfaz visual de todas las mesas primero
           listadoMesasBase.forEach(id => {
             const m = mesasDOM[id];
             if (m) {
@@ -787,13 +784,18 @@
           let mesasOcupadasCount = 0;
           const fragmentKDS = document.createDocumentFragment();
 
+          // Agrupador consolidado por mesa para evitar pisar datos si hay múltiples push
+          const mesasAgrupadas = {};
+
           if (data) {
             Object.keys(data).forEach(firebaseKey => {
               const cmd = data[firebaseKey];
-              if (!cmd) return;
+              if (!cmd || !cmd.mesa) return;
+              
               const mesaKey = cmd.mesa;
               comandasActivas[firebaseKey] = { ...cmd, firebaseKey };
 
+              // Contar pendientes para KDS individualmente
               if (cmd.estado === 'PENDIENTE' || cmd.estado === 'EN PREPARACIÓN') {
                 countPendientes++;
                 const div = document.createElement('div');
@@ -802,20 +804,43 @@
                 fragmentKDS.appendChild(div);
               }
 
-              if (mesaKey && mesasDOM[mesaKey]) {
-                const m = mesasDOM[mesaKey];
-                if (m.card && !m.card.classList.contains('ocupada')) {
-                  mesasOcupadasCount++;
-                }
-                if (m.card) m.card.classList.add('ocupada');
-                if (m.badge) m.badge.textContent = cmd.estado || 'ACTIVA';
-                if (m.preview) {
-                  m.preview.innerHTML = (cmd.items || []).map(i => `• ${i.cantidad}x ${i.nombre}`).join('<br>');
-                }
-                if (m.total) m.total.textContent = `$${(cmd.total || 0).toLocaleString('es-AR')}`;
+              // Consolidar ítems y totales por mesa en el plano visual
+              if (!mesasAgrupadas[mesaKey]) {
+                mesasAgrupadas[mesaKey] = {
+                  estado: cmd.estado || 'ACTIVA',
+                  total: 0,
+                  items: []
+                };
+              }
+              mesasAgrupadas[mesaKey].total += Number(cmd.total || 0);
+              if (cmd.items && Array.isArray(cmd.items)) {
+                cmd.items.forEach(item => {
+                  const existente = mesasAgrupadas[mesaKey].items.find(i => i.nombre === item.nombre);
+                  if (existente) {
+                    existente.cantidad += Number(item.cantidad || 1);
+                  } else {
+                    mesasAgrupadas[mesaKey].items.push({ ...item });
+                  }
+                });
               }
             });
           }
+
+          // 2. Renderizar el plano de mesas consolidado de forma limpia
+          Object.keys(mesasAgrupadas).forEach(mesaKey => {
+            if (mesasDOM[mesaKey]) {
+              mesasOcupadasCount++;
+              const m = mesasDOM[mesaKey];
+              const datosMesa = mesasAgrupadas[mesaKey];
+              
+              if (m.card) m.card.classList.add('ocupada');
+              if (m.badge) m.badge.textContent = datosMesa.estado;
+              if (m.preview) {
+                m.preview.innerHTML = datosMesa.items.map(i => `• ${i.cantidad}x ${i.nombre}`).join('<br>');
+              }
+              if (m.total) m.total.textContent = `$${datosMesa.total.toLocaleString('es-AR')}`;
+            }
+          });
 
           listaPendientesKDS.appendChild(fragmentKDS);
 
