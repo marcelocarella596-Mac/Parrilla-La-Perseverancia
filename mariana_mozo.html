@@ -539,7 +539,7 @@
     let comandasActivas = {};
     let idMesaGestion = null;
     let sonidoHabilitado = true;
-    let mesasDOM = {}; // Caché del DOM para optimizar renderizado
+    let mesasDOM = {}; 
 
     const listadoMesasBase = [
       "Salón - Mesa 1", "Salón - Mesa 2", "Salón - Mesa 3", "Salón - Mesa 4",
@@ -590,9 +590,7 @@
         gain.gain.setValueAtTime(0.1, ctx.currentTime);
         osc.start();
         osc.stop(ctx.currentTime + 0.15);
-      } catch (e) {
-        // Silenciar errores de política de audio del navegador
-      }
+      } catch (e) {}
     }
 
     function inicializarMapaMesas() {
@@ -602,7 +600,7 @@
       mesasDOM = {};
 
       listadoMesasBase.forEach(id => {
-        const keyId = id.replace(/\s+/g, '_');
+        const keyId = id.replace(/\s+/g, '_').replace(/-/g, '_');
         const card = document.createElement('div');
         card.className = 'card-mesa-grid';
         card.id = `mesa_card_${keyId}`;
@@ -620,7 +618,6 @@
         `;
         contenedor.appendChild(card);
 
-        // Guardamos referencias directas en caché
         mesasDOM[id] = {
           card,
           badge: document.getElementById(`badge_${keyId}`),
@@ -750,7 +747,8 @@
         timestamp: Date.now()
       };
 
-      db.ref('orders').push(nuevaOrden, (error) => {
+      // AQUÍ SE ESCRIBE EN EL NODO CORRECTO: comandas_activas
+      db.ref('comandas_activas').push(nuevaOrden, (error) => {
         if (!error) {
           alert(`✅ Comanda enviada para [${destino}]`);
           carrito = [];
@@ -763,12 +761,12 @@
     }
 
     function escucharOrdenesFirebase() {
-      db.ref('orders').on('value', snapshot => {
+      // AQUÍ SE LEE DESDE EL NODO CORRECTO: comandas_activas
+      db.ref('comandas_activas').on('value', snapshot => {
         try {
           const data = snapshot.val();
           comandasActivas = {};
           
-          // Reset visual rápido usando el caché del DOM
           listadoMesasBase.forEach(id => {
             const m = mesasDOM[id];
             if (m) {
@@ -900,5 +898,3 @@
       if (modal) modal.style.display = 'none';
     }
   </script>
-</body>
-</html>
