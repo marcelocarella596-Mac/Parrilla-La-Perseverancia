@@ -18,30 +18,27 @@
     }
 
     body {
-      background-color: #121212;
+      background-color: #0e0e0e;
       color: #ffffff;
       padding: 10px;
     }
 
     header {
-      background: #8b0000;
-      padding: 12px 18px;
-      border-radius: 8px;
+      background: linear-gradient(90deg, #34495e, #2c3e50);
+      padding: 10px 18px;
+      border-radius: 6px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 15px;
+      margin-bottom: 12px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-      flex-wrap: wrap;
-      gap: 10px;
     }
 
     header h1 {
-      font-size: 1.2rem;
+      font-size: 18px;
       font-weight: bold;
       text-transform: uppercase;
-      color: #fff;
-      letter-spacing: 0.5px;
+      letter-spacing: 1px;
     }
 
     .header-btns {
@@ -51,73 +48,60 @@
       flex-wrap: wrap;
     }
 
-    .btn-top {
-      background-color: #2c3e50;
+    .btn-top-accion {
+      background-color: #2980b9;
       color: white;
       border: none;
-      padding: 6px 12px;
+      padding: 6px 10px;
       border-radius: 4px;
       font-size: 11px;
       font-weight: bold;
       cursor: pointer;
       transition: 0.2s;
     }
-    .btn-top:hover { opacity: 0.85; }
-    .btn-sonido-top { background-color: #d35400; }
-    .btn-sonido-top.silenciado { background-color: #7f8c8d; }
 
-    .info-widget {
-      background-color: rgba(0, 0, 0, 0.3);
-      padding: 5px 10px;
-      border-radius: 4px;
-      font-size: 11px;
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      border: 1px solid rgba(255,255,255,0.1);
-    }
+    .btn-top-accion:hover { filter: brightness(1.2); }
+    .btn-mjes { background-color: #8e44ad; }
 
     .badge-live {
       background-color: #000;
-      color: #2ecc71;
+      color: #00ff66;
       font-size: 11px;
       font-weight: bold;
-      padding: 4px 10px;
-      border-radius: 4px;
-      border: 1px solid #2ecc71;
+      padding: 3px 8px;
+      border-radius: 12px;
+      border: 1px solid #00ff66;
     }
 
     /* LAYOUT PRINCIPAL DE 3 COLUMNAS */
     .layout-principal {
       display: grid;
-      grid-template-columns: 340px 1fr 300px;
-      gap: 15px;
-    }
-    @media (max-width: 1200px) {
-      .layout-principal { grid-template-columns: 320px 1fr; }
-      .panel-derecho { grid-column: 1 / -1; }
+      grid-template-columns: 420px 1fr 340px;
+      gap: 12px;
+      align-items: start;
     }
 
-    /* PANEL IZQUIERDO: POS / FORMULARIO */
+    @media(max-width: 1400px) {
+      .layout-principal { grid-template-columns: 420px 1fr; }
+    }
+
+    /* PANEL IZQUIERDO */
     .panel-formulario {
-      background-color: #1e1e1e;
-      border: 1px solid #333;
+      background-color: #161616;
+      border: 1px solid #2a2a2a;
       border-radius: 8px;
       padding: 12px;
       display: flex;
       flex-direction: column;
       gap: 10px;
-      height: fit-content;
     }
 
     .seccion-titulo {
       font-size: 11px;
       font-weight: bold;
-      color: #ffc107;
+      color: #3498db;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      margin-bottom: 4px;
     }
 
     .row-ubicacion {
@@ -126,10 +110,10 @@
       gap: 8px;
     }
 
-    select, input {
+    select, input, textarea {
       width: 100%;
       padding: 8px;
-      background-color: #111;
+      background-color: #222;
       border: 1px solid #444;
       color: #fff;
       border-radius: 4px;
@@ -147,7 +131,6 @@
       gap: 6px;
     }
 
-    /* CATEGORÍAS */
     .contenedor-categorias {
       display: flex;
       gap: 5px;
@@ -159,7 +142,7 @@
       background-color: #222;
       border: 1px solid #444;
       color: #ccc;
-      padding: 6px 10px;
+      padding: 6px 12px;
       border-radius: 4px;
       font-size: 11px;
       font-weight: bold;
@@ -169,46 +152,49 @@
     }
 
     .btn-cat:hover, .btn-cat.activo {
-      background-color: #8b0000;
+      background-color: #2980b9;
       color: #fff;
-      border-color: #e74c3c;
+      border-color: #3498db;
     }
 
-    /* GRILLA DE PRODUCTOS */
     .grilla-productos {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(auto-fill, minmax(125px, 1fr));
       gap: 6px;
-      max-height: 220px;
+      max-height: 200px;
       overflow-y: auto;
-      background-color: #121212;
+      background-color: #0d0d0d;
       padding: 8px;
       border-radius: 6px;
       border: 1px solid #222;
     }
 
     .card-prod {
-      background-color: #252525;
-      border: 1px solid #444;
+      background-color: #1c1c1c;
+      border: 1px solid #333;
       border-radius: 5px;
       padding: 8px;
       cursor: pointer;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      min-height: 60px;
+      min-height: 65px;
       transition: transform 0.1s, border-color 0.2s;
     }
-    .card-prod:hover { border-color: #ffc107; transform: scale(1.02); }
-    .card-prod .nombre { font-size: 11px; font-weight: bold; color: #ffffff; line-height: 1.2; }
-    .card-prod .precio { font-size: 11px; font-weight: bold; color: #2ecc71; margin-top: 4px; }
 
-    /* RESUMEN DE COMANDA */
+    .card-prod:hover {
+      border-color: #3498db;
+      transform: scale(1.02);
+    }
+
+    .card-prod .nombre { font-size: 11px; font-weight: bold; color: #ffffff; line-height: 1.2; }
+    .card-prod .precio { font-size: 11px; font-weight: bold; color: #00ff66; margin-top: 4px; }
+
     .resumen-box {
       background-color: #111;
-      border: 1px solid #333;
+      border: 1px solid #262626;
       border-radius: 6px;
-      padding: 8px;
+      padding: 10px;
       min-height: 100px;
       max-height: 130px;
       overflow-y: auto;
@@ -220,13 +206,13 @@
       align-items: center;
       padding: 4px 0;
       border-bottom: 1px solid #222;
-      font-size: 11px;
+      font-size: 12px;
     }
 
-    .cnt-ctrls { display: flex; align-items: center; gap: 5px; }
+    .cnt-ctrls { display: flex; align-items: center; gap: 6px; }
 
     .btn-qty {
-      background-color: #444;
+      background-color: #333;
       color: #fff;
       border: none;
       width: 18px;
@@ -241,136 +227,149 @@
       justify-content: space-between;
       align-items: center;
       font-weight: bold;
-      font-size: 14px;
+      font-size: 15px;
       padding: 4px 0;
-      color: #ffc107;
+      color: #3498db;
     }
 
     .btn-enviar {
       width: 100%;
-      background: #e74c3c;
+      background: linear-gradient(180deg, #3498db, #2980b9);
       border: none;
       color: white;
       padding: 10px;
-      font-size: 12px;
+      font-size: 13px;
       font-weight: bold;
       border-radius: 6px;
       cursor: pointer;
       text-transform: uppercase;
-      box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
+      box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
     }
-    .btn-enviar:hover { background: #c0392b; }
 
-    /* PANEL CENTRAL: PLANO DE MESAS */
+    .btn-enviar:hover { background: linear-gradient(180deg, #5dade2, #3498db); }
+
+    /* PANEL CENTRAL (PLANO DE MESAS) */
     .panel-produccion {
-      background-color: #1e1e1e;
-      border: 1px solid #333;
-      border-radius: 8px;
-      padding: 15px;
-    }
-
-    .mapa-contenedor {
-      background-color: #121212;
-      border: 1px dashed #444;
-      border-radius: 8px;
-      padding: 15px;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 12px;
-      min-height: 520px;
-      align-content: start;
-    }
-
-    .card-mesa-grid {
-      background-color: #1a1a1a;
-      border: 2px solid #8b0000;
-      border-radius: 6px;
-      padding: 10px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      min-height: 140px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .card-mesa-grid:hover { border-color: #ffc107; box-shadow: 0 0 10px rgba(255,193,7,0.3); }
-    .card-mesa-grid.ocupada { border-color: #27ae60; background-color: #17202a; }
-
-    .mesa-hdr-grid {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid #333;
-      padding-bottom: 4px;
-      margin-bottom: 6px;
-    }
-    .mesa-title-grid { font-size: 12px; font-weight: bold; color: #ffc107; }
-    .mesa-status-badge { font-size: 9px; padding: 2px 6px; border-radius: 3px; font-weight: bold; background: #333; color: #aaa; }
-    .card-mesa-grid.ocupada .mesa-status-badge { background: #27ae60; color: #fff; }
-
-    .mesa-body-preview {
-      font-size: 10px;
-      color: #ccc;
-      flex-grow: 1;
-      overflow-y: auto;
-      max-height: 70px;
-      line-height: 1.2;
-    }
-
-    .mesa-footer-grid {
-      border-top: 1px solid #333;
-      padding-top: 4px;
-      margin-top: 4px;
-      display: flex;
-      justify-content: space-between;
-      font-size: 11px;
-      font-weight: bold;
-      color: #2ecc71;
-    }
-
-    /* PANEL DERECHO: PENDIENTES & MENSAJES */
-    .panel-derecho {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-
-    .box-kds-mini, .box-mensajes {
-      background-color: #1e1e1e;
-      border: 1px solid #333;
+      background-color: #161616;
+      border: 1px solid #2a2a2a;
       border-radius: 8px;
       padding: 12px;
     }
 
-    .lista-pendientes {
-      max-height: 180px;
-      overflow-y: auto;
-      font-size: 11px;
-      color: #ccc;
-      margin-top: 8px;
+    .mapa-contenedor {
+      background-color: #0b0b0b;
+      border: 1px dashed #333;
+      border-radius: 8px;
+      padding: 10px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(195px, 1fr));
+      gap: 10px;
+      min-height: 530px;
+      align-content: start;
     }
 
-    .chat-box {
-      background-color: #111;
-      border: 1px solid #333;
-      border-radius: 6px;
-      height: 160px;
-      overflow-y: auto;
-      padding: 8px;
-      font-size: 11px;
-      margin-bottom: 8px;
+    .mesa-card-ampliada {
+      background-color: #1b1b1b;
+      border: 2px solid #444;
+      border-radius: 8px;
+      padding: 10px;
+      cursor: pointer;
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      justify-content: space-between;
+      min-height: 135px;
+      transition: 0.2s;
+      position: relative;
     }
 
-    .chat-msg {
-      background: #222;
-      padding: 5px 8px;
-      border-radius: 4px;
-      border-left: 3px solid #2980b9;
+    .mesa-card-ampliada:hover { border-color: #3498db; transform: translateY(-2px); }
+    .mesa-card-ampliada.ocupada { background-color: #152a3a; border-color: #2980b9; }
+    .mesa-card-ampliada.lista { background-color: #113822; border-color: #27ae60; }
+
+    .mesa-header-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding-bottom: 4px;
+      margin-bottom: 5px;
     }
-    .chat-msg.mio { border-left-color: #e74c3c; }
+
+    .mesa-nombre { font-size: 12px; font-weight: bold; color: #3498db; }
+    .mesa-estado-badge { font-size: 9px; font-weight: bold; padding: 2px 5px; border-radius: 4px; background: #222; color: #aaa; }
+    .ocupada .mesa-estado-badge { background: #2980b9; color: #fff; }
+    .lista .mesa-estado-badge { background: #27ae60; color: #fff; }
+
+    .mesa-items-preview {
+      font-size: 11px;
+      color: #ddd;
+      max-height: 55px;
+      overflow-y: auto;
+      margin-bottom: 4px;
+      line-height: 1.2;
+    }
+
+    /* ESTILOS DE DESTACADO PARA PARRILLA */
+    .item-parrilla-destacado {
+      color: #ff3d00 !important;
+      font-weight: 900 !important;
+      font-size: 11.5px !important;
+      background: rgba(255, 61, 0, 0.18);
+      padding: 2px 4px;
+      border-radius: 3px;
+      border-left: 3px solid #ff3d00;
+      margin: 2px 0;
+      display: block;
+      text-transform: uppercase;
+    }
+
+    .mesa-footer-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      font-weight: bold;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 4px;
+      color: #00ff66;
+    }
+
+    /* PANEL DERECHO LATERAL (KDS Y MENSAJES) */
+    .panel-lateral-derecho {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .panel-kds-box, .panel-chat-box {
+      background-color: #161616;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      padding: 12px;
+    }
+
+    .contenedor-kds-tarjetas {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 250px;
+      overflow-y: auto;
+    }
+
+    .tarjeta-kds-flotante {
+      background-color: #222;
+      border: 1px solid #444;
+      border-left: 4px solid #e67e22;
+      border-radius: 6px;
+      padding: 8px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .tarjeta-kds-flotante:hover { border-color: #ff6600; }
+    .tarjeta-kds-flotante.alerta-amarilla { border-left-color: #f1c40f; background: #2c2811; }
+    .tarjeta-kds-flotante.alerta-naranja { border-left-color: #e67e22; background: #331f11; }
+    .tarjeta-kds-flotante.alerta-verde { border-left-color: #27ae60; background: #11331c; }
 
     /* MODALES */
     .modal-overlay {
@@ -384,12 +383,14 @@
     }
 
     .modal-contenido {
-      background-color: #1e1e1e;
+      background-color: #181818;
       border: 1px solid #444;
       border-radius: 8px;
       padding: 20px;
       width: 90%;
-      max-width: 450px;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
       box-shadow: 0 5px 20px rgba(0,0,0,0.8);
     }
 
@@ -403,502 +404,4 @@
     }
 
     .btn-cerrar-modal { background: none; border: none; color: #999; font-size: 18px; cursor: pointer; }
-    .btn-opcion-mesa { width: 100%; padding: 10px; margin-bottom: 8px; border: none; border-radius: 5px; font-weight: bold; font-size: 12px; cursor: pointer; }
-  </style>
-</head>
-<body>
-
-  <header>
-    <h1>🔥 LA PERSEVERANCIA | COMANDERA MARIANA (MOZO) 🔥</h1>
-    <div class="header-btns">
-      <div class="info-widget" id="relojWidget">🕒 --:--:--</div>
-      <div class="info-widget" id="climaWidget">🌤️ 22°C</div>
-      <div class="info-widget" style="color: #2ecc71;">🪑 Mesas Activas: <span id="contadorMesasAtendidas">0</span></div>
-      <button class="btn-top btn-sonido-top" id="btnSonido" onclick="toggleSonido()">🔔 SONIDO: ON</button>
-      <span class="badge-live">• EN VIVO</span>
-    </div>
-  </header>
-
-  <div class="layout-principal">
-    
-    <!-- PANEL IZQUIERDO: POS / FORMULARIO -->
-    <aside class="panel-formulario">
-      <div class="seccion-titulo">1. Ubicación y Cliente</div>
-      <div class="row-ubicacion">
-        <select id="selectUbicacion" onchange="evaluarCanalSeleccionado()">
-          <optgroup label="Salón">
-            <option value="Salón - Mesa 1">Salón - Mesa 1</option>
-            <option value="Salón - Mesa 2">Salón - Mesa 2</option>
-            <option value="Salón - Mesa 3">Salón - Mesa 3</option>
-            <option value="Salón - Mesa 4">Salón - Mesa 4</option>
-          </optgroup>
-          <optgroup label="Vereda">
-            <option value="Vereda - Mesa 5">Vereda - Mesa 5</option>
-            <option value="Vereda - Mesa 6">Vereda - Mesa 6</option>
-            <option value="Vereda - Mesa 7">Vereda - Mesa 7</option>
-          </optgroup>
-          <optgroup label="Canales Directos">
-            <option value="Canal - Mostrador">Mostrador</option>
-            <option value="Canal - Delivery">Delivery</option>
-            <option value="Canal - Pickup">Pickup</option>
-          </optgroup>
-        </select>
-        <select id="selectComensales">
-          <option value="1">1 Pers.</option>
-          <option value="2" selected>2 Pers.</option>
-          <option value="4">4 Pers.</option>
-          <option value="6">6 Pers.</option>
-          <option value="8">8 Pers.</option>
-        </select>
-      </div>
-
-      <div id="boxDelivery" class="box-delivery" style="display: none;">
-        <div style="font-size: 10px; color: #ffc107; font-weight: bold;">🛵 DATOS DE ENVÍO DELIVERY</div>
-        <input type="text" id="delivNombre" placeholder="Nombre del Cliente">
-        <input type="text" id="delivDireccion" placeholder="Dirección completa">
-        <input type="text" id="delivTelefono" placeholder="Teléfono de contacto">
-      </div>
-
-      <div class="seccion-titulo">2. Menú de Productos (Firebase RTDB)</div>
-      <div class="contenedor-categorias" id="contenedorCategorias">
-        <button class="btn-cat activo" onclick="filtrarCategoria('Todos', this)">Todos</button>
-      </div>
-
-      <div class="grilla-productos" id="grillaProductos">
-        <div style="color: #666; font-size: 11px; text-align: center; grid-column: span 2; margin-top: 20px;">Cargando menú...</div>
-      </div>
-
-      <div class="seccion-titulo">3. Selección Actual</div>
-      <div class="resumen-box" id="resumenComanda">
-        <p style="color: #666; font-size: 11px; text-align: center; margin-top: 15px;">No hay ítems seleccionados.</p>
-      </div>
-
-      <div class="total-bar">
-        <span>TOTAL SELECCIONADO:</span>
-        <span id="totalMonto">$0</span>
-      </div>
-
-      <button class="btn-enviar" onclick="enviarOActualizarComanda()">🚀 ENVIAR / AGREGAR A COMANDA</button>
-    </aside>
-
-    <!-- PANEL CENTRAL: PLANO DE MESAS Y COMANDAS ACTIVAS -->
-    <main class="panel-produccion">
-      <div class="seccion-titulo" style="margin-bottom: 10px; font-size: 12px;">📍 PLANO DE MESAS Y COMANDAS ACTIVAS</div>
-      <div class="mapa-contenedor" id="mapaMesasGrid">
-        <!-- Las mesas se generan dinámicamente -->
-      </div>
-    </main>
-
-    <!-- PANEL DERECHO: PENDIENTES & MENSAJES -->
-    <aside class="panel-derecho">
-      <div class="box-kds-mini">
-        <div class="seccion-titulo">📋 PENDIENTES / KDS (<span id="contadorPendientes">0</span>)</div>
-        <div class="lista-pendientes" id="listaPendientesKDS">
-          <div style="color: #666; text-align: center; padding: 10px;">Sin comandas pendientes.</div>
-        </div>
-      </div>
-
-      <div class="box-mensajes" style="flex-grow: 1; display: flex; flex-direction: column;">
-        <div class="seccion-titulo">💬 MENSAJES / AVISOS | MARIANA / GUSTAVO</div>
-        <div class="chat-box" id="chatMensajes">
-          <div style="color: #666; text-align: center; margin: auto;">Sin mensajes recientes.</div>
-        </div>
-        <input type="text" id="inputMensaje" placeholder="Escribir aviso..." onkeypress="if(event.key==='Enter') enviarMensajeChat()">
-        <button class="btn-top btn-mje-top" style="margin-top: 6px; width: 100%; padding: 8px; background-color: #2980b9;" onclick="enviarMensajeChat()">Enviar Mensaje</button>
-      </div>
-    </aside>
-
-  </div>
-
-  <!-- MODAL GESTIÓN DE MESA -->
-  <div class="modal-overlay" id="modalOpcionesMesa">
-    <div class="modal-contenido">
-      <div class="modal-hdr">
-        <h3 id="tituloOpcionesMesa" style="color: #ffc107; font-size: 14px;">Gestionar Comanda</h3>
-        <button class="btn-cerrar-modal" onclick="cerrarModal('modalOpcionesMesa')">✕</button>
-      </div>
-      <button class="btn-opcion-mesa" style="background-color: #27ae60; color: white;" onclick="seleccionarMesaParaAgregar()">➕ AGREGAR MÁS ÍTEMS</button>
-      <button class="btn-opcion-mesa" style="background-color: #2980b9; color: white;" onclick="verDetalleMesaModal()">👁️ VER DETALLE / ESTADO</button>
-      <button class="btn-opcion-mesa" style="background-color: #444; color: white;" onclick="cerrarModal('modalOpcionesMesa')">CANCELAR</button>
-    </div>
-  </div>
-
-  <script>
-    const firebaseConfig = {
-      databaseURL: "https://parrilla-la-perseveranci-f3f54-default-rtdb.firebaseio.com"
-    };
-
-    if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
-    }
-    const db = firebase.database();
-
-    let MENU = [];
-    let categoriaActiva = 'Todos';
-    let carrito = [];
-    let comandasActivas = {};
-    let idMesaGestion = null;
-    let sonidoHabilitado = true;
-    let mesasDOM = {}; // Caché del DOM para optimizar renderizado
-
-    const listadoMesasBase = [
-      "Salón - Mesa 1", "Salón - Mesa 2", "Salón - Mesa 3", "Salón - Mesa 4",
-      "Vereda - Mesa 5", "Vereda - Mesa 6", "Vereda - Mesa 7",
-      "Canal - Mostrador", "Canal - Delivery", "Canal - Pickup"
-    ];
-
-    window.onload = () => {
-      inicializarMapaMesas();
-      escucharMenuFirebase();
-      escucharOrdenesFirebase();
-      escucharMensajesFirebase();
-      iniciarReloj();
-    };
-
-    function iniciarReloj() {
-      setInterval(() => {
-        const ahora = new Date();
-        const relojEl = document.getElementById('relojWidget');
-        if (relojEl) relojEl.textContent = `🕒 ${ahora.toLocaleTimeString()}`;
-      }, 1000);
-    }
-
-    function toggleSonido() {
-      sonidoHabilitado = !sonidoHabilitado;
-      const btn = document.getElementById('btnSonido');
-      if (btn) {
-        if (sonidoHabilitado) {
-          btn.textContent = "🔔 SONIDO: ON";
-          btn.classList.remove('silenciado');
-        } else {
-          btn.textContent = "🔕 SONIDO: OFF";
-          btn.classList.add('silenciado');
-        }
-      }
-    }
-
-    function reproducirAlertaSonora() {
-      if (!sonidoHabilitado) return;
-      try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.type = 'sine';
-        osc.frequency.value = 587.33;
-        gain.gain.setValueAtTime(0.1, ctx.currentTime);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.15);
-      } catch (e) {
-        // Silenciar errores de política de audio del navegador
-      }
-    }
-
-    function inicializarMapaMesas() {
-      const contenedor = document.getElementById('mapaMesasGrid');
-      if (!contenedor) return;
-      contenedor.innerHTML = '';
-      mesasDOM = {};
-
-      listadoMesasBase.forEach(id => {
-        const keyId = id.replace(/\s+/g, '_');
-        const card = document.createElement('div');
-        card.className = 'card-mesa-grid';
-        card.id = `mesa_card_${keyId}`;
-        card.onclick = () => clickUbicacion(id);
-        card.innerHTML = `
-          <div class="mesa-hdr-grid">
-            <span class="mesa-title-grid">${id.toUpperCase()}</span>
-            <span class="mesa-status-badge" id="badge_${keyId}">LIBRE</span>
-          </div>
-          <div class="mesa-body-preview" id="preview_${keyId}">Sin comanda activa</div>
-          <div class="mesa-footer-grid">
-            <span>Total:</span>
-            <span id="total_${keyId}">$0</span>
-          </div>
-        `;
-        contenedor.appendChild(card);
-
-        // Guardamos referencias directas en caché
-        mesasDOM[id] = {
-          card,
-          badge: document.getElementById(`badge_${keyId}`),
-          preview: document.getElementById(`preview_${keyId}`),
-          total: document.getElementById(`total_${keyId}`)
-        };
-      });
-    }
-
-    function escucharMenuFirebase() {
-      db.ref('menu').on('value', snapshot => {
-        const data = snapshot.val();
-        if (data) {
-          MENU = Object.keys(data).map(key => {
-            const item = data[key];
-            if (!item) return null;
-            return {
-              id: key,
-              nombre: item.nombre || item.title || key,
-              cat: item.cat || item.categoria || 'General',
-              precio: Number(item.precio || item.price || 0)
-            };
-          }).filter(i => i !== null);
-          construirBotonesCategorias();
-          renderGrilla(categoriaActiva);
-        }
-      });
-    }
-
-    function construirBotonesCategorias() {
-      const contenedor = document.getElementById('contenedorCategorias');
-      if (!contenedor) return;
-      const categoriasUnicas = ['Todos', ...new Set(MENU.map(item => item.cat))];
-      contenedor.innerHTML = '';
-      categoriasUnicas.forEach(cat => {
-        const btn = document.createElement('button');
-        btn.className = `btn-cat ${cat === categoriaActiva ? 'activo' : ''}`;
-        btn.textContent = cat;
-        btn.onclick = () => filtrarCategoria(cat, btn);
-        contenedor.appendChild(btn);
-      });
-    }
-
-    function filtrarCategoria(cat, btn) {
-      categoriaActiva = cat;
-      document.querySelectorAll('.btn-cat').forEach(b => b.classList.remove('activo'));
-      if (btn) btn.classList.add('activo');
-      renderGrilla(cat);
-    }
-
-    function renderGrilla(categoria) {
-      const contenedor = document.getElementById('grillaProductos');
-      if (!contenedor) return;
-      contenedor.innerHTML = '';
-      const filtrados = (categoria === 'Todos') ? MENU : MENU.filter(m => m.cat === categoria);
-      if (filtrados.length === 0) {
-        contenedor.innerHTML = '<p style="color: #666; font-size: 11px; text-align: center; grid-column: span 2;">Sin productos.</p>';
-        return;
-      }
-      filtrados.forEach(prod => {
-        const card = document.createElement('div');
-        card.className = 'card-prod';
-        card.onclick = () => agregarAlCarrito(prod);
-        card.innerHTML = `<div class="nombre">${prod.nombre}</div><div class="precio">$${prod.precio.toLocaleString('es-AR')}</div>`;
-        contenedor.appendChild(card);
-      });
-    }
-
-    function agregarAlCarrito(prod) {
-      const existe = carrito.find(item => item.id === prod.id);
-      if (existe) existe.cantidad++;
-      else carrito.push({ ...prod, cantidad: 1 });
-      renderCarrito();
-    }
-
-    function cambiarCantidad(id, delta) {
-      const item = carrito.find(i => i.id === id);
-      if (item) {
-        item.cantidad += delta;
-        if (item.cantidad <= 0) carrito = carrito.filter(i => i.id !== id);
-      }
-      renderCarrito();
-    }
-
-    function renderCarrito() {
-      const contenedor = document.getElementById('resumenComanda');
-      const totalEl = document.getElementById('totalMonto');
-      if (!contenedor || !totalEl) return;
-      contenedor.innerHTML = '';
-      if (carrito.length === 0) {
-        contenedor.innerHTML = '<p style="color: #666; font-size: 11px; text-align: center; margin-top: 15px;">No hay ítems seleccionados.</p>';
-        totalEl.textContent = '$0';
-        return;
-      }
-      let total = 0;
-      carrito.forEach(item => {
-        total += item.precio * item.cantidad;
-        const row = document.createElement('div');
-        row.className = 'item-carrito';
-        row.innerHTML = `<div><strong>${item.nombre}</strong><br><small style="color:#2ecc71;">$${item.precio.toLocaleString('es-AR')}</small></div>
-        <div class="cnt-ctrls"><button class="btn-qty" onclick="cambiarCantidad('${item.id}', -1)">-</button><span>${item.cantidad}</span><button class="btn-qty" onclick="cambiarCantidad('${item.id}', 1)">+</button></div>`;
-        contenedor.appendChild(row);
-      });
-      totalEl.textContent = `$${total.toLocaleString('es-AR')}`;
-    }
-
-    function evaluarCanalSeleccionado() {
-      const canal = document.getElementById('selectUbicacion').value;
-      const boxDeliv = document.getElementById('boxDelivery');
-      if (boxDeliv) boxDeliv.style.display = (canal.includes('Delivery')) ? 'flex' : 'none';
-    }
-
-    function enviarOActualizarComanda() {
-      if (carrito.length === 0) { alert("⚠️ Seleccioná al menos un producto."); return; }
-      const destino = document.getElementById('selectUbicacion').value;
-      const comensales = document.getElementById('selectComensales').value;
-
-      let totalMesa = carrito.reduce((acc, curr) => acc + (curr.precio * curr.cantidad), 0);
-
-      const nuevaOrden = {
-        mesa: destino,
-        comensales: comensales,
-        items: carrito,
-        total: totalMesa,
-        estado: 'PENDIENTE',
-        emisor: 'Mariana',
-        timestamp: Date.now()
-      };
-
-      db.ref('orders').push(nuevaOrden, (error) => {
-        if (!error) {
-          alert(`✅ Comanda enviada para [${destino}]`);
-          carrito = [];
-          renderCarrito();
-          reproducirAlertaSonora();
-        } else {
-          alert("Error al enviar comanda: " + error.message);
-        }
-      });
-    }
-
-    function escucharOrdenesFirebase() {
-      db.ref('orders').on('value', snapshot => {
-        try {
-          const data = snapshot.val();
-          comandasActivas = {};
-          
-          // Reset visual rápido usando el caché del DOM
-          listadoMesasBase.forEach(id => {
-            const m = mesasDOM[id];
-            if (m) {
-              if (m.card) m.card.classList.remove('ocupada');
-              if (m.badge) m.badge.textContent = 'LIBRE';
-              if (m.preview) m.preview.textContent = 'Sin comanda activa';
-              if (m.total) m.total.textContent = '$0';
-            }
-          });
-
-          const listaPendientesKDS = document.getElementById('listaPendientesKDS');
-          if (!listaPendientesKDS) return;
-          listaPendientesKDS.innerHTML = '';
-          
-          let countPendientes = 0;
-          let mesasOcupadasCount = 0;
-          const fragmentKDS = document.createDocumentFragment();
-
-          if (data) {
-            Object.keys(data).forEach(firebaseKey => {
-              const cmd = data[firebaseKey];
-              if (!cmd) return;
-              const mesaKey = cmd.mesa;
-              comandasActivas[firebaseKey] = { ...cmd, firebaseKey };
-
-              if (cmd.estado === 'PENDIENTE' || cmd.estado === 'EN PREPARACIÓN') {
-                countPendientes++;
-                const div = document.createElement('div');
-                div.style.cssText = "background: #222; padding: 6px; border-radius: 4px; margin-bottom: 4px; border-left: 3px solid #ffc107;";
-                div.innerHTML = `<strong>${cmd.mesa}</strong> (${cmd.estado})<br><small>${(cmd.items||[]).length} ítems - $${cmd.total||0}</small>`;
-                fragmentKDS.appendChild(div);
-              }
-
-              if (mesaKey && mesasDOM[mesaKey]) {
-                const m = mesasDOM[mesaKey];
-                if (m.card && !m.card.classList.contains('ocupada')) {
-                  mesasOcupadasCount++;
-                }
-                if (m.card) m.card.classList.add('ocupada');
-                if (m.badge) m.badge.textContent = cmd.estado || 'ACTIVA';
-                if (m.preview) {
-                  m.preview.innerHTML = (cmd.items || []).map(i => `• ${i.cantidad}x ${i.nombre}`).join('<br>');
-                }
-                if (m.total) m.total.textContent = `$${(cmd.total || 0).toLocaleString('es-AR')}`;
-              }
-            });
-          }
-
-          listaPendientesKDS.appendChild(fragmentKDS);
-
-          const elContPendientes = document.getElementById('contadorPendientes');
-          const elContMesas = document.getElementById('contadorMesasAtendidas');
-          if (elContPendientes) elContPendientes.textContent = countPendientes;
-          if (elContMesas) elContMesas.textContent = mesasOcupadasCount;
-          
-          if (countPendientes === 0) {
-            listaPendientesKDS.innerHTML = '<div style="color: #666; text-align: center; padding: 10px;">Sin comandas pendientes.</div>';
-          }
-        } catch (err) {
-          console.error("Error al procesar órdenes de Firebase:", err);
-        }
-      });
-    }
-
-    function clickUbicacion(id) {
-      idMesaGestion = id;
-      const tituloModal = document.getElementById('tituloOpcionesMesa');
-      const modal = document.getElementById('modalOpcionesMesa');
-      if (tituloModal) tituloModal.textContent = `Gestionar: ${id}`;
-      if (modal) modal.style.display = 'flex';
-    }
-
-    function seleccionarMesaParaAgregar() {
-      const selectUbicacion = document.getElementById('selectUbicacion');
-      if (selectUbicacion) selectUbicacion.value = idMesaGestion;
-      evaluarCanalSeleccionado();
-      cerrarModal('modalOpcionesMesa');
-    }
-
-    function verDetalleMesaModal() {
-      cerrarModal('modalOpcionesMesa');
-      alert(`Seleccionaste la mesa ${idMesaGestion}. Podés agregar más ítems seleccionándola en el panel izquierdo.`);
-    }
-
-    function enviarMensajeChat() {
-      const input = document.getElementById('inputMensaje');
-      if (!input) return;
-      const texto = input.value.trim();
-      if (!texto) return;
-
-      db.ref('mensajes').push({
-        emisor: 'Mariana',
-        texto: texto,
-        hora: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-        timestamp: Date.now()
-      }, err => {
-        if (!err) {
-          input.value = '';
-          reproducirAlertaSonora();
-        }
-      });
-    }
-
-    function escucharMensajesFirebase() {
-      db.ref('mensajes').limitToLast(20).on('value', snapshot => {
-        const chatBox = document.getElementById('chatMensajes');
-        if (!chatBox) return;
-        chatBox.innerHTML = '';
-        const data = snapshot.val();
-        if (!data) {
-          chatBox.innerHTML = '<div style="color: #666; text-align: center; margin: auto;">Sin mensajes recientes.</div>';
-          return;
-        }
-        const fragmentChat = document.createDocumentFragment();
-        Object.keys(data).forEach(k => {
-          const m = data[k];
-          const div = document.createElement('div');
-          div.className = `chat-msg ${m.emisor === 'Mariana' ? 'mio' : ''}`;
-          div.innerHTML = `<strong style="color: ${m.emisor === 'Mariana' ? '#e74c3c' : '#3498db'};">${m.emisor}</strong> <small style="color:#888;">(${m.hora})</small><br>${m.texto}`;
-          fragmentChat.appendChild(div);
-        });
-        chatBox.appendChild(fragmentChat);
-        chatBox.scrollTop = chatBox.scrollHeight;
-      });
-    }
-
-    function cerrarModal(id) {
-      const modal = document.getElementById(id);
-      if (modal) modal.style.display = 'none';
-    }
-  </script>
-</body>
-</html>
+    .btn-opcion-mesa { width: 100%; padding: 12px; margin-bottom: 8px; border: none; border-radius: 5
