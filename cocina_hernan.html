@@ -9,7 +9,7 @@
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',sans-serif}
 body{background:#0b0b0b;color:#fff;padding:10px}
 header{background:linear-gradient(90deg,#b03a2e,#d35400);padding:10px 16px;border-radius:6px;display:flex;justify-content:space-between;align-items:center}
-header h1{font-size:15px}
+header h1{font-size:14px}
 .btn{padding:7px 14px;border-radius:5px;border:1px solid #34495e;background:#1c2833;color:#fff;font-weight:bold;cursor:pointer;font-size:12px}
 .btn-resumen{background:#1a5276;border-color:#2980b9}
 .layout{display:grid;grid-template-columns:360px 1fr;gap:12px;margin-top:12px}
@@ -30,116 +30,38 @@ header h1{font-size:15px}
 </style>
 </head>
 <body>
-<header>
-<h1>🔥 LA PERSEVERANCIA | COCINA HERNÁN - CONECTADA A MARIANA | <span id="reloj"></span></h1>
-<div style="display:flex;gap:8px">
-<button class="btn btn-resumen" onclick="abrirResumen()">📊 RESUMEN (<span id="cantResumen">0</span>)</button>
-<span style="background:#000;color:#00ff66;padding:7px 12px;border-radius:12px;border:1px solid #00ff66;font-size:11px">• COCINA ACTIVA</span>
-</div>
-</header>
-
+<header><h1>🔥 COCINA HERNÁN | <span id="reloj"></span></h1><div style="display:flex;gap:8px"><button class="btn btn-resumen" onclick="abrirResumen()">📊 RESUMEN (<span id="cantResumen">0</span>)</button><span style="background:#000;color:#00ff66;padding:7px 12px;border-radius:12px;border:1px solid #00ff66;font-size:11px">• ACTIVA</span></div></header>
 <div class="layout">
-<aside class="panel"><div class="titulo">🍳 ÍTEMS DE COCINA (FIFO) - EN TIEMPO REAL <span id="total">0</span></div><div id="lista"></div></aside>
-<main class="panel"><div class="titulo">📍 PLANO - COMANDAS MARIANA</div><div class="plano" id="plano"></div></main>
+<aside class="panel"><div class="titulo">🍳 ÍTEMS COCINA - FIFO <span id="total">0</span></div><div id="lista"></div></aside>
+<main class="panel"><div class="titulo">📍 PLANO - MARIANA</div><div class="plano" id="plano"></div></main>
 </div>
-
-<div class="modal" id="modalResumen"><div class="modal-box"><div style="display:flex;justify-content:space-between;border-bottom:1px solid #333;padding-bottom:8px;margin-bottom:10px"><h3 style="color:#ff9900">📊 RESUMEN DE COCINA - MESAS CERRADAS</h3><button onclick="cerrarResumen()" style="background:none;border:none;color:#fff;font-size:18px">✕</button></div><div id="contenidoResumen"></div><button onclick="limpiarResumen()" style="width:100%;background:#c0392b;color:#fff;border:none;padding:10px;border-radius:6px;margin-top:12px;font-weight:bold">🗑️ LIMPIAR RESUMEN</button></div></div>
-
+<div class="modal" id="modalResumen"><div class="modal-box"><div style="display:flex;justify-content:space-between;border-bottom:1px solid #333;padding-bottom:8px;margin-bottom:10px"><h3 style="color:#ff9900">📊 RESUMEN - MESAS CERRADAS</h3><button onclick="cerrarResumen()" style="background:none;border:none;color:#fff;font-size:18px">✕</button></div><div id="contenidoResumen"></div><button onclick="limpiarResumen()" style="width:100%;background:#c0392b;color:#fff;border:none;padding:10px;border-radius:6px;margin-top:12px;font-weight:bold">🗑️ LIMPIAR</button></div></div>
 <script>
-const firebaseConfig = {
-  apiKey: "AIzaSyAvrpQSDoq9S87j3J7V4-uhJnPFCylCU",
-  authDomain: "parrilla-la-perseveranci-f3f54.firebaseapp.com",
-  databaseURL: "https://parrilla-la-perseveranci-f3f54-default-rtdb.firebaseio.com",
-  projectId: "parrilla-la-perseveranci-f3f54",
-  storageBucket: "parrilla-la-perseveranci-f3f54.firebasestorage.app",
-  messagingSenderId: "899082319184",
-  appId: "1:899082319184:web:9876161963705785efe855"
-};
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+const firebaseConfig = { apiKey: "AIzaSyAvrpQSDoq9S87j3J7V4-uhJnPFCylCU", authDomain: "parrilla-la-perseveranci-f3f54.firebaseapp.com", databaseURL: "https://parrilla-la-perseveranci-f3f54-default-rtdb.firebaseio.com", projectId: "parrilla-la-perseveranci-f3f54", storageBucket: "parrilla-la-perseveranci-f3f54.firebasestorage.app", messagingSenderId: "899082319184", appId: "1:899082319184:web:9876161963705785efe855" };
+firebase.initializeApp(firebaseConfig); const db = firebase.database();
 setInterval(()=>document.getElementById('reloj').textContent=new Date().toLocaleTimeString('es-AR'),1000);
-
-const ZONAS = {
-  "SALÓN PRINCIPAL": ["Salón - Mesa 1","Salón - Mesa 2","Salón - Mesa 3","Salón - Mesa 4"],
-  "VEREDA": ["Vereda - Mesa 5","Vereda - Mesa 6","Vereda - Mesa 7"],
-  "MOSTRADOR / DELIVERY": ["Canal - Mostrador","Canal - Pickup","Canal - Delivery"]
-};
-
-let porMesaAnterior = {};
-let resumenCocina = JSON.parse(localStorage.getItem('resumen_hernan') || '[]');
-
-function guardarResumen(){ localStorage.setItem('resumen_hernan', JSON.stringify(resumenCocina)); document.getElementById('cantResumen').textContent = resumenCocina.length; }
-
+const ZONAS = { "SALÓN PRINCIPAL": ["Salón - Mesa 1","Salón - Mesa 2","Salón - Mesa 3","Salón - Mesa 4"], "VEREDA": ["Vereda - Mesa 5","Vereda - Mesa 6","Vereda - Mesa 7"], "MOSTRADOR": ["Canal - Mostrador","Canal - Pickup","Canal - Delivery"] };
+let porMesaAnterior = {}; let resumenCocina = JSON.parse(localStorage.getItem('resumen_hernan_v4')||'[]');
+function guardarResumen(){ localStorage.setItem('resumen_hernan_v4', JSON.stringify(resumenCocina)); document.getElementById('cantResumen').textContent=resumenCocina.length; }
 db.ref('comandas_activas').on('value', snap=>{
-  const data = snap.val() || {};
-  const porMesa = {};
-
+  const data=snap.val()||{}; const porMesa={};
   Object.entries(data).forEach(([key, cmd])=>{
-    if(!cmd ||!cmd.mesa || cmd.mesa === 'undefined') return;
-    const mesaNombre = String(cmd.mesa).trim();
-    if(!mesaNombre) return;
-    if(!porMesa[mesaNombre]) porMesa[mesaNombre] = {mesa: mesaNombre, items:[], total:0, estado: cmd.estado||'PENDIENTE', timestamp: cmd.timestamp||Date.now()};
-    porMesa[mesaNombre].items.push(...(cmd.items||[]));
-    porMesa[mesaNombre].total += Number(cmd.total||0);
-    porMesa[mesaNombre].estado = cmd.estado || porMesa[mesaNombre].estado;
-    if(cmd.timestamp > porMesa[mesaNombre].timestamp) porMesa[mesaNombre].timestamp = cmd.timestamp;
+    if(!cmd||!cmd.mesa) return; const mesaNombre=String(cmd.mesa).trim(); if(!mesaNombre||mesaNombre==='undefined') return;
+    if(!porMesa[mesaNombre]) porMesa[mesaNombre]={mesa:mesaNombre,items:[],total:0,estado:cmd.estado||'PENDIENTE',timestamp:cmd.timestamp||Date.now()};
+    porMesa[mesaNombre].items.push(...(cmd.items||[])); porMesa[mesaNombre].total+=Number(cmd.total||0); porMesa[mesaNombre].estado=cmd.estado||porMesa[mesaNombre].estado;
   });
-
-  // DETECTAR MESAS CERRADAS -> PASAR A RESUMEN Y LUEGO DESAPARECER
-  Object.keys(porMesaAnterior).forEach(mesaCerrada=>{
-    if(!porMesa[mesaCerrada]){
-      // se cerró
-      const info = porMesaAnterior[mesaCerrada];
-      resumenCocina.unshift({mesa: mesaCerrada, items: info.items, total: info.total, hora: new Date().toLocaleTimeString('es-AR')});
-      if(resumenCocina.length>100) resumenCocina.pop();
-    }
-  });
-  porMesaAnterior = JSON.parse(JSON.stringify(porMesa));
-  guardarResumen();
-  render(porMesa);
+  Object.keys(porMesaAnterior).forEach(mesaCerrada=>{ if(!porMesa[mesaCerrada]){ resumenCocina.unshift({mesa:mesaCerrada,items:porMesaAnterior[mesaCerrada].items,total:porMesaAnterior[mesaCerrada].total,hora:new Date().toLocaleTimeString('es-AR')}); if(resumenCocina.length>100) resumenCocina.pop(); } });
+  porMesaAnterior=JSON.parse(JSON.stringify(porMesa)); guardarResumen(); render(porMesa);
 });
-
 function render(porMesa){
-  const lista = document.getElementById('lista');
-  const plano = document.getElementById('plano');
-  lista.innerHTML=''; plano.innerHTML='';
-  const orden = Object.values(porMesa).sort((a,b)=>a.timestamp-b.timestamp);
-  document.getElementById('total').textContent = orden.length;
-
-  orden.forEach((g, idx)=>{
-    const nro = String(idx+1).padStart(3,'0');
-    const div = document.createElement('div');
-    div.className='card';
-    div.innerHTML=`<div style="display:flex;justify-content:space-between"><span class="mesa">#${nro} 📍 ${g.mesa}</span><span style="font-size:10px;background:#333;padding:2px 6px;border-radius:4px">${g.estado}</span></div>
-    <div style="margin-top:6px">${g.items.map(i=>`<div class="item"><span>${i.nombre}</span><span class="cant">x${i.cantidad}</span></div>`).join('')}</div>`;
-    lista.appendChild(div);
-  });
-  if(orden.length===0) lista.innerHTML='<p style="color:#666;text-align:center;margin-top:20px">Sin comandas activas.<br>Cuando Mariana mande una, aparece acá.<br>Cuando la cierre, pasa a RESUMEN y desaparece.</p>';
-
-  Object.entries(ZONAS).forEach(([nombreZona, mesas])=>{
-    const zonaDiv=document.createElement('div'); zonaDiv.className='zona';
-    zonaDiv.innerHTML=`<span class="zona-nombre">${nombreZona}</span><div class="grilla"></div>`;
-    const grilla=zonaDiv.querySelector('.grilla');
-    mesas.forEach(mesaId=>{
-      const g=porMesa[mesaId];
-      const box=document.createElement('div'); box.className='mesa-box'+(g?' ocupada':'');
-      if(g) box.innerHTML=`<div style="display:flex;justify-content:space-between;border-bottom:1px solid #333;padding-bottom:4px"><strong style="font-size:11px">${mesaId}</strong><small style="color:#ff9900">${g.estado}</small></div><div style="font-size:11px;margin-top:6px">${g.items.map(i=>`• ${i.cantidad}x ${i.nombre}`).join('<br>')}</div>`;
-      else box.innerHTML=`<div><strong style="font-size:11px">${mesaId}</strong><small style="color:#666;float:right">Libre</small></div><p style="color:#555;font-size:11px;text-align:center;margin-top:25px">Sin comanda</p>`;
-      grilla.appendChild(box);
-    });
-    plano.appendChild(zonaDiv);
-  });
+  const lista=document.getElementById('lista'); const plano=document.getElementById('plano'); lista.innerHTML=''; plano.innerHTML='';
+  const orden=Object.values(porMesa).sort((a,b)=>a.timestamp-b.timestamp); document.getElementById('total').textContent=orden.length;
+  orden.forEach((g,idx)=>{ const nro=String(idx+1).padStart(3,'0'); const div=document.createElement('div'); div.className='card'; div.innerHTML=`<div style="display:flex;justify-content:space-between"><span class="mesa">#${nro} 📍 ${g.mesa}</span><span style="font-size:10px;background:#333;padding:2px 6px;border-radius:4px">${g.estado}</span></div><div style="margin-top:6px">${g.items.map(i=>`<div class="item"><span>${i.nombre}</span><span class="cant">x${i.cantidad}</span></div>`).join('')}</div>`; lista.appendChild(div); });
+  if(orden.length===0) lista.innerHTML='<p style="color:#666;text-align:center;margin-top:20px">Sin comandas.<br>Esperando a Mariana.</p>';
+  Object.entries(ZONAS).forEach(([nombreZona, mesas])=>{ const zonaDiv=document.createElement('div'); zonaDiv.className='zona'; zonaDiv.innerHTML=`<span class="zona-nombre">${nombreZona}</span><div class="grilla"></div>`; const grilla=zonaDiv.querySelector('.grilla'); mesas.forEach(mesaId=>{ const g=porMesa[mesaId]; const box=document.createElement('div'); box.className='mesa-box'+(g?' ocupada':''); if(g) box.innerHTML=`<div style="display:flex;justify-content:space-between;border-bottom:1px solid #333;padding-bottom:4px"><strong style="font-size:11px">${mesaId}</strong><small style="color:#ff9900">${g.estado}</small></div><div style="font-size:11px;margin-top:6px">${g.items.map(i=>`• ${i.cantidad}x ${i.nombre}`).join('<br>')}</div>`; else box.innerHTML=`<div><strong style="font-size:11px">${mesaId}</strong><small style="color:#666;float:right">Libre</small></div><p style="color:#555;font-size:11px;text-align:center;margin-top:25px">Sin comanda</p>`; grilla.appendChild(box); }); plano.appendChild(zonaDiv); });
 }
-
-function abrirResumen(){
-  const cont=document.getElementById('contenidoResumen');
-  if(resumenCocina.length===0) cont.innerHTML='<p style="color:#888">Resumen vacío. Cuando cierres una mesa, aparece acá.</p>';
-  else cont.innerHTML=resumenCocina.map((r,i)=>`<div style="background:#222;padding:8px;border-radius:6px;margin-bottom:8px;border-left:4px solid #27ae60"><div style="display:flex;justify-content:space-between"><strong style="color:#ff9900">${r.mesa}</strong><small>${r.hora} - $${r.total.toLocaleString('es-AR')}</small></div><div style="font-size:11px;margin-top:4px">${r.items.map(it=>`• ${it.cantidad}x ${it.nombre}`).join('<br>')}</div></div>`).join('');
-  document.getElementById('modalResumen').style.display='flex';
-}
+function abrirResumen(){ const cont=document.getElementById('contenidoResumen'); if(resumenCocina.length===0) cont.innerHTML='<p style="color:#888">Vacío</p>'; else cont.innerHTML=resumenCocina.map(r=>`<div style="background:#222;padding:8px;border-radius:6px;margin-bottom:8px;border-left:4px solid #27ae60"><div style="display:flex;justify-content:space-between"><strong style="color:#ff9900">${r.mesa}</strong><small>${r.hora} - $${r.total.toLocaleString('es-AR')}</small></div><div style="font-size:11px;margin-top:4px">${r.items.map(it=>`• ${it.cantidad}x ${it.nombre}`).join('<br>')}</div></div>`).join(''); document.getElementById('modalResumen').style.display='flex'; }
 function cerrarResumen(){ document.getElementById('modalResumen').style.display='none'; }
 function limpiarResumen(){ if(confirm('¿Borrar resumen?')){ resumenCocina=[]; guardarResumen(); cerrarResumen(); } }
 guardarResumen();
-</script>
-</body>
-</html>
+</script></body></html>
