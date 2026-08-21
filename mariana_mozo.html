@@ -1,39 +1,37 @@
 <!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mariana - Mozo</title>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="config.js"></script>
 <script>firebase.initializeApp(firebaseConfig);</script>
-<style>body{font-family:sans-serif;background:#111;color:#fff;padding:15px}.cat{color:#ffcc00;margin-top:20px}.prod{background:#222;padding:10px;margin:5px 0;border-radius:8px;display:flex;justify-content:space-between} button{padding:10px;background:#00cc66;border:0;border-radius:8px;color:#fff;font-weight:bold;cursor:pointer}</style>
-</head><body><h1>🧾 MARIANA - COMANDERA</h1><div id="menu">Cargando menú...</div><hr><h3>Pedido: <span id="mesaTxt">Mesa 1</span></h3><div id="pedido"></div><h2>Total: $<span id="total">0</span></h2><button onclick="enviar()">🚀 ENVIAR A COCINA/PARRILLA</button>
+<style>body{font-family:sans-serif;background:#111;color:#fff;padding:15px}.cat{color:#ffcc00;margin-top:20px;font-size:22px;border-bottom:1px solid #333}.prod{background:#222;padding:12px;margin:6px 0;border-radius:8px;display:flex;justify-content:space-between;align-items:center} button{padding:10px 15px;background:#00cc66;border:0;border-radius:8px;color:#fff;font-weight:bold;cursor:pointer} #pedido{background:#1a1a1a;padding:10px;border-radius:8px;min-height:40px}</style>
+</head><body><h1>🧾 MARIANA - COMANDERA</h1><div id="menu">Cargando menú...</div><hr><h3>Pedido: <span id="mesaTxt">Mesa?</span></h3><div id="pedido">Vacío</div><h2>Total: $<span id="total">0</span></h2><button onclick="enviar()" style="width:100%;font-size:18px;padding:15px">🚀 ENVIAR A COCINA/PARRILLA</button>
 <script>
-let carrito=[]; let total=0;
-const db= firebase.firestore();
+let carrito=[], total=0;
 const rtdb= firebase.database();
-
-// Carga menú desde Firestore (donde ya lo tenías)
-db.collection("menu").onSnapshot(snap=>{
-  let html='';
+rtdb.ref('menu').on('value', snap=>{
   let porCat={};
-  snap.forEach(d=>{
-    let p=d.data(); porCat[p.categoria]=porCat[p.categoria]||[]; porCat[p.categoria].push({...p,id:d.id});
+  snap.forEach(child=>{
+    let p=child.val(); p.id=child.key;
+    if(!p.nombre) return;
+    porCat[p.categoria||'General']=porCat[p.categoria||'General']||[];
+    porCat[p.categoria||'General'].push(p);
   });
+  let html='';
   for(let c in porCat){
-    html+=`<h2 class="cat">${c}</h2>`;
+    html+=`<div class="cat">${c.toUpperCase()}</div>`;
     porCat[c].forEach(prod=>{
-      html+=`<div class="prod"><span>${prod.nombre} - $${prod.precio}</span><button onclick="add('${prod.id}','${prod.nombre}',${prod.precio},'${c}')">+</button></div>`;
+      html+=`<div class="prod"><span>${prod.nombre} - $${prod.precio}</span><button onclick="add('${prod.id}','${prod.nombre.replace(/'/g,"\\'")}',${prod.precio},'${c}')">+ ADD</button></div>`;
     });
   }
-  document.getElementById('menu').innerHTML=html||'Menú vacío - cargalo en Firestore colección menu';
+  document.getElementById('menu').innerHTML=html||'⚠️ No hay productos en Realtime Database /menu - cargalos en cargar_menu.html';
 });
-
-function add(id,nombre,precio,cat){ carrito.push({id,nombre,precio,cantidad:1,cat}); total+=precio; render(); }
-function render(){ document.getElementById('pedido').innerHTML=carrito.map(i=>`• ${i.cantidad}x ${i.nombre}`).join('<br>'); document.getElementById('total').innerText=total; }
-
+function add(id,nombre,precio,cat){ carrito.push({id,nombre,precio,cantidad:1,cat}); total+=Number(precio); render(); }
+function render(){ document.getElementById('pedido').innerHTML=carrito.map(i=>`• ${i.cantidad}x ${i.nombre} $${i.precio}`).join('<br>'); document.getElementById('total').innerText=total; }
 function enviar(){
   if(!carrito.length) return alert('Carrito vacío');
-  const mesa = prompt('Número de mesa?','1');
+  const mesa = prompt('Número de mesa?','1'); if(!mesa) return;
+  document.getElementById('mesaTxt').innerText='Mesa '+mesa;
   const comanda = { mesa: 'Mesa '+mesa, items: carrito, total: total, estado:'PENDIENTE', timestamp: Date.now() };
-  rtdb.ref('comandas_activas').push(comanda).then(()=>{ alert('¡Enviado! No se pisó nada'); carrito=[]; total=0; render(); });
+  rtdb.ref('comandas_activas').push(comanda).then(()=>{ alert('¡Enviado a Cocina/Parrilla! No se pisa'); carrito=[]; total=0; render(); });
 }
 </script></body></html>
