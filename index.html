@@ -1,9 +1,21 @@
-<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Parrilla La Perseverancia</title>
-<style>body{font-family:sans-serif;background:#111;color:#fff;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0} .card{background:#222;padding:30px;border-radius:15px;text-align:center;width:90%;max-width:400px} a{display:block;background:#ff6600;color:#fff;padding:15px;margin:10px 0;border-radius:10px;text-decoration:none;font-weight:bold} a.sec{background:#333}</style>
-</head><body><div class="card"><h1>🔥 LA PERSEVERANCIA</h1><p>Panel operativo - Ya con apiKey</p>
-<a href="menu.html">📱 Ver Menú Cliente</a>
-<a href="generar_qr.html" class="sec">🔳 Generar QR Mesas</a>
-<a href="mariana_mozo.html" class="sec">🧑‍🍳 Mariana - Mozos</a>
-<a href="parrilla_gustavo.html" class="sec">🥩 Gustavo - Parrilla</a>
-<a href="cocina_hernan.html" class="sec">🍝 Hernán - Cocina</a>
-</div></body></html>
+<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LA PERSEVERANCIA - SISTEMA</title>
+<style>*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',sans-serif}body{background:#0e0e0e;color:#fff;padding:20px;text-align:center}h1{color:#f1c40f;margin-bottom:20px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;max-width:1000px;margin:0 auto}.card{background:#1c1c1c;border:2px solid #333;border-radius:12px;padding:20px;cursor:pointer;transition:.2s;text-decoration:none;color:#fff;display:block}.card:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,.5)}.card.gustavo{border-color:#c0392b}.card.hernan{border-color:#27ae60}.card.mariana{border-color:#2980b9}.card.caja{border-color:#f1c40f}.badge{font-size:10px;padding:3px 8px;border-radius:10px;background:#000;border:1px solid #555}</style></head><body>
+<h1>🔥 LA PERSEVERANCIA - SISTEMA FINAL</h1>
+<p style="color:#aaa;margin-bottom:20px">Flujo: Gustavo cobra → Mariana libera → Caja registra</p>
+<div class="grid">
+<a class="card gustavo" href="parrilla_gustavo_FINAL_COBRO.html"><div style="font-size:40px">🔥</div><h2>GUSTAVO PARRILLA</h2><p style="font-size:12px;color:#aaa;margin:8px 0">Único que puede COBRAR<br>Milanesa/Pechuga no ve<br>Bondiola/Vacio/Chori/Morci + agregados = MIXTA</p><span class="badge" style="color:#e74c3c;border-color:#e74c3c">● CAJA ACTIVA</span></a>
+<a class="card hernan" href="cocina_hernan_FINAL_COBRO_COMPLETO.html"><div style="font-size:40px">🍳</div><h2>HERNÁN COCINA</h2><p style="font-size:12px;color:#aaa;margin:8px 0">Milanesa/Pechuga 100% cocina<br>Bondiola/Vacio + agregados = ve agregados amarillo<br>No puede cobrar</p><span class="badge" style="color:#27ae60;border-color:#27ae60">● SOLO COCINA</span></a>
+<a class="card mariana" href="mariana_mozo_FINAL_COBRO_COMPLETO.html"><div style="font-size:40px">💁‍♀️</div><h2>MARIANA MOZO</h2><p style="font-size:12px;color:#aaa;margin:8px 0">Ve ticket amarillo de Gustavo<br>Solo libera mesas COBRADAS<br>Mixta lista = parpadea</p><span class="badge" style="color:#3498db;border-color:#3498db">● TICKET Y LIBERAR</span></a>
+<a class="card caja" href="caja_arqueo.html"><div style="font-size:40px">💰</div><h2>CAJA / ARQUEO</h2><p style="font-size:12px;color:#aaa;margin:8px 0">Historial de cobros de Gustavo<br>Total del día<br>Exportar</p><span class="badge" style="color:#f1c40f;border-color:#f1c40f">● ARQUEO</span></a>
+</div>
+<div style="margin-top:30px;background:#1a1a00;border:1px solid #f1c40f;border-radius:8px;padding:12px;max-width:1000px;margin:20px auto">
+<div style="color:#f1c40f;font-weight:800">📋 REGLAS FINALES ACTIVAS</div>
+<div style="font-size:11px;color:#ccc;text-align:left;margin-top:8px;line-height:1.6">
+• MILANESA / PECHUGA / SUPREMA en todas variantes = SOLO COCINA HERNÁN<br>
+• BONDIOLA / VACIO / CHORIPAN / MORCIPAN SOLO = SOLO PARRILLA GUSTAVO<br>
+• BONDIOLA / VACIO / CHORIPAN / MORCIPAN + lechuga, tomate, jamón, queso, huevo, fritas = MIXTA → Carne = Gustavo, Agregados = Hernán<br>
+• ASADO / VACIO / BIFE c/fritas = MIXTA<br>
+• GUSTAVO es el ÚNICO que cobra → genera ticket amarillo → MARIANA solo libera → mesa libre para todos + queda en caja
+</div>
+</div>
+</body></html>
