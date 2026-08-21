@@ -2,42 +2,48 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LA PERSEVERANCIA | VISTA COCINA (HERNÁN)</title>
+<title>LA PERSEVERANCIA | COCINA HERNÁN - FINAL</title>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',sans-serif}
 body{background:#0b0b0b;color:#fff;padding:10px}
-header{background:linear-gradient(90deg,#b03a2e,#d35400);padding:10px 16px;border-radius:6px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-header h1{font-size:16px;font-weight:bold}
-.badge-live{background:#000;color:#00ff66;font-size:11px;padding:4px 10px;border-radius:12px;border:1px solid #00ff66}
-.layout{display:grid;grid-template-columns:360px 1fr;gap:12px}
+header{background:linear-gradient(90deg,#b03a2e,#d35400);padding:10px 16px;border-radius:6px;display:flex;justify-content:space-between;align-items:center}
+header h1{font-size:15px}
+.btn{padding:7px 14px;border-radius:5px;border:1px solid #34495e;background:#1c2833;color:#fff;font-weight:bold;cursor:pointer;font-size:12px}
+.btn-resumen{background:#1a5276;border-color:#2980b9}
+.layout{display:grid;grid-template-columns:360px 1fr;gap:12px;margin-top:12px}
 .panel{background:#141414;border:1px solid #222;border-radius:8px;padding:12px}
-.titulo{font-size:12px;color:#ff9900;font-weight:bold;margin-bottom:10px;text-transform:uppercase}
+.titulo{color:#ff9900;font-size:12px;font-weight:bold;margin-bottom:10px;display:flex;justify-content:space-between}
 .card{background:#1c1c1c;border:2px solid #e67e22;border-left:6px solid #e67e22;border-radius:6px;padding:10px;margin-bottom:10px}
-.card.recibido{border-color:#f39c12;background:#211a0e}
-.card.manos{border-color:#27ae60;background:#112218}
 .mesa{color:#ff9900;font-weight:bold;font-size:13px}
-.items{font-size:12px;margin-top:6px}
-.item{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px dashed #333}
-.cant{color:#00ff66;background:#000;padding:1px 6px;border-radius:4px;border:1px solid #00ff66;font-size:11px}
+.item{display:flex;justify-content:space-between;font-size:12px;padding:3px 0;border-bottom:1px dashed #333}
+.cant{background:#000;color:#00ff66;border:1px solid #00ff66;padding:1px 6px;border-radius:4px;font-size:11px}
 .plano{display:flex;flex-direction:column;gap:14px;background:#0d0d0d;border:1px dashed #333;border-radius:8px;padding:14px;min-height:80vh}
 .zona{background:#111;border:1px solid #222;border-radius:8px;padding:10px}
-.zona-nombre{font-size:11px;color:#888;font-weight:bold;display:block;margin-bottom:8px;text-transform:uppercase}
-.grilla{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
-.mesa-box{background:#1a1a1a;border:2px solid #333;border-radius:8px;padding:10px;min-height:110px}
+.zona-nombre{font-size:11px;color:#888;font-weight:bold;margin-bottom:8px;display:block}
+.grilla{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
+.mesa-box{background:#1a1a1a;border:2px solid #333;border-radius:8px;padding:10px;min-height:100px}
 .mesa-box.ocupada{background:#241414;border-color:#c0392b}
-.mesa-box.manos{background:#113822;border-color:#27ae60}
-.btn-limpiar{width:100%;background:#27ae60;color:#fff;border:none;padding:7px;border-radius:4px;font-weight:bold;cursor:pointer;margin-top:8px;font-size:12px}
+.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.9);display:none;justify-content:center;align-items:center;z-index:999}
+.modal-box{background:#181818;border:1px solid #444;border-radius:8px;padding:20px;width:90%;max-width:500px;max-height:80vh;overflow:auto}
 </style>
 </head>
 <body>
-<header><h1>🔥 LA PERSEVERANCIA | VISTA COCINA (HERNÁN) | <span id="reloj">--:--:--</span></h1><span class="badge-live">• COCINA - CONECTADA A MARIANA</span></header>
+<header>
+<h1>🔥 LA PERSEVERANCIA | COCINA HERNÁN - CONECTADA A MARIANA | <span id="reloj"></span></h1>
+<div style="display:flex;gap:8px">
+<button class="btn btn-resumen" onclick="abrirResumen()">📊 RESUMEN (<span id="cantResumen">0</span>)</button>
+<span style="background:#000;color:#00ff66;padding:7px 12px;border-radius:12px;border:1px solid #00ff66;font-size:11px">• COCINA ACTIVA</span>
+</div>
+</header>
 
 <div class="layout">
-<aside class="panel"><div class="titulo">🍳 ÍTEMS DE COCINA (FIFO) - <span id="total">0</span></div><div id="lista"></div></aside>
-<main class="panel"><div class="titulo">📍 PLANO DE COCINA (COMANDAS EN TIEMPO REAL)</div><div class="plano" id="plano"></div></main>
+<aside class="panel"><div class="titulo">🍳 ÍTEMS DE COCINA (FIFO) - EN TIEMPO REAL <span id="total">0</span></div><div id="lista"></div></aside>
+<main class="panel"><div class="titulo">📍 PLANO - COMANDAS MARIANA</div><div class="plano" id="plano"></div></main>
 </div>
+
+<div class="modal" id="modalResumen"><div class="modal-box"><div style="display:flex;justify-content:space-between;border-bottom:1px solid #333;padding-bottom:8px;margin-bottom:10px"><h3 style="color:#ff9900">📊 RESUMEN DE COCINA - MESAS CERRADAS</h3><button onclick="cerrarResumen()" style="background:none;border:none;color:#fff;font-size:18px">✕</button></div><div id="contenidoResumen"></div><button onclick="limpiarResumen()" style="width:100%;background:#c0392b;color:#fff;border:none;padding:10px;border-radius:6px;margin-top:12px;font-weight:bold">🗑️ LIMPIAR RESUMEN</button></div></div>
 
 <script>
 const firebaseConfig = {
@@ -51,84 +57,89 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
-
 setInterval(()=>document.getElementById('reloj').textContent=new Date().toLocaleTimeString('es-AR'),1000);
 
 const ZONAS = {
   "SALÓN PRINCIPAL": ["Salón - Mesa 1","Salón - Mesa 2","Salón - Mesa 3","Salón - Mesa 4"],
   "VEREDA": ["Vereda - Mesa 5","Vereda - Mesa 6","Vereda - Mesa 7"],
-  "MOSTRADOR / DELIVERY / PICKUP": ["Canal - Mostrador","Canal - Pickup","Canal - Delivery"]
+  "MOSTRADOR / DELIVERY": ["Canal - Mostrador","Canal - Pickup","Canal - Delivery"]
 };
+
+let porMesaAnterior = {};
+let resumenCocina = JSON.parse(localStorage.getItem('resumen_hernan') || '[]');
+
+function guardarResumen(){ localStorage.setItem('resumen_hernan', JSON.stringify(resumenCocina)); document.getElementById('cantResumen').textContent = resumenCocina.length; }
 
 db.ref('comandas_activas').on('value', snap=>{
   const data = snap.val() || {};
   const porMesa = {};
 
   Object.entries(data).forEach(([key, cmd])=>{
-    if(!cmd ||!cmd.mesa) return;
+    if(!cmd ||!cmd.mesa || cmd.mesa === 'undefined') return;
     const mesaNombre = String(cmd.mesa).trim();
-    if(!porMesa[mesaNombre]) porMesa[mesaNombre] = {mesa: mesaNombre, items:[], total:0, estado: cmd.estado||'PENDIENTE', keys:[], timestamp: cmd.timestamp||Date.now()};
+    if(!mesaNombre) return;
+    if(!porMesa[mesaNombre]) porMesa[mesaNombre] = {mesa: mesaNombre, items:[], total:0, estado: cmd.estado||'PENDIENTE', timestamp: cmd.timestamp||Date.now()};
     porMesa[mesaNombre].items.push(...(cmd.items||[]));
     porMesa[mesaNombre].total += Number(cmd.total||0);
-    porMesa[mesaNombre].keys.push(key);
     porMesa[mesaNombre].estado = cmd.estado || porMesa[mesaNombre].estado;
     if(cmd.timestamp > porMesa[mesaNombre].timestamp) porMesa[mesaNombre].timestamp = cmd.timestamp;
   });
 
+  // DETECTAR MESAS CERRADAS -> PASAR A RESUMEN Y LUEGO DESAPARECER
+  Object.keys(porMesaAnterior).forEach(mesaCerrada=>{
+    if(!porMesa[mesaCerrada]){
+      // se cerró
+      const info = porMesaAnterior[mesaCerrada];
+      resumenCocina.unshift({mesa: mesaCerrada, items: info.items, total: info.total, hora: new Date().toLocaleTimeString('es-AR')});
+      if(resumenCocina.length>100) resumenCocina.pop();
+    }
+  });
+  porMesaAnterior = JSON.parse(JSON.stringify(porMesa));
+  guardarResumen();
   render(porMesa);
 });
 
 function render(porMesa){
   const lista = document.getElementById('lista');
   const plano = document.getElementById('plano');
-  lista.innerHTML='';
-  plano.innerHTML='';
-
+  lista.innerHTML=''; plano.innerHTML='';
   const orden = Object.values(porMesa).sort((a,b)=>a.timestamp-b.timestamp);
   document.getElementById('total').textContent = orden.length;
 
   orden.forEach((g, idx)=>{
     const nro = String(idx+1).padStart(3,'0');
-    const esManos = g.estado.includes('MANOS') || g.estado.includes('LISTO');
     const div = document.createElement('div');
-    div.className = 'card' + (esManos? ' manos' : (g.estado==='RECIBIDO'?' recibido':''));
-    div.innerHTML = `<div style="display:flex;justify-content:space-between"><span class="mesa">#${nro} 📍 ${g.mesa}</span><span style="font-size:10px;background:#333;padding:2px 6px;border-radius:4px">${g.estado}</span></div>
-      <div class="items">${g.items.map(i=>`<div class="item"><span>${i.nombre}</span><span class="cant">x${i.cantidad}</span></div>`).join('')}</div>
-      ${esManos?`<button class="btn-limpiar" onclick="limpiar('${g.mesa.replace(/'/g,"\\'")}')">✅ LIMPIAR / RETIRAR</button>`:''}`;
+    div.className='card';
+    div.innerHTML=`<div style="display:flex;justify-content:space-between"><span class="mesa">#${nro} 📍 ${g.mesa}</span><span style="font-size:10px;background:#333;padding:2px 6px;border-radius:4px">${g.estado}</span></div>
+    <div style="margin-top:6px">${g.items.map(i=>`<div class="item"><span>${i.nombre}</span><span class="cant">x${i.cantidad}</span></div>`).join('')}</div>`;
     lista.appendChild(div);
   });
-
-  if(orden.length===0) lista.innerHTML='<p style="color:#666;text-align:center">Sin comandas. Esperando a Mariana...</p>';
+  if(orden.length===0) lista.innerHTML='<p style="color:#666;text-align:center;margin-top:20px">Sin comandas activas.<br>Cuando Mariana mande una, aparece acá.<br>Cuando la cierre, pasa a RESUMEN y desaparece.</p>';
 
   Object.entries(ZONAS).forEach(([nombreZona, mesas])=>{
-    const zonaDiv = document.createElement('div');
-    zonaDiv.className='zona';
+    const zonaDiv=document.createElement('div'); zonaDiv.className='zona';
     zonaDiv.innerHTML=`<span class="zona-nombre">${nombreZona}</span><div class="grilla"></div>`;
-    const grilla = zonaDiv.querySelector('.grilla');
+    const grilla=zonaDiv.querySelector('.grilla');
     mesas.forEach(mesaId=>{
-      const g = porMesa[mesaId];
-      const box = document.createElement('div');
-      box.className='mesa-box' + (g? (g.estado.includes('MANOS')?' manos':' ocupada') : '');
-      if(g){
-        box.innerHTML=`<div style="display:flex;justify-content:space-between;border-bottom:1px solid #333;padding-bottom:4px;margin-bottom:4px"><strong style="font-size:12px">${mesaId.toUpperCase()}</strong><small style="color:#ff9900">${g.estado}</small></div>
-        <div style="font-size:11px">${g.items.map(i=>`• ${i.cantidad}x ${i.nombre}`).join('<br>')}</div>
-        <div style="margin-top:6px;font-size:11px;color:#00ff66;font-weight:bold">Total: $${g.total.toLocaleString('es-AR')}</div>`;
-      }else{
-        box.innerHTML=`<div style="display:flex;justify-content:space-between;border-bottom:1px solid #333;padding-bottom:4px"><strong style="font-size:12px">${mesaId.toUpperCase()}</strong><small style="color:#666">Libre</small></div><p style="color:#555;font-size:11px;text-align:center;margin-top:20px">Sin comanda</p>`;
-      }
+      const g=porMesa[mesaId];
+      const box=document.createElement('div'); box.className='mesa-box'+(g?' ocupada':'');
+      if(g) box.innerHTML=`<div style="display:flex;justify-content:space-between;border-bottom:1px solid #333;padding-bottom:4px"><strong style="font-size:11px">${mesaId}</strong><small style="color:#ff9900">${g.estado}</small></div><div style="font-size:11px;margin-top:6px">${g.items.map(i=>`• ${i.cantidad}x ${i.nombre}`).join('<br>')}</div>`;
+      else box.innerHTML=`<div><strong style="font-size:11px">${mesaId}</strong><small style="color:#666;float:right">Libre</small></div><p style="color:#555;font-size:11px;text-align:center;margin-top:25px">Sin comanda</p>`;
       grilla.appendChild(box);
     });
     plano.appendChild(zonaDiv);
   });
 }
 
-function limpiar(mesa){
-  if(!confirm('¿Limpiar '+mesa+'? Se borra de Mariana, Gustavo y Hernán.')) return;
-  db.ref('comandas_activas').once('value', s=>{
-    const data=s.val()||{};
-    Object.entries(data).forEach(([k,v])=>{ if(v.mesa===mesa) db.ref('comandas_activas/'+k).remove(); });
-  });
+function abrirResumen(){
+  const cont=document.getElementById('contenidoResumen');
+  if(resumenCocina.length===0) cont.innerHTML='<p style="color:#888">Resumen vacío. Cuando cierres una mesa, aparece acá.</p>';
+  else cont.innerHTML=resumenCocina.map((r,i)=>`<div style="background:#222;padding:8px;border-radius:6px;margin-bottom:8px;border-left:4px solid #27ae60"><div style="display:flex;justify-content:space-between"><strong style="color:#ff9900">${r.mesa}</strong><small>${r.hora} - $${r.total.toLocaleString('es-AR')}</small></div><div style="font-size:11px;margin-top:4px">${r.items.map(it=>`• ${it.cantidad}x ${it.nombre}`).join('<br>')}</div></div>`).join('');
+  document.getElementById('modalResumen').style.display='flex';
 }
+function cerrarResumen(){ document.getElementById('modalResumen').style.display='none'; }
+function limpiarResumen(){ if(confirm('¿Borrar resumen?')){ resumenCocina=[]; guardarResumen(); cerrarResumen(); } }
+guardarResumen();
 </script>
 </body>
 </html>
