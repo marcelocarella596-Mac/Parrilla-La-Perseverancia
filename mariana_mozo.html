@@ -1,205 +1,108 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Comandera Mariana (Mozo) | La Perseverancia - FINAL</title>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-  <style>
-    *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',sans-serif}
-    body{background:#121212;color:#fff;padding:10px}
-    header{background:#8b0000;padding:12px 18px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;flex-wrap:wrap;gap:10px}
-    header h1{font-size:1.1rem;font-weight:bold;text-transform:uppercase}
-   .header-btns{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-   .btn-top{background:#2c3e50;color:#fff;border:none;padding:6px 12px;border-radius:4px;font-size:11px;font-weight:bold;cursor:pointer}
-   .btn-sonido-top{background:#d35400}.btn-sonido-top.silenciado{background:#7f8c8d}
-   .info-widget{background:rgba(0,0,0,.3);padding:5px 10px;border-radius:4px;font-size:11px;font-weight:bold;display:flex;align-items:center;gap:6px;border:1px solid rgba(255,255,255,.1)}
-   .badge-live{background:#000;color:#2ecc71;font-size:11px;font-weight:bold;padding:4px 10px;border-radius:4px;border:1px solid #2ecc71}
-   .layout-principal{display:grid;grid-template-columns:340px 1fr 300px;gap:15px}
-    @media(max-width:1200px){.layout-principal{grid-template-columns:320px 1fr}.panel-derecho{grid-column:1/-1}}
-   .panel-formulario{background:#1e1e1e;border:1px solid #333;border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:10px;height:fit-content}
-   .seccion-titulo{font-size:11px;font-weight:bold;color:#ffc107;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
-   .row-ubicacion{display:grid;grid-template-columns:2fr 1fr;gap:8px}
-    select,input{width:100%;padding:8px;background:#111;border:1px solid #444;color:#fff;border-radius:4px;font-size:12px;outline:none}
-   .box-delivery{background:#1a1a1a;border:1px dashed #e67e22;padding:8px;border-radius:5px;display:flex;flex-direction:column;gap:6px}
-   .contenedor-categorias{display:flex;gap:5px;overflow-x:auto;padding-bottom:5px}
-   .btn-cat{background:#222;border:1px solid #444;color:#ccc;padding:6px 10px;border-radius:4px;font-size:11px;font-weight:bold;cursor:pointer;white-space:nowrap}
-   .btn-cat.activo,.btn-cat:hover{background:#8b0000;color:#fff;border-color:#e74c3c}
-   .grilla-productos{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;max-height:260px;overflow-y:auto;background:#121212;padding:8px;border-radius:6px;border:1px solid #222}
-   .card-prod{background:#252525;border:1px solid #444;border-radius:5px;padding:8px;cursor:pointer;display:flex;flex-direction:column;justify-content:space-between;min-height:60px}
-   .card-prod:hover{border-color:#ffc107;transform:scale(1.02)}
-   .card-prod.agotado{background:#3a1212;border-color:#c0392b;opacity:0.5;cursor:not-allowed}
-   .card-prod.nombre{font-size:11px;font-weight:bold;color:#fff;line-height:1.2}
-   .card-prod.precio{font-size:11px;font-weight:bold;color:#2ecc71;margin-top:4px}
-   .resumen-box{background:#111;border:1px solid #333;border-radius:6px;padding:8px;min-height:100px;max-height:130px;overflow-y:auto}
-   .item-carrito{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid #222;font-size:11px}
-   .cnt-ctrls{display:flex;align-items:center;gap:5px}
-   .btn-qty{background:#444;color:#fff;border:none;width:18px;height:18px;border-radius:3px;cursor:pointer;font-weight:bold}
-   .total-bar{display:flex;justify-content:space-between;align-items:center;font-weight:bold;font-size:14px;padding:4px 0;color:#ffc107}
-   .btn-enviar{width:100%;background:#e74c3c;border:none;color:#fff;padding:10px;font-size:12px;font-weight:bold;border-radius:6px;cursor:pointer;text-transform:uppercase}
-   .panel-produccion{background:#1e1e1e;border:1px solid #333;border-radius:8px;padding:15px}
-   .mapa-contenedor{background:#121212;border:1px dashed #444;border-radius:8px;padding:15px;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;min-height:520px;align-content:start}
-   .card-mesa-grid{background:#1a1a1a;border:2px solid #8b0000;border-radius:6px;padding:10px;display:flex;flex-direction:column;justify-content:space-between;min-height:140px;cursor:pointer}
-   .card-mesa-grid.ocupada{border-color:#27ae60;background:#17202a}
-   .mesa-hdr-grid{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #333;padding-bottom:4px;margin-bottom:6px}
-   .mesa-title-grid{font-size:12px;font-weight:bold;color:#ffc107}
-   .mesa-status-badge{font-size:9px;padding:2px 6px;border-radius:3px;font-weight:bold;background:#333;color:#aaa}
-   .mesa-body-preview{font-size:10px;color:#ccc;flex-grow:1;overflow-y:auto;max-height:70px;line-height:1.2}
-   .mesa-footer-grid{border-top:1px solid #333;padding-top:4px;margin-top:4px;display:flex;justify-content:space-between;font-size:11px;font-weight:bold;color:#2ecc71}
-   .badge-tipo{font-size:8px;padding:2px 5px;border-radius:8px;border:1px solid}
-   .box-kds-mini,.box-mensajes{background:#1e1e1e;border:1px solid #333;border-radius:8px;padding:12px}
-   .lista-pendientes{max-height:180px;overflow-y:auto;font-size:11px;color:#ccc;margin-top:8px}
-   .chat-box{background:#111;border:1px solid #333;border-radius:6px;height:160px;overflow-y:auto;padding:8px;font-size:11px;margin-bottom:8px;display:flex;flex-direction:column;gap:6px}
-   .chat-msg{background:#222;padding:5px 8px;border-radius:4px;border-left:3px solid #2980b9}
-   .chat-msg.mio{border-left-color:#e74c3c}
-   .modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);display:none;justify-content:center;align-items:center;z-index:1000}
-   .modal-contenido{background:#1e1e1e;border:1px solid #444;border-radius:8px;padding:20px;width:90%;max-width:450px}
-   .modal-hdr{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #333;padding-bottom:10px;margin-bottom:15px}
-   .btn-cerrar-modal{background:none;border:none;color:#999;font-size:18px;cursor:pointer}
-   .btn-opcion-mesa{width:100%;padding:10px;margin-bottom:8px;border:none;border-radius:5px;font-weight:bold;font-size:12px;cursor:pointer}
-  </style>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MARIANA MOZO - FIX CHAT Y MIXTA</title>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',sans-serif}
+body{background:#121212;color:#fff;padding:10px}
+header{background:#8b0000;padding:12px 18px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;flex-wrap:wrap;gap:10px}
+.btn-top{background:#2c3e50;color:#fff;border:none;padding:6px 12px;border-radius:4px;font-size:11px;font-weight:bold;cursor:pointer}
+.info-widget{background:rgba(0,0,0,.3);padding:5px 10px;border-radius:4px;font-size:11px;font-weight:bold;border:1px solid rgba(255,255,255,.1)}
+.badge-live{background:#000;color:#2ecc71;font-size:11px;font-weight:bold;padding:4px 10px;border-radius:4px;border:1px solid #2ecc71}
+.layout-principal{display:grid;grid-template-columns:340px 1fr 320px;gap:15px}
+@media(max-width:1200px){.layout-principal{grid-template-columns:320px 1fr}.panel-derecho{grid-column:1/-1}}
+.panel-formulario,.panel-produccion,.box-kds-mini,.box-mensajes{background:#1e1e1e;border:1px solid #333;border-radius:8px;padding:12px}
+.seccion-titulo{font-size:11px;font-weight:bold;color:#ffc107;text-transform:uppercase;margin-bottom:4px}
+select,input{width:100%;padding:8px;background:#111;border:1px solid #444;color:#fff;border-radius:4px;font-size:12px}
+.contenedor-categorias{display:flex;gap:5px;overflow-x:auto;padding-bottom:5px}
+.btn-cat{background:#222;border:1px solid #444;color:#ccc;padding:6px 10px;border-radius:4px;font-size:11px;font-weight:bold;cursor:pointer;white-space:nowrap}
+.btn-cat.activo{background:#8b0000;color:#fff}
+.grilla-productos{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;max-height:260px;overflow-y:auto;background:#121212;padding:8px;border-radius:6px;border:1px solid #222}
+.card-prod{background:#252525;border:1px solid #444;border-radius:5px;padding:8px;cursor:pointer;min-height:60px}
+.card-prod.agotado{background:#3a1212;border-color:#c0392b;opacity:0.5;cursor:not-allowed}
+.mapa-contenedor{background:#121212;border:1px dashed #444;border-radius:8px;padding:15px;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;min-height:520px;align-content:start}
+.card-mesa-grid{background:#1a1a1a;border:2px solid #8b0000;border-radius:6px;padding:10px;display:flex;flex-direction:column;justify-content:space-between;min-height:140px;cursor:pointer}
+.card-mesa-grid.ocupada{border-color:#27ae60;background:#17202a}
+.card-mesa-grid.lista-completa{border-color:#f1c40f;background:#2a2411;animation:parpadeo 1s infinite}
+@keyframes parpadeo{0%,100%{border-color:#f1c40f}50%{border-color:#fff}}
+.mesa-hdr-grid{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #333;padding-bottom:4px;margin-bottom:6px}
+.mesa-title-grid{font-size:12px;font-weight:bold;color:#ffc107}
+.mesa-status-badge{font-size:9px;padding:2px 6px;border-radius:3px;font-weight:bold;background:#333;color:#aaa}
+.badge-tipo{font-size:8px;padding:2px 5px;border-radius:8px;border:1px solid}
+.chat-box{background:#111;border:1px solid #333;border-radius:6px;height:180px;overflow-y:auto;padding:8px;font-size:11px;margin-bottom:8px;display:flex;flex-direction:column;gap:6px}
+.chat-msg{background:#222;padding:5px 8px;border-radius:4px;border-left:3px solid #2980b9}
+.chat-msg.mio{border-left-color:#e74c3c}
+.chat-msg.sistema{background:#331f11;border-left-color:#f1c40f;color:#f1c40f;font-weight:bold}
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);display:none;justify-content:center;align-items:center;z-index:1000}
+.modal-contenido{background:#1e1e1e;border:1px solid #444;border-radius:8px;padding:20px;width:90%;max-width:450px}
+</style>
 </head>
 <body>
-  <header>
-    <h1>🔥 LA PERSEVERANCIA | MARIANA (MOZO) - FINAL</h1>
-    <div class="header-btns">
-      <div class="info-widget" id="relojWidget">🕒 --:--:--</div>
-      <div class="info-widget" id="climaWidget">🌤️ 22°C</div>
-      <div class="info-widget" style="color:#2ecc71">🪑 Activas: <span id="contadorMesasAtendidas">0</span></div>
-      <button class="btn-top btn-sonido-top" id="btnSonido" onclick="toggleSonido()">🔔 SONIDO: ON</button>
-      <span class="badge-live">• EN VIVO + 86</span>
-    </div>
-  </header>
-
-  <div class="layout-principal">
-    <aside class="panel-formulario">
-      <div class="seccion-titulo">1. Ubicación y Cliente</div>
-      <div class="row-ubicacion">
-        <select id="selectUbicacion" onchange="evaluarCanalSeleccionado()">
-          <optgroup label="Salón"><option value="Salón - Mesa 1">Salón - Mesa 1</option><option value="Salón - Mesa 2">Salón - Mesa 2</option><option value="Salón - Mesa 3">Salón - Mesa 3</option><option value="Salón - Mesa 4">Salón - Mesa 4</option></optgroup>
-          <optgroup label="Vereda"><option value="Vereda - Mesa 5">Vereda - Mesa 5</option><option value="Vereda - Mesa 6">Vereda - Mesa 6</option><option value="Vereda - Mesa 7">Vereda - Mesa 7</option></optgroup>
-          <optgroup label="Canales"><option value="Canal - Mostrador">Mostrador</option><option value="Canal - Delivery">Delivery</option><option value="Canal - Pickup">Pickup</option></optgroup>
-        </select>
-        <select id="selectComensales"><option value="1">1 Pers.</option><option value="2" selected>2 Pers.</option><option value="4">4 Pers.</option><option value="6">6 Pers.</option><option value="8">8 Pers.</option></select>
-      </div>
-      <div id="boxDelivery" class="box-delivery" style="display:none">
-        <div style="font-size:10px;color:#ffc107;font-weight:bold">🛵 DATOS DELIVERY</div>
-        <input type="text" id="delivNombre" placeholder="Nombre"><input type="text" id="delivDireccion" placeholder="Dirección"><input type="text" id="delivTelefono" placeholder="Teléfono">
-      </div>
-      <div class="seccion-titulo">2. Menú (con 86 de Jefe)</div>
-      <div class="contenedor-categorias" id="contenedorCategorias"><button class="btn-cat activo" onclick="filtrarCategoria('Todos',this)">Todos</button></div>
-      <div class="grilla-productos" id="grillaProductos"><div style="color:#666;font-size:11px;text-align:center;grid-column:span 2;margin-top:20px">Cargando menú...</div></div>
-      <div class="seccion-titulo">3. Selección Actual</div>
-      <div class="resumen-box" id="resumenComanda"><p style="color:#666;font-size:11px;text-align:center;margin-top:15px">No hay ítems.</p></div>
-      <div class="total-bar"><span>TOTAL:</span><span id="totalMonto">$0</span></div>
-      <button class="btn-enviar" onclick="enviarOActualizarComanda()">🚀 ENVIAR / AGREGAR</button>
-    </aside>
-
-    <main class="panel-produccion">
-      <div class="seccion-titulo" style="margin-bottom:10px;font-size:12px">📍 PLANO - VISIBILIDAD COMPLETA + ESTADOS</div>
-      <div class="mapa-contenedor" id="mapaMesasGrid"></div>
-    </main>
-
-    <aside class="panel-derecho">
-      <div class="box-kds-mini"><div class="seccion-titulo">📋 PENDIENTES / KDS (<span id="contadorPendientes">0</span>)</div><div class="lista-pendientes" id="listaPendientesKDS"></div></div>
-      <div class="box-mensajes" style="flex-grow:1;display:flex;flex-direction:column"><div class="seccion-titulo">💬 MENSAJES</div><div class="chat-box" id="chatMensajes"></div><input type="text" id="inputMensaje" placeholder="Escribir aviso..." onkeypress="if(event.key==='Enter') enviarMensajeChat()"><button class="btn-top" style="margin-top:6px;width:100%;padding:8px;background:#2980b9" onclick="enviarMensajeChat()">Enviar Mensaje</button></div>
-    </aside>
-  </div>
-
-  <div class="modal-overlay" id="modalOpcionesMesa"><div class="modal-contenido"><div class="modal-hdr"><h3 id="tituloOpcionesMesa" style="color:#ffc107;font-size:14px">Gestionar</h3><button class="btn-cerrar-modal" onclick="cerrarModal('modalOpcionesMesa')">✕</button></div><button class="btn-opcion-mesa" style="background:#27ae60;color:#fff" onclick="seleccionarMesaParaAgregar()">➕ AGREGAR MÁS ÍTEMS</button><button class="btn-opcion-mesa" style="background:#2980b9;color:#fff" onclick="verDetalleMesaModal()">👁️ VER DETALLE / ESTADO</button><button class="btn-opcion-mesa" style="background:#c0392b;color:#fff" onclick="cobrarMesa()">💰 COBRAR / LIMPIAR</button><button class="btn-opcion-mesa" style="background:#444;color:#fff" onclick="cerrarModal('modalOpcionesMesa')">CANCELAR</button></div></div>
-
+<header>
+<h1>🔥 LA PERSEVERANCIA | MARIANA - MOZO</h1>
+<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+<div class="info-widget" id="relojWidget">🕒 --:--:--</div>
+<div class="info-widget" style="color:#2ecc71">🪑 Activas: <span id="contadorMesasAtendidas">0</span></div>
+<div class="info-widget" style="color:#f1c40f">🔀 Mixtas listas: <span id="contadorMixtas">0</span></div>
+<button class="btn-top" id="btnSonido" onclick="toggleSonido()">🔔 SONIDO: ON</button>
+<span class="badge-live">• EN VIVO FIX</span>
+</div>
+</header>
+<div class="layout-principal">
+<aside class="panel-formulario">
+<div class="seccion-titulo">1. Ubicación</div>
+<select id="selectUbicacion" onchange="evaluarCanalSeleccionado()"><option value="Salón - Mesa 1">Salón - Mesa 1</option><option value="Salón - Mesa 2">Salón - Mesa 2</option><option value="Salón - Mesa 3">Salón - Mesa 3</option><option value="Salón - Mesa 4">Salón - Mesa 4</option><option value="Vereda - Mesa 5">Vereda - Mesa 5</option><option value="Vereda - Mesa 6">Vereda - Mesa 6</option><option value="Vereda - Mesa 7">Vereda - Mesa 7</option><option value="Canal - Mostrador">Mostrador</option><option value="Canal - Delivery">Delivery</option><option value="Canal - Pickup">Pickup</option></select>
+<div id="boxDelivery" style="display:none"><input id="delivNombre" placeholder="Nombre"><input id="delivDireccion" placeholder="Dirección"><input id="delivTelefono" placeholder="Teléfono"></div>
+<div class="seccion-titulo">2. Menú</div>
+<div class="contenedor-categorias" id="contenedorCategorias"></div>
+<div class="grilla-productos" id="grillaProductos"></div>
+<div class="seccion-titulo">3. Selección</div>
+<div id="resumenComanda"></div>
+<div style="display:flex;justify-content:space-between;color:#ffc107;font-weight:bold"><span>TOTAL:</span><span id="totalMonto">$0</span></div>
+<button style="width:100%;background:#e74c3c;border:none;color:#fff;padding:10px;font-weight:bold;border-radius:6px;cursor:pointer" onclick="enviarOActualizarComanda()">🚀 ENVIAR</button>
+</aside>
+<main class="panel-produccion"><div class="seccion-titulo">📍 PLANO - ESTADOS SEPARADOS PARRILLA / COCINA</div><div class="mapa-contenedor" id="mapaMesasGrid"></div></main>
+<aside>
+<div class="box-kds-mini"><div class="seccion-titulo">📋 PENDIENTES (<span id="contadorPendientes">0</span>)</div><div id="listaPendientesKDS" style="max-height:180px;overflow-y:auto;font-size:11px"></div></div>
+<div class="box-mensajes" style="margin-top:12px"><div class="seccion-titulo">💬 MENSAJES TIEMPO REAL (Gustavo/Hernán)</div><div class="chat-box" id="chatMensajes"></div><input type="text" id="inputMensaje" placeholder="Escribir aviso..." onkeypress="if(event.key==='Enter')enviarMensajeChat()"><button style="margin-top:6px;width:100%;padding:8px;background:#2980b9;border:none;color:#fff;border-radius:4px;cursor:pointer" onclick="enviarMensajeChat()">Enviar Mensaje</button></div>
+</aside>
+</div>
+<div class="modal-overlay" id="modalOpcionesMesa"><div class="modal-contenido"><h3 id="tituloOpcionesMesa" style="color:#ffc107"></h3><div id="detalleEstadosSeparados" style="background:#111;padding:8px;border-radius:4px;font-size:11px;margin:10px 0"></div><button style="width:100%;padding:10px;background:#27ae60;color:#fff;border:none;border-radius:5px;font-weight:bold;margin-bottom:6px" onclick="seleccionarMesaParaAgregar()">➕ AGREGAR</button><button style="width:100%;padding:10px;background:#2980b9;color:#fff;border:none;border-radius:5px;font-weight:bold;margin-bottom:6px" onclick="verDetalleMesaModal()">👁️ VER DETALLE</button><button style="width:100%;padding:10px;background:#c0392b;color:#fff;border:none;border-radius:5px;font-weight:bold" onclick="cobrarMesa()">💰 COBRAR</button><button style="width:100%;margin-top:8px;background:#333;color:#fff;border:none;padding:8px;border-radius:4px" onclick="cerrarModal('modalOpcionesMesa')">CERRAR</button></div></div>
 <script>
 const firebaseConfig={apiKey:"AIzaSyAvrpQSDoq9S87j3J7V4-uhJnPFCylCU",authDomain:"parrilla-la-perseveranci-f3f54.firebaseapp.com",databaseURL:"https://parrilla-la-perseveranci-f3f54-default-rtdb.firebaseio.com",projectId:"parrilla-la-perseveranci-f3f54",storageBucket:"parrilla-la-perseveranci-f3f54.firebasestorage.app",messagingSenderId:"899082319184",appId:"1:899082319184:web:9876161963705785efe855"};
-if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
 const db=firebase.database();
-let MENU=[],categoriaActiva='Todos',carrito=[],comandasActivas={},idMesaGestion=null,sonidoHabilitado=true,mesasDOM={},agotados={};
+let MENU=[],categoriaActiva='Todos',carrito=[],idMesaGestion=null,sonidoHabilitado=true,mesasDOM={},agotados={},comandasCache={};
 const listadoMesasBase=["Salón - Mesa 1","Salón - Mesa 2","Salón - Mesa 3","Salón - Mesa 4","Vereda - Mesa 5","Vereda - Mesa 6","Vereda - Mesa 7","Canal - Mostrador","Canal - Delivery","Canal - Pickup"];
 const keysParrilla=['asado','vacio','bife','entraña','morcilla','chinchulin','chorizo','provoleta','molleja','costillar','matambre','chori'];
 function esParrilla(n){return keysParrilla.some(k=>n.toLowerCase().includes(k));}
 function esGuarnicion(n){const t=n.toLowerCase();return t.includes('frita')||t.includes('ensalada')||t.includes('papas')||t.includes('pure');}
-function getTipo(items){const p=items.some(i=>esParrilla(i.nombre)&&!esGuarnicion(i.nombre));const c=items.some(i=>!esParrilla(i.nombre)||esGuarnicion(i.nombre));if(p&&c) return 'MIXTA';if(p) return 'PARRILLA';return 'COCINA';}
-
-window.onload=()=>{inicializarMapaMesas();escucharMenuFirebase();escucharOrdenesFirebase();escucharMensajesFirebase();escucharAgotados();iniciarReloj();};
-function iniciarReloj(){setInterval(()=>{const a=new Date();document.getElementById('relojWidget').textContent=`🕒 ${a.toLocaleTimeString()}`;},1000);}
-function toggleSonido(){sonidoHabilitado=!sonidoHabilitado;const b=document.getElementById('btnSonido');b.textContent=sonidoHabilitado?'🔔 SONIDO: ON':'🔕 SONIDO: OFF';b.classList.toggle('silenciado',!sonidoHabilitado);}
-function reproducirAlerta(){if(!sonidoHabilitado) return;try{const c=new (window.AudioContext||window.webkitAudioContext)();const o=c.createOscillator();const g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=587;g.gain.setValueAtTime(.1,c.currentTime);o.start();o.stop(c.currentTime+.15);}catch(e){}}
-function inicializarMapaMesas(){const cont=document.getElementById('mapaMesasGrid');cont.innerHTML='';mesasDOM={};listadoMesasBase.forEach(id=>{const key=id.replace(/\s+/g,'_').replace(/-/g,'_');const card=document.createElement('div');card.className='card-mesa-grid';card.id=`mesa_card_${key}`;card.onclick=()=>clickUbicacion(id);card.innerHTML=`<div class="mesa-hdr-grid"><span class="mesa-title-grid">${id.toUpperCase()}</span><span class="mesa-status-badge" id="badge_${key}">LIBRE</span></div><div class="mesa-body-preview" id="preview_${key}">Sin comanda</div><div class="mesa-footer-grid"><span>Total:</span><span id="total_${key}">$0</span></div>`;cont.appendChild(card);mesasDOM[id]={card,badge:document.getElementById(`badge_${key}`),preview:document.getElementById(`preview_${key}`),total:document.getElementById(`total_${key}`)};});}
+function getTipo(items){const p=items.some(i=>esParrilla(i.nombre)&&!esGuarnicion(i.nombre));const c=items.some(i=>!esParrilla(i.nombre)||esGuarnicion(i.nombre));if(p&&c)return'MIXTA';if(p)return'PARRILLA';return'COCINA';}
+window.onload=()=>{inicializarMapaMesas();escucharMenuFirebase();escucharOrdenesFirebase();escucharMensajesFirebase();escucharAgotados();escucharNotificacionesMixtas();iniciarReloj();};
+function iniciarReloj(){setInterval(()=>{document.getElementById('relojWidget').textContent=`🕒 ${new Date().toLocaleTimeString()}`;},1000);}
+function toggleSonido(){sonidoHabilitado=!sonidoHabilitado;document.getElementById('btnSonido').textContent=sonidoHabilitado?'🔔 SONIDO: ON':'🔕 SONIDO: OFF';}
+function reproducirAlerta(){if(!sonidoHabilitado)return;try{const c=new(window.AudioContext||window.webkitAudioContext)();const o=c.createOscillator();const g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=880;g.gain.setValueAtTime(.2,c.currentTime);o.start();o.stop(c.currentTime+.3);}catch(e){}}
+function inicializarMapaMesas(){const cont=document.getElementById('mapaMesasGrid');cont.innerHTML='';mesasDOM={};listadoMesasBase.forEach(id=>{const key=id.replace(/[^a-zA-Z0-9]/g,'_');const card=document.createElement('div');card.className='card-mesa-grid';card.id=`mesa_card_${key}`;card.onclick=()=>clickUbicacion(id);card.innerHTML=`<div class="mesa-hdr-grid"><span class="mesa-title-grid">${id.toUpperCase()}</span><span class="mesa-status-badge" id="badge_${key}">LIBRE</span></div><div id="preview_${key}" style="font-size:10px;color:#ccc">Sin comanda</div><div style="font-size:11px;color:#2ecc71;font-weight:bold;margin-top:4px" id="total_${key}">$0</div>`;cont.appendChild(card);mesasDOM[id]={card,badge:document.getElementById(`badge_${key}`),preview:document.getElementById(`preview_${key}`),total:document.getElementById(`total_${key}`)};});}
 function escucharAgotados(){db.ref('platos_agotados').on('value',s=>{agotados=s.val()||{};renderGrilla(categoriaActiva);});}
-function escucharMenuFirebase(){db.ref('menu').on('value',snap=>{const data=snap.val();if(!data) return;MENU=Object.keys(data).map(k=>{const it=data[k];if(!it) return null;return{id:k,nombre:it.nombre||it.title||k,cat:it.cat||it.categoria||'General',precio:Number(it.precio||it.price||0)}}).filter(Boolean);construirBotonesCategorias();renderGrilla(categoriaActiva);});}
+function escucharMenuFirebase(){db.ref('menu').on('value',snap=>{const data=snap.val();if(!data)return;MENU=Object.keys(data).map(k=>{const it=data[k];if(!it)return null;return{id:k,nombre:it.nombre||k,cat:it.cat||it.categoria||'General',precio:Number(it.precio||0)}}).filter(Boolean);construirBotonesCategorias();renderGrilla(categoriaActiva);});}
 function construirBotonesCategorias(){const c=document.getElementById('contenedorCategorias');const cats=['Todos',...new Set(MENU.map(i=>i.cat))];c.innerHTML='';cats.forEach(cat=>{const b=document.createElement('button');b.className=`btn-cat ${cat===categoriaActiva?'activo':''}`;b.textContent=cat;b.onclick=()=>filtrarCategoria(cat,b);c.appendChild(b);});}
-function filtrarCategoria(cat,btn){categoriaActiva=cat;document.querySelectorAll('.btn-cat').forEach(b=>b.classList.remove('activo'));if(btn) btn.classList.add('activo');renderGrilla(cat);}
-function renderGrilla(categoria){
-const cont=document.getElementById('grillaProductos');cont.innerHTML='';
-const filtrados=categoria==='Todos'?MENU:MENU.filter(m=>m.cat===categoria);
-if(filtrados.length===0){cont.innerHTML='<p style="color:#666;font-size:11px;text-align:center;grid-column:span 2">Sin productos</p>';return;}
-filtrados.forEach(prod=>{
-const estaAgotado=!!agotados[prod.nombre];
-const card=document.createElement('div');card.className=`card-prod ${estaAgotado?'agotado':''}`;
-card.onclick=()=>{if(estaAgotado){alert('❌ '+prod.nombre+' AGOTADO por cocina');return;} agregarAlCarrito(prod);};
-card.innerHTML=`<div class="nombre">${prod.nombre} ${estaAgotado?'❌ AGOTADO':''}</div><div class="precio">$${prod.precio.toLocaleString('es-AR')}</div>`;
-cont.appendChild(card);
-});
-}
-function agregarAlCarrito(prod){const ex=carrito.find(i=>i.id===prod.id);if(ex) ex.cantidad++;else carrito.push({...prod,cantidad:1});renderCarrito();}
-function cambiarCantidad(id,delta){const it=carrito.find(i=>i.id===id);if(it){it.cantidad+=delta;if(it.cantidad<=0) carrito=carrito.filter(i=>i.id!==id);}renderCarrito();}
-function renderCarrito(){const cont=document.getElementById('resumenComanda');const tot=document.getElementById('totalMonto');cont.innerHTML='';if(carrito.length===0){cont.innerHTML='<p style="color:#666;font-size:11px;text-align:center;margin-top:15px">No hay ítems.</p>';tot.textContent='$0';return;}let total=0;carrito.forEach(it=>{total+=it.precio*it.cantidad;const r=document.createElement('div');r.className='item-carrito';r.innerHTML=`<div><strong>${it.nombre}</strong><br><small style="color:#2ecc71">$${it.precio.toLocaleString('es-AR')}</small></div><div class="cnt-ctrls"><button class="btn-qty" onclick="cambiarCantidad('${it.id}',-1)">-</button><span>${it.cantidad}</span><button class="btn-qty" onclick="cambiarCantidad('${it.id}',1)">+</button></div>`;cont.appendChild(r);});tot.textContent=`$${total.toLocaleString('es-AR')}`;}
-function evaluarCanalSeleccionado(){const c=document.getElementById('selectUbicacion').value;document.getElementById('boxDelivery').style.display=c.includes('Delivery')?'flex':'none';}
-function enviarOActualizarComanda(){
-if(carrito.length===0){alert("Seleccioná productos");return;}
-const destino=document.getElementById('selectUbicacion').value;
-const comensales=document.getElementById('selectComensales').value;
-const idSeguro=destino.replace(/[^a-zA-Z0-9]/g,'_');
-db.ref('comandas_activas/'+idSeguro).once('value').then(snap=>{
-const existente=snap.val();
-let itemsFinales=[...carrito];
-let totalFinal=carrito.reduce((a,c)=>a+(c.precio*c.cantidad),0);
-let nro=existente?existente.nroOrden:Date.now();
-if(existente && existente.items){
-  const mapa={};
-  existente.items.forEach(i=>{mapa[i.nombre]=i;});
-  carrito.forEach(nuevo=>{
-    if(mapa[nuevo.nombre]) mapa[nuevo.nombre].cantidad+=nuevo.cantidad;
-    else mapa[nuevo.nombre]=nuevo;
-  });
-  itemsFinales=Object.values(mapa);
-  totalFinal=itemsFinales.reduce((a,c)=>a+(c.precio*c.cantidad),0);
-}
-const orden={
-  mesa:destino,comensales,items:itemsFinales,total:totalFinal,
-  estado:existente?existente.estado:'RECIBIDO',
-  emisor:'Mariana',timestamp:Date.now(),nroOrden:nro,
-  delivery:destino.includes('Delivery')?{nombre:document.getElementById('delivNombre').value,direccion:document.getElementById('delivDireccion').value,telefono:document.getElementById('delivTelefono').value}:null
-};
-db.ref('comandas_activas/'+idSeguro).set(orden,err=>{
-  if(!err){alert(`✅ Comanda ${existente?'actualizada':'enviada'} a ${destino} - ${getTipo(itemsFinales)}`);carrito=[];renderCarrito();reproducirAlerta();}
-});
-});
-}
-function escucharOrdenesFirebase(){
-db.ref('comandas_activas').on('value',snap=>{
-const data=snap.val()||{};
-listadoMesasBase.forEach(id=>{const m=mesasDOM[id];if(m){m.card.classList.remove('ocupada');m.badge.textContent='LIBRE';m.preview.textContent='Sin comanda';m.total.textContent='$0';}});
-const lista=document.getElementById('listaPendientesKDS');lista.innerHTML='';
-let pend=0,ocup=0;const frag=document.createDocumentFragment();
-Object.values(data).forEach(cmd=>{
-if(!cmd||!cmd.mesa) return;
-const tipo=getTipo(cmd.items||[]);
-if(cmd.estado==='RECIBIDO'||cmd.estado==='PREPARACION'||cmd.estado==='PENDIENTE'){pend++;const d=document.createElement('div');d.style.cssText="background:#222;padding:6px;border-radius:4px;margin-bottom:4px;border-left:3px solid "+(tipo==='PARRILLA'?'#ff3d00':tipo==='MIXTA'?'#f1c40f':'#00ff66');d.innerHTML=`<strong>${cmd.mesa}</strong> <span class="badge-tipo" style="color:${tipo==='PARRILLA'?'#ff3d00':tipo==='MIXTA'?'#f1c40f':'#00ff66'};border-color:${tipo==='PARRILLA'?'#ff3d00':tipo==='MIXTA'?'#f1c40f':'#00ff66'}">${tipo}</span><br><small>${(cmd.items||[]).length} ítems - ${cmd.estado}</small>`;frag.appendChild(d);}
-const m=mesasDOM[cmd.mesa];if(m){if(!m.card.classList.contains('ocupada')) ocup++;m.card.classList.add('ocupada');m.badge.textContent=`${cmd.estado||'ACTIVA'} | ${tipo}`;m.preview.innerHTML=(cmd.items||[]).map(i=>`• ${i.cantidad}x ${i.nombre}`).join('<br>');m.total.textContent=`$${(cmd.total||0).toLocaleString('es-AR')}`;}
-});
-lista.appendChild(frag);
-document.getElementById('contadorPendientes').textContent=pend;
-document.getElementById('contadorMesasAtendidas').textContent=ocup;
-if(pend===0) lista.innerHTML='<div style="color:#666;text-align:center;padding:10px">Sin pendientes</div>';
-});
-}
-function clickUbicacion(id){idMesaGestion=id;document.getElementById('tituloOpcionesMesa').textContent=`Gestionar: ${id}`;document.getElementById('modalOpcionesMesa').style.display='flex';}
-function seleccionarMesaParaAgregar(){document.getElementById('selectUbicacion').value=idMesaGestion;evaluarCanalSeleccionado();cerrarModal('modalOpcionesMesa');}
-function verDetalleMesaModal(){cerrarModal('modalOpcionesMesa');db.ref('comandas_activas/'+idMesaGestion.replace(/[^a-zA-Z0-9]/g,'_')).once('value').then(s=>{const c=s.val();if(!c) alert('Mesa libre');else alert(`${c.mesa} - ${getTipo(c.items)} - ${c.estado}\n${c.items.map(i=>`• ${i.nombre} x${i.cantidad}`).join('\n')}\nTotal $${c.total}`);});}
-function cobrarMesa(){if(!idMesaGestion) return;if(!confirm(`¿Cobrar y limpiar ${idMesaGestion}?`)) return;db.ref('comandas_activas/'+idMesaGestion.replace(/[^a-zA-Z0-9]/g,'_')).remove();cerrarModal('modalOpcionesMesa');}
-function enviarMensajeChat(){const inp=document.getElementById('inputMensaje');const txt=inp.value.trim();if(!txt) return;db.ref('mensajes').push({emisor:'Mariana',texto:txt,hora:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),timestamp:Date.now()},err=>{if(!err){inp.value='';reproducirAlerta();}});}
-function escucharMensajesFirebase(){db.ref('mensajes').limitToLast(20).on('value',snap=>{const box=document.getElementById('chatMensajes');box.innerHTML='';const data=snap.val();if(!data){box.innerHTML='<div style="color:#666;text-align:center;margin:auto">Sin mensajes</div>';return;}const frag=document.createDocumentFragment();Object.values(data).forEach(m=>{const d=document.createElement('div');d.className=`chat-msg ${m.emisor==='Mariana'?'mio':''}`;d.innerHTML=`<strong style="color:${m.emisor==='Mariana'?'#e74c3c':'#3498db'}">${m.emisor}</strong> <small style="color:#888">(${m.hora})</small><br>${m.texto}`;frag.appendChild(d);});box.appendChild(frag);box.scrollTop=box.scrollHeight;});}
+function filtrarCategoria(cat,btn){categoriaActiva=cat;document.querySelectorAll('.btn-cat').forEach(b=>b.classList.remove('activo'));if(btn)btn.classList.add('activo');renderGrilla(cat);}
+function renderGrilla(cat){const cont=document.getElementById('grillaProductos');cont.innerHTML='';const filtrados=cat==='Todos'?MENU:MENU.filter(m=>m.cat===cat);filtrados.forEach(prod=>{const agot=!!agotados[prod.nombre];const card=document.createElement('div');card.className=`card-prod ${agot?'agotado':''}`;card.onclick=()=>{if(agot){alert('❌ AGOTADO');return;}agregarAlCarrito(prod);};card.innerHTML=`<div style="font-size:11px;font-weight:bold">${prod.nombre} ${agot?'❌':''}</div><div style="color:#2ecc71;font-size:11px">$${prod.precio}</div>`;cont.appendChild(card);});}
+function agregarAlCarrito(p){const ex=carrito.find(i=>i.id===p.id);if(ex)ex.cantidad++;else carrito.push({...p,cantidad:1});renderCarrito();}
+function renderCarrito(){const cont=document.getElementById('resumenComanda');const tot=document.getElementById('totalMonto');cont.innerHTML='';if(carrito.length===0){cont.innerHTML='<p style="color:#666;font-size:11px">No hay ítems</p>';tot.textContent='$0';return;}let total=0;carrito.forEach(it=>{total+=it.precio*it.cantidad;const r=document.createElement('div');r.style.cssText='display:flex;justify-content:space-between;font-size:11px;padding:3px 0;border-bottom:1px solid #222';r.innerHTML=`<span>${it.cantidad}x ${it.nombre}</span><span>$${it.precio*it.cantidad}</span>`;cont.appendChild(r);});tot.textContent=`$${total}`;}
+function evaluarCanalSeleccionado(){document.getElementById('boxDelivery').style.display=document.getElementById('selectUbicacion').value.includes('Delivery')?'block':'none';}
+function enviarOActualizarComanda(){if(carrito.length===0){alert("Seleccioná productos");return;}const destino=document.getElementById('selectUbicacion').value;const idSeguro=destino.replace(/[^a-zA-Z0-9]/g,'_');db.ref('comandas_activas/'+idSeguro).once('value').then(snap=>{const existente=snap.val();let itemsFinales=[...carrito];let totalFinal=carrito.reduce((a,c)=>a+(c.precio*c.cantidad),0);let nro=existente?existente.nroOrden:Date.now();if(existente&&existente.items){const mapa={};existente.items.forEach(i=>{mapa[i.nombre]=i;});carrito.forEach(n=>{if(mapa[n.nombre])mapa[n.nombre].cantidad+=n.cantidad;else mapa[n.nombre]=n;});itemsFinales=Object.values(mapa);totalFinal=itemsFinales.reduce((a,c)=>a+(c.precio*c.cantidad),0);}const orden={mesa:destino,items:itemsFinales,total:totalFinal,estado:existente?existente.estado:'RECIBIDO',estado_parrilla:existente?existente.estado_parrilla||existente.estado:'RECIBIDO',estado_cocina:existente?existente.estado_cocina||existente.estado:'RECIBIDO',emisor:'Mariana',timestamp:Date.now(),nroOrden:nro};db.ref('comandas_activas/'+idSeguro).set(orden,err=>{if(!err){carrito=[];renderCarrito();reproducirAlerta();}});});}
+function escucharOrdenesFirebase(){db.ref('comandas_activas').on('value',snap=>{const data=snap.val()||{};comandasCache=data;listadoMesasBase.forEach(id=>{const m=mesasDOM[id];if(m){m.card.classList.remove('ocupada','lista-completa');m.badge.textContent='LIBRE';m.preview.textContent='Sin comanda';m.total.textContent='$0';}});const lista=document.getElementById('listaPendientesKDS');lista.innerHTML='';let pend=0,ocup=0,mixtasListas=0;Object.values(data).forEach(cmd=>{if(!cmd||!cmd.mesa)return;const tipo=getTipo(cmd.items||[]);const ep=cmd.estado_parrilla||cmd.estado||'RECIBIDO';const ec=cmd.estado_cocina||cmd.estado||'RECIBIDO';const listaCompleta=(ep.includes('LISTO')||ep.includes('MANOS'))&&(ec.includes('LISTO')||ec.includes('MANOS'))||(tipo!=='MIXTA'&&(ep.includes('LISTO')||ec.includes('LISTO')));if(cmd.estado==='RECIBIDO'||cmd.estado==='PREPARACION'||ep.includes('PREP')||ec.includes('PREP')){pend++;const d=document.createElement('div');d.style.cssText="background:#222;padding:6px;border-radius:4px;margin-bottom:4px;border-left:3px solid "+(tipo==='PARRILLA'?'#ff3d00':tipo==='MIXTA'?'#f1c40f':'#00ff66');d.innerHTML=`<strong>${cmd.mesa}</strong> <span class="badge-tipo">${tipo}</span><br><small>Parrilla: ${ep} | Cocina: ${ec} ${listaCompleta?'✅ LISTA':''}</small>`;lista.appendChild(d);}const m=mesasDOM[cmd.mesa];if(m){ocup++;m.card.classList.add('ocupada');if(tipo==='MIXTA'&&listaCompleta){m.card.classList.add('lista-completa');mixtasListas++;m.badge.textContent=`✅ MIXTA LISTA - ENTREGAR`;m.badge.style.background='#f1c40f';m.badge.style.color='#000';}else{m.badge.textContent=`${tipo} | P:${ep} C:${ec}`;}m.preview.innerHTML=(cmd.items||[]).map(i=>`• ${i.cantidad}x ${i.nombre}`).join('<br>');m.total.textContent=`$${(cmd.total||0)}`;if(listaCompleta&&tipo!=='MIXTA')m.card.classList.add('lista-completa');}});document.getElementById('contadorPendientes').textContent=pend;document.getElementById('contadorMesasAtendidas').textContent=ocup;document.getElementById('contadorMixtas').textContent=mixtasListas;if(pend===0)lista.innerHTML='<div style="color:#666;text-align:center">Sin pendientes</div>';});}
+function escucharMensajesFirebase(){db.ref('mensajes_chat').limitToLast(30).on('value',snap=>{const box=document.getElementById('chatMensajes');box.innerHTML='';const data=snap.val();if(!data){box.innerHTML='<div style="color:#666;text-align:center">Sin mensajes</div>';return;}Object.values(data).sort((a,b)=>(a.timestamp||0)-(b.timestamp||0)).forEach(m=>{const d=document.createElement('div');d.className=`chat-msg ${m.remitente==='Mariana'?'mio':''} ${m.remitente==='SISTEMA'?'sistema':''}`;d.innerHTML=`<strong style="color:${m.remitente==='Mariana'?'#e74c3c':m.remitente==='SISTEMA'?'#f1c40f':'#3498db'}">${m.remitente}</strong> <small>(${m.hora||''})</small><br>${m.texto}`;box.appendChild(d);});box.scrollTop=box.scrollHeight;});}
+function escucharNotificacionesMixtas(){db.ref('notificaciones_mariana').limitToLast(5).on('child_added',snap=>{const n=snap.val();if(!n)return;if(Date.now()-(n.timestamp||0)<120000){reproducirAlerta();if(Notification&&Notification.permission==="granted"){new Notification(n.mensaje);}const box=document.getElementById('chatMensajes');const d=document.createElement('div');d.className='chat-msg sistema';d.innerHTML=`<strong>🔔 SISTEMA</strong><br>${n.mensaje}`;box.appendChild(d);box.scrollTop=box.scrollHeight;}});}
+function clickUbicacion(id){idMesaGestion=id;document.getElementById('tituloOpcionesMesa').textContent=`Gestionar: ${id}`;const cmd=Object.values(comandasCache).find(c=>c.mesa===id);if(cmd){const ep=cmd.estado_parrilla||cmd.estado;const ec=cmd.estado_cocina||cmd.estado;document.getElementById('detalleEstadosSeparados').innerHTML=`Tipo: ${getTipo(cmd.items)}<br>Parrilla: <b>${ep}</b><br>Cocina: <b>${ec}</b><br><br>${cmd.items.map(i=>`• ${i.cantidad}x ${i.nombre}`).join('<br>')}`;}document.getElementById('modalOpcionesMesa').style.display='flex';}
+function seleccionarMesaParaAgregar(){document.getElementById('selectUbicacion').value=idMesaGestion;cerrarModal('modalOpcionesMesa');}
+function verDetalleMesaModal(){const cmd=Object.values(comandasCache).find(c=>c.mesa===idMesaGestion);if(!cmd)alert('Libre');else alert(`${cmd.mesa} - ${getTipo(cmd.items)}\nParrilla: ${cmd.estado_parrilla||cmd.estado}\nCocina: ${cmd.estado_cocina||cmd.estado}\n${cmd.items.map(i=>`• ${i.nombre} x${i.cantidad}`).join('\n')}`);}
+function cobrarMesa(){if(!idMesaGestion)return;if(!confirm(`¿Cobrar ${idMesaGestion}?`))return;db.ref('comandas_activas/'+idMesaGestion.replace(/[^a-zA-Z0-9]/g,'_')).remove();cerrarModal('modalOpcionesMesa');}
+function enviarMensajeChat(){const inp=document.getElementById('inputMensaje');const txt=inp.value.trim();if(!txt)return;db.ref('mensajes_chat').push({remitente:'Mariana',texto:txt,hora:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),timestamp:Date.now()});inp.value='';}
 function cerrarModal(id){document.getElementById(id).style.display='none';}
 </script>
 </body>
