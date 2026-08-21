@@ -2,126 +2,180 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Comandera Gustavo (Parrilla) | FIX PERMISOS - VE COCINA NO TOCA</title>
+<title>🔥 Gustavo Parrilla - FINAL VISUAL + REGLAS MILANESA/PECHUGA SOLO COCINA</title>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
-body{background-color:#0e0e0e;color:#ffffff;padding:10px}
-header{background:linear-gradient(90deg,#b03a2e,#d35400);padding:10px 18px;border-radius:6px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-header h1{font-size:18px;font-weight:bold;text-transform:uppercase}
-.header-btns{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.btn-top-accion{background-color:#27ae60;color:white;border:none;padding:6px 10px;border-radius:4px;font-size:11px;font-weight:bold;cursor:pointer}
-.btn-egresos{background-color:#c0392b}.btn-mjes{background-color:#2980b9}
-.badge-live{background-color:#000;color:#00ff66;font-size:11px;font-weight:bold;padding:3px 8px;border-radius:12px;border:1px solid #00ff66}
-.layout-principal{display:grid;grid-template-columns:420px 1fr 340px;gap:12px;align-items:start}
-@media(max-width:1400px){.layout-principal{grid-template-columns:420px 1fr}}
-.panel-formulario,.panel-produccion,.panel-kds-box,.panel-chat-box{background-color:#161616;border:1px solid #2a2a2a;border-radius:8px;padding:12px}
-.seccion-titulo{font-size:11px;font-weight:bold;color:#ff9900;text-transform:uppercase}
-select,input{width:100%;padding:8px;background-color:#222;border:1px solid #444;color:#fff;border-radius:4px;font-size:12px}
-.contenedor-categorias{display:flex;gap:5px;overflow-x:auto;padding-bottom:5px}
-.btn-cat{background-color:#222;border:1px solid #444;color:#ccc;padding:6px 12px;border-radius:4px;font-size:11px;font-weight:bold;cursor:pointer;white-space:nowrap}
-.btn-cat.activo{background-color:#d35400;color:#fff}
-.grilla-productos{display:grid;grid-template-columns:repeat(auto-fill,minmax(125px,1fr));gap:6px;max-height:200px;overflow-y:auto;background-color:#0d0d0d;padding:8px;border-radius:6px;border:1px solid #222}
-.card-prod{background-color:#1c1c1c;border:1px solid #333;border-radius:5px;padding:8px;cursor:pointer;min-height:65px}
-.card-prod.nombre{font-size:11px;font-weight:bold;color:#fff}
-.card-prod.precio{font-size:11px;font-weight:bold;color:#00ff66;margin-top:4px}
-.resumen-box{background-color:#111;border:1px solid #262626;border-radius:6px;padding:10px;min-height:100px;max-height:130px;overflow-y:auto}
-.item-carrito{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid #222;font-size:12px}
-.btn-qty{background-color:#333;color:#fff;border:none;width:18px;height:18px;border-radius:3px;cursor:pointer}
-.total-bar{display:flex;justify-content:space-between;font-weight:bold;font-size:15px;color:#ff9900}
-.btn-enviar{width:100%;background:linear-gradient(180deg,#d35400,#b03a2e);border:none;color:white;padding:10px;font-size:13px;font-weight:bold;border-radius:6px;cursor:pointer;text-transform:uppercase}
-.mapa-contenedor{background-color:#0b0b0b;border:1px dashed #333;border-radius:8px;padding:10px;display:grid;grid-template-columns:repeat(auto-fit,minmax(195px,1fr));gap:10px;min-height:530px;align-content:start}
-.mesa-card-ampliada{background-color:#1b1b1b;border:2px solid #444;border-radius:8px;padding:10px;cursor:pointer;min-height:135px}
-.mesa-card-ampliada.ocupada{background-color:#3b1412;border-color:#c0392b}
-.mesa-card-ampliada.lista{background-color:#113822;border-color:#27ae60}
-.mesa-card-ampliada.solo-cocina{opacity:0.6;border-style:dashed;border-color:#555}
-.mesa-header-info{display:flex;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.1);padding-bottom:4px;margin-bottom:5px}
-.mesa-nombre{font-size:12px;font-weight:bold;color:#ff9900}
-.mesa-estado-badge{font-size:9px;font-weight:bold;padding:2px 5px;border-radius:4px;background:#222;color:#aaa}
-.item-parrilla-destacado{color:#ff3d00!important;font-weight:900!important;background:rgba(255,61,0,.18);padding:2px 4px;border-radius:3px;border-left:3px solid #ff3d00;display:block;text-transform:uppercase}
-.item-cocina-solo-vista{color:#888!important;font-style:italic;background:rgba(255,255,255,.05);padding:2px 4px;border-radius:3px;border-left:3px solid #555;display:block}
-.mesa-footer-info{display:flex;justify-content:space-between;font-size:11px;font-weight:bold;border-top:1px solid rgba(255,255,255,.1);padding-top:4px;color:#00ff66}
-.contenedor-kds-tarjetas{display:flex;flex-direction:column;gap:8px;max-height:250px;overflow-y:auto}
-.tarjeta-kds-flotante{background-color:#222;border:1px solid #444;border-left:4px solid #e67e22;border-radius:6px;padding:8px;cursor:pointer}
-.tarjeta-kds-flotante.solo-vista{opacity:0.5;cursor:not-allowed}
-.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);display:none;justify-content:center;align-items:center;z-index:1000}
-.modal-contenido{background-color:#181818;border:1px solid #444;border-radius:8px;padding:20px;width:90%;max-width:500px;max-height:90vh;overflow-y:auto}
-.modal-hdr{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #333;padding-bottom:10px;margin-bottom:15px}
-.btn-cerrar-modal{background:none;border:none;color:#999;font-size:18px;cursor:pointer}
-.btn-opcion-mesa{width:100%;padding:12px;margin-bottom:8px;border:none;border-radius:5px;font-weight:bold;font-size:13px;cursor:pointer}
-.btn-opcion-mesa:disabled{background-color:#333!important;color:#777!important;cursor:not-allowed}
-.tabla-historial{width:100%;border-collapse:collapse;font-size:11px;margin-top:10px}
-.tabla-historial th,.tabla-historial td{border:1px solid #333;padding:6px;text-align:left}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Inter','Segoe UI',system-ui,sans-serif}
+body{background:#0a0a0a;color:#fff;padding:10px}
+header{background:linear-gradient(90deg,#7f1d1d,#c2410c,#ea580c);padding:12px 18px;border-radius:10px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 4px 20px rgba(234,88,12,.3);border:1px solid rgba(255,255,255,.1)}
+header h1{font-size:17px;font-weight:800;letter-spacing:.5px;text-shadow:0 1px 2px rgba(0,0,0,.5)}
+.badge-live{background:#000;color:#22c55e;border:1px solid #22c55e;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:800;box-shadow:0 0 10px rgba(34,197,94,.3)}
+.layout-principal{display:grid;grid-template-columns:440px 1fr 360px;gap:14px;margin-top:12px}
+.panel{background:#151515;border:1px solid #262626;border-radius:12px;padding:14px;box-shadow:0 2px 10px rgba(0,0,0,.5)}
+.seccion-titulo{font-size:11px;font-weight:800;color:#fb923c;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+select,input{width:100%;padding:9px 10px;background:#1f1f1f;border:1px solid #333;color:#fff;border-radius:8px;font-size:13px;outline:none;transition:.2s}
+select:focus,input:focus{border-color:#ea580c;box-shadow:0 0 0 2px rgba(234,88,12,.2)}
+.contenedor-categorias{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none}
+.btn-cat{background:#1f1f1f;border:1px solid #333;color:#9ca3af;padding:7px 14px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;transition:.2s}
+.btn-cat.activo{background:linear-gradient(180deg,#ea580c,#c2410c);color:#fff;border-color:#ea580c;box-shadow:0 2px 8px rgba(234,88,12,.4)}
+.grilla-productos{display:grid;grid-template-columns:repeat(auto-fill,minmax(135px,1fr));gap:8px;max-height:220px;overflow-y:auto;background:#0f0f0f;padding:10px;border-radius:10px;border:1px solid #1f1f1f}
+.card-prod{background:linear-gradient(180deg,#1e1e1e,#171717);border:1px solid #2a2a2a;border-radius:10px;padding:10px;cursor:pointer;min-height:70px;transition:.2s}
+.card-prod:hover{border-color:#ea580c;transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.5)}
+.card-prod.nombre{font-size:11px;font-weight:700;color:#f3f4f6;line-height:1.3}
+.card-prod.precio{font-size:12px;font-weight:800;color:#4ade80;margin-top:6px}
+.mapa-contenedor{background:radial-gradient(ellipse at top,#1a1a1a,#0a0a0a);border:1px dashed #333;border-radius:12px;padding:14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;min-height:580px}
+.mesa-card-ampliada{background:linear-gradient(180deg,#1e1e1e,#181818);border:2px solid #2a2a2a;border-radius:12px;padding:12px;cursor:pointer;min-height:150px;transition:.2s;position:relative;overflow:hidden}
+.mesa-card-ampliada:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.6)}
+.mesa-card-ampliada.ocupada{background:linear-gradient(180deg,#2a1515,#1f1010);border-color:#dc2626;box-shadow:0 0 15px rgba(220,38,38,.2)}
+.mesa-card-ampliada.lista{background:linear-gradient(180deg,#0f2a1a,#0f1f15);border-color:#22c55e;box-shadow:0 0 15px rgba(34,197,94,.25)}
+.mesa-card-ampliada.solo-cocina{opacity:.45;border-style:dashed;border-color:#52525b;background:#18181b}
+.mesa-card-ampliada.solo-cocina::after{content:"SOLO COCINA - MILANESA/PECHUGA";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-15deg);background:rgba(0,0,0,.8);color:#f87171;border:1px solid #f87171;padding:4px 10px;border-radius:6px;font-size:9px;font-weight:800;white-space:nowrap}
+.mesa-header-info{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,.08);padding-bottom:8px;margin-bottom:8px}
+.mesa-nombre{font-size:12px;font-weight:800;color:#fb923c;letter-spacing:.3px}
+.mesa-estado-badge{font-size:9px;font-weight:800;padding:3px 8px;border-radius:20px;text-transform:uppercase}
+.badge-recibido{background:#27272a;color:#a1a1aa}.badge-prep{background:#1e3a8a;color:#93c5fd;border:1px solid #3b82f6}.badge-listo{background:#14532d;color:#86efac;border:1px solid #22c55e}
+.badge-mixta{background:#713f12;color:#fde68a;border:1px solid #f59e0b;animation:pulseMixta 1.5s infinite}
+@keyframes pulseMixta{0%,100%{box-shadow:0 0 0 0 rgba(245,158,11,.4)}50%{box-shadow:0 0 0 6px rgba(245,158,11,0)}}
+.item-parrilla-destacado{color:#ff6b35!important;font-weight:900!important;background:linear-gradient(90deg,rgba(255,107,53,.2),rgba(255,107,53,.05));padding:5px 8px;border-radius:6px;border-left:4px solid #ff6b35;display:block;text-transform:uppercase;font-size:11px;margin:4px 0;box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}
+.item-cocina-solo-vista{color:#71717a!important;font-style:italic;background:rgba(113,113,122,.08);padding:4px 8px;border-radius:6px;border-left:4px solid #52525b;display:block;font-size:10px;margin:3px 0;opacity:.8}
+.mesa-footer-info{display:flex;justify-content:space-between;font-size:11px;font-weight:800;border-top:1px solid rgba(255,255,255,.08);padding-top:8px;color:#4ade80;margin-top:8px}
+.btn-top-accion{padding:6px 12px;border-radius:8px;border:none;font-size:11px;font-weight:800;cursor:pointer;transition:.2s}
+.btn-top-accion:hover{transform:translateY(-1px)}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(6px);display:none;justify-content:center;align-items:center;z-index:9999}
+.modal-contenido{background:linear-gradient(180deg,#1e1e1e,#151515);border:1px solid #333;border-radius:16px;padding:22px;width:92%;max-width:480px;box-shadow:0 20px 60px rgba(0,0,0,.8)}
+.btn-opcion-mesa{width:100%;padding:14px;margin-bottom:10px;border:none;border-radius:10px;font-weight:800;font-size:13px;cursor:pointer;transition:.2s}
+.btn-opcion-mesa:disabled{opacity:.3;cursor:not-allowed}
 </style>
 </head>
 <body>
-<header>
-<h1>🔥 LA PERSEVERANCIA | COMANDERA GUSTAVO - VE COCINA NO TOCA</h1>
-<div class="header-btns">
-<button class="btn-top-accion btn-egresos" onclick="abrirModalEgresos()">💸 EGRESOS</button>
-<button class="btn-top-accion btn-mjes" onclick="abrirModalMensajesModal()">💬 MJES</button>
-<button class="btn-top-accion" onclick="abrirModalCierreCaja()">📊 CAJA</button>
-<button class="btn-top-accion" id="btnToggleSonido" onclick="toggleSonidoAlertas()" style="background-color:#8e44ad;">🔊 ALERTA: ON</button>
-<span class="badge-live">• EN VIVO - FIX PERMISOS</span>
-</div>
-</header>
+<header><h1>🔥 LA PERSEVERANCIA | GUSTAVO PARRILLA - VISUAL FIX</h1><span class="badge-live">● EN VIVO</span></header>
 <div class="layout-principal">
-<aside class="panel-formulario">
-<div class="seccion-titulo">1. Ubicación</div>
+<aside class="panel">
+<div class="seccion-titulo">📍 1. Ubicación</div>
 <select id="selectUbicacion"><option value="Mesa 1">Salón - Mesa 1</option><option value="Mesa 2">Salón - Mesa 2</option><option value="Mesa 3">Salón - Mesa 3</option><option value="Mesa 4">Salón - Mesa 4</option><option value="Mesa 5 Vereda">Vereda - Mesa 5</option><option value="Mesa 6 Vereda">Vereda - Mesa 6</option><option value="Mesa 7 Vereda">Vereda - Mesa 7</option><option value="Mostrador">Mostrador</option><option value="Delivery">Delivery</option><option value="Pickup">Pickup</option></select>
-<div class="seccion-titulo">2. Menú</div>
+<div class="seccion-titulo" style="margin-top:14px">🍽️ 2. Menú</div>
 <div class="contenedor-categorias" id="contenedorCategorias"></div>
 <div class="grilla-productos" id="grillaProductos"></div>
-<div class="seccion-titulo">3. Selección</div>
-<div class="resumen-box" id="resumenComanda"></div>
-<div class="total-bar"><span>TOTAL:</span><span id="totalMonto">$0</span></div>
-<button class="btn-enviar" onclick="enviarOActualizarComanda()">🚀 ENVIAR</button>
+<div class="seccion-titulo" style="margin-top:14px">🛒 3. Selección</div>
+<div id="resumenComanda" style="background:#0f0f0f;border:1px solid #222;border-radius:10px;padding:10px;min-height:110px;max-height:140px;overflow-y:auto;font-size:12px"></div>
+<div style="display:flex;justify-content:space-between;font-weight:800;color:#fb923c;margin:10px 0;font-size:15px"><span>TOTAL</span><span id="totalMonto">$0</span></div>
+<button onclick="enviarOActualizarComanda()" style="width:100%;background:linear-gradient(180deg,#ea580c,#c2410c);border:none;color:#fff;padding:12px;border-radius:10px;font-weight:800;cursor:pointer;box-shadow:0 4px 12px rgba(234,88,12,.3)">🚀 ENVIAR A COCINA</button>
 </aside>
-<main class="panel-produccion"><div class="seccion-titulo">📍 MESAS - GUSTAVO VE TODO, TOCA SOLO PARRILLA/BARRA/SALON/VEREDA</div><div class="mapa-contenedor" id="planoMesasContainer"></div></main>
-<aside class="panel-lateral-derecho">
-<div class="panel-kds-box"><div class="seccion-titulo">🔥 PENDIENTES</div><div class="contenedor-kds-tarjetas" id="contenedorTarjetasKds"></div></div>
-<div class="panel-chat-box"><div id="contenedorChatMjes" style="background:#111;border:1px solid #333;height:160px;overflow-y:auto;padding:8px;font-size:11px"></div><div style="display:flex;gap:6px;margin-top:6px"><input type="text" id="inputNuevoMje"><button class="btn-top-accion btn-mjes" onclick="enviarMensajeChat()">Enviar</button></div></div>
+<main class="panel"><div class="seccion-titulo">🗺️ MESAS - ROJO=PARRILLA / VERDE=LISTO / GRIS=MILANESA/PECHUGA SOLO COCINA</div><div class="mapa-contenedor" id="planoMesasContainer"></div></main>
+<aside style="display:flex;flex-direction:column;gap:12px">
+<div class="panel"><div class="seccion-titulo">🔥 PENDIENTES PARRILLA</div><div id="contenedorTarjetasKds" style="display:flex;flex-direction:column;gap:8px;max-height:280px;overflow-y:auto"></div></div>
+<div class="panel"><div class="seccion-titulo">💬 CHAT TIEMPO REAL (Gustavo - Hernán - Mariana)</div><div id="contenedorChatMjes" style="background:#0a0a0a;border:1px solid #222;height:180px;overflow-y:auto;padding:10px;font-size:11px;border-radius:8px"></div><div style="display:flex;gap:6px;margin-top:8px"><input id="inputNuevoMje" placeholder="Escribir..." style="flex:1"><button onclick="enviarMensajeChat()" style="background:#2563eb;color:#fff;border:none;padding:8px 14px;border-radius:8px;font-weight:700;cursor:pointer">Enviar</button></div></div>
 </aside>
 </div>
-<div class="modal-overlay" id="modalOpcionesMesa"><div class="modal-contenido" style="max-width:400px;text-align:center;"><div class="modal-hdr"><h3 id="tituloOpcionesMesa" style="color:#ff9900;">Gestionar</h3><button class="btn-cerrar-modal" onclick="cerrarModal('modalOpcionesMesa')">✕</button></div><div id="infoPermisoAviso" style="display:none;background:#331111;border:1px solid #c0392b;color:#ffaaaa;padding:8px;border-radius:4px;font-size:11px;margin-bottom:10px;">👁️ SOLO DE COCINA - Solo vista, no puedes cambiar estado. Es para control de carga operativa.</div><div id="infoMixtaAviso" style="display:none;background:#11331c;border:1px solid #27ae60;color:#aaffaa;padding:8px;border-radius:4px;font-size:11px;margin-bottom:10px;">🔀 MIXTA: Tu parte de Parrilla se marcará LISTA. A Mariana le avisa cuando Cocina también esté LISTA.</div><button class="btn-opcion-mesa" id="btnPrep" style="background:#3498db;color:white" onclick="cambiarEstadoCocina('PREPARACION')">🔥 PASAR A PREP PARRILLA</button><button class="btn-opcion-mesa" id="btnListo" style="background:#27ae60;color:white" onclick="cambiarEstadoCocina('LISTO ✔️')">🖐️ LISTO PARRILLA ✔️</button><button class="btn-opcion-mesa" style="background:#e67e22;color:white" onclick="imprimirComandaCocina()">🖨️ IMPRIMIR</button></div></div>
-<div class="modal-overlay" id="modalCierreCaja"><div class="modal-contenido"><div class="modal-hdr"><h3>📊 CAJA</h3><button class="btn-cerrar-modal" onclick="cerrarModal('modalCierreCaja')">✕</button></div><div id="totCajaRecaudado"></div><table class="tabla-historial"><tbody id="tbodyHistorial"></tbody></table><button onclick="cerrarModal('modalCierreCaja')">Cerrar</button></div></div>
-<div class="modal-overlay" id="modalEgresos"><div class="modal-contenido"><h3>💸 EGRESO</h3><input id="egresoConcepto" placeholder="Concepto"><input id="egresoMonto" type="number" placeholder="Monto"><button onclick="guardarEgreso()">REGISTRAR</button><button onclick="cerrarModal('modalEgresos')">Cerrar</button></div></div>
-<div id="ticketImpresionContainer" style="display:none;"></div>
+<div class="modal-overlay" id="modalOpcionesMesa"><div class="modal-contenido" style="text-align:center"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><h3 id="tituloOpcionesMesa" style="color:#fb923c;font-size:16px">Gestionar</h3><button onclick="cerrarModal('modalOpcionesMesa')" style="background:none;border:none;color:#666;font-size:20px;cursor:pointer">✕</button></div><div id="infoPermisoAviso" style="display:none;background:linear-gradient(90deg,#3f1515,#2a0f0f);border:1px solid #dc2626;color:#fca5a5;padding:10px;border-radius:10px;font-size:11px;margin-bottom:12px;font-weight:600">🔒 SOLO DE COCINA (Milanesa/Pechuga/Suprema/Tortilla en todas variantes) - Solo vista informativa. No podés cambiar estado.</div><div id="infoMixtaAviso" style="display:none;background:linear-gradient(90deg,#1a2e12,#152a0f);border:1px solid #22c55e;color:#bbf7d0;padding:10px;border-radius:10px;font-size:11px;margin-bottom:12px;font-weight:600">🔀 MIXTA: Vacio/Bondiola/Choripan/Morcipan + Agregados. Tu parte de Parrilla se marca LISTA. Cuando Hernán también marque LISTO, Mariana recibe aviso automático.</div><div id="detalleMesaModal" style="background:#0a0a0a;border:1px solid #222;padding:12px;border-radius:10px;font-size:11px;text-align:left;margin-bottom:14px;line-height:1.5"></div><button id="btnPrep" class="btn-opcion-mesa" style="background:linear-gradient(180deg,#2563eb,#1d4ed8);color:#fff" onclick="cambiarEstadoCocina('PREPARACION')">🔥 PASAR A PREPARACIÓN PARRILLA</button><button id="btnListo" class="btn-opcion-mesa" style="background:linear-gradient(180deg,#16a34a,#15803d);color:#fff" onclick="cambiarEstadoCocina('LISTO ✔️')">🖐️ MARCAR LISTO PARRILLA ✔️</button><button class="btn-opcion-mesa" style="background:#27272a;color:#a1a1aa" onclick="cerrarModal('modalOpcionesMesa')">CANCELAR</button></div></div>
 <script>
 const firebaseConfig={apiKey:"AIzaSyAvrpQSDoq9S87j3J7V4-uhJnPFCylCU",authDomain:"parrilla-la-perseveranci-f3f54.firebaseapp.com",databaseURL:"https://parrilla-la-perseveranci-f3f54-default-rtdb.firebaseio.com",projectId:"parrilla-la-perseveranci-f3f54",storageBucket:"parrilla-la-perseveranci-f3f54.firebasestorage.app",messagingSenderId:"899082319184",appId:"1:899082319184:web:9876161963705785efe855"};
 firebase.initializeApp(firebaseConfig);const db=firebase.database();
 const MAPEO_VIEJO_A_NUEVO={"Mesa 1":"Salón - Mesa 1","Mesa 2":"Salón - Mesa 2","Mesa 3":"Salón - Mesa 3","Mesa 4":"Salón - Mesa 4","Mesa 5 Vereda":"Vereda - Mesa 5","Mesa 6 Vereda":"Vereda - Mesa 6","Mesa 7 Vereda":"Vereda - Mesa 7","Mostrador":"Canal - Mostrador","Delivery":"Canal - Delivery","Pickup":"Canal - Pickup"};
 const MAPEO_NUEVO_A_VIEJO={"Salón - Mesa 1":"Mesa 1","Salón - Mesa 2":"Mesa 2","Salón - Mesa 3":"Mesa 3","Salón - Mesa 4":"Mesa 4","Vereda - Mesa 5":"Mesa 5 Vereda","Vereda - Mesa 6":"Mesa 6 Vereda","Vereda - Mesa 7":"Mesa 7 Vereda","Canal - Mostrador":"Mostrador","Canal - Delivery":"Delivery","Canal - Pickup":"Pickup"};
-let MENU=[];let categoriaActiva='Todos';let carrito=[];let comandasActivas={};let historialCaja=JSON.parse(localStorage.getItem('historialCaja'))||[];let listaEgresos=JSON.parse(localStorage.getItem('listaEgresos'))||[];let historialMensajes=JSON.parse(localStorage.getItem('historialMensajes'))||[];let idMesaGestion=null;let alertasSonidoActivas=true;
-const palabrasClaveParrilla=['asado','vacio','bife','entraña','morcilla','chinchulin','chorizo','provoleta','molleja','parrilla','costillar','vacío'];
+let MENU=[];let categoriaActiva='Todos';let carrito=[];let comandasActivas={};let idMesaGestion=null;
+const PARRILLA_BASE=['asado','vacio','vacío','entraña','bife','bondiola','chorizo','morcilla','choripan','morcipan','parrillada','pollo','provoleta','matambre','riñon','chinchulin'];
+const AGREGADOS_COCINA=['lechuga','tomate','jamon','jamón','queso','huevo','frita','papas'];
+const COCINA_PURA=['milanesa','suprema','pechuga','tortilla','buñuelo','buñuelos'];
+function descomponerItem(nombreCompleto){
+  const n=(nombreCompleto||'').toLowerCase();
+  if(COCINA_PURA.some(k=>n.includes(k))) return [{texto:nombreCompleto, estacion:'COCINA'}];
+  const esParrillaBase=PARRILLA_BASE.some(k=>n.includes(k));
+  const tieneAgregado=AGREGADOS_COCINA.some(k=>n.includes(k));
+  const esSandwichParrilla=(n.includes('vacio')||n.includes('bondiola')||n.includes('choripan')||n.includes('morcipan')||n.includes('chorizo')||n.includes('morcilla')||n.includes('asado')||n.includes('bife'))&&tieneAgregado;
+  if(esSandwichParrilla){
+    let carne=nombreCompleto; let agregado=''; const m=n.match(/(lechuga|tomate|jamon|jamón|queso|huevo|frita|papas)/);
+    if(m){ const idx=n.indexOf(m[0]); if(idx>2){ carne=nombreCompleto.substring(0,idx).trim(); agregado=nombreCompleto.substring(idx).trim(); } }
+    if(n.includes(' solo') &&!agregado) return [{texto:carne, estacion:'PARRILLA'}];
+    if(n.includes('c/fritas') &&!agregado){ const p=nombreCompleto.split(/c\/fritas/i); carne=p[0].trim(); agregado='FRITAS'; }
+    const res=[]; if(carne) res.push({texto:carne, estacion:'PARRILLA'}); if(agregado) res.push({texto:agregado.toUpperCase(), estacion:'COCINA', esGuarnicion:true});
+    return res.length?res:[{texto:nombreCompleto, estacion:'PARRILLA'}];
+  }
+  if(esParrillaBase && tieneAgregado){
+    const carne=nombreCompleto.split(/c\/fritas|c\/frita/i)[0].trim();
+    return [{texto:carne, estacion:'PARRILLA'}, {texto:'FRITAS', estacion:'COCINA', esGuarnicion:true}];
+  }
+  if(esParrillaBase) return [{texto:nombreCompleto, estacion:'PARRILLA'}];
+  return [{texto:nombreCompleto, estacion:'COCINA'}];
+}
+function analizarComanda(cmd){
+  let p=false,c=false;(cmd.items||[]).forEach(it=>{descomponerItem(it.nombre).forEach(s=>{if(s.estacion==='PARRILLA')p=true;else c=true;});});
+  return {tieneParrilla:p,tieneCocina:c,esSoloCocina:!p&&c,esSoloParrilla:p&&!c,esMixta:p&&c};
+}
 const listadoMesasDefinidas=[{id:"Mesa 1",nombre:"Salón - Mesa 1"},{id:"Mesa 2",nombre:"Salón - Mesa 2"},{id:"Mesa 3",nombre:"Salón - Mesa 3"},{id:"Mesa 4",nombre:"Salón - Mesa 4"},{id:"Mesa 5 Vereda",nombre:"Vereda - Mesa 5"},{id:"Mesa 6 Vereda",nombre:"Vereda - Mesa 6"},{id:"Mesa 7 Vereda",nombre:"Vereda - Mesa 7"},{id:"Mostrador",nombre:"Canal - Mostrador"},{id:"Delivery",nombre:"Canal - Delivery"},{id:"Pickup",nombre:"Canal - Pickup"}];
-window.onload=()=>{escucharMenuFirebase();escucharComandasRemotasUnificado();renderizarChatMjes();setInterval(actualizarContadoresTiempo,1000);};
-function toggleSonidoAlertas(){alertasSonidoActivas=!alertasSonidoActivas;}
-function reproducirAlertaSonora(){if(!alertasSonidoActivas)return;}
-function esItemParrilla(n,c=''){const t=((n||'')+' '+(c||'')).toLowerCase();return palabrasClaveParrilla.some(p=>t.includes(p));}
-function analizarComanda(cmd){let tieneParrilla=false,tieneCocina=false;(cmd.items||[]).forEach(it=>{if(esItemParrilla(it.nombre,it.cat))tieneParrilla=true;else tieneCocina=true;});return{tieneParrilla,tieneCocina,esSoloCocina:!tieneParrilla&&tieneCocina,esSoloParrilla:tieneParrilla&&!tieneCocina,esMixta:tieneParrilla&&tieneCocina};}
+window.onload=()=>{escucharMenuFirebase();escucharComandasRemotasUnificado();escucharChatFirebase();};
 function escucharMenuFirebase(){db.ref('menu').on('value',s=>{const data=s.val();if(data){MENU=Array.isArray(data)?data.filter(i=>i).map(i=>({id:i.id||Math.random(),nombre:i.nombre||'Sin Nombre',cat:i.cat||i.categoria||'General',precio:Number(i.precio||0)})):Object.keys(data).map(k=>{const it=data[k];return it?{id:it.id||k,nombre:it.nombre||'Sin Nombre',cat:it.cat||it.categoria||'General',precio:Number(it.precio||0)}:null}).filter(Boolean);construirBotonesCategorias();renderGrilla(categoriaActiva);}});}
 function escucharComandasRemotasUnificado(){db.ref('comandas_activas').on('value',snap=>{const data=snap.val()||{};const nuevoObj={};Object.entries(data).forEach(([key,cmd])=>{if(!cmd)return;if(cmd.mesa&&Array.isArray(cmd.items)){const idViejo=MAPEO_NUEVO_A_VIEJO[cmd.mesa]||cmd.mesa;if(!listadoMesasDefinidas.find(x=>x.id===idViejo))return;if(!nuevoObj[idViejo])nuevoObj[idViejo]={id:idViejo,items:[],estado:cmd.estado||'INGRESO',estado_parrilla:cmd.estado_parrilla||cmd.estado||'INGRESO',estado_cocina:cmd.estado_cocina||'INGRESO',tiempoInicioEstado:cmd.timestamp||Date.now()};(cmd.items||[]).forEach(it=>{const existente=nuevoObj[idViejo].items.find(x=>x.nombre===it.nombre);if(existente)existente.cantidad+=it.cantidad;else nuevoObj[idViejo].items.push({id:it.id||it.nombre,nombre:it.nombre,cat:it.cat||'',precio:Number(it.precio||0),cantidad:it.cantidad});});if(cmd.estado_parrilla)nuevoObj[idViejo].estado_parrilla=cmd.estado_parrilla;if(cmd.estado_cocina)nuevoObj[idViejo].estado_cocina=cmd.estado_cocina;}else if(cmd.id&&Array.isArray(cmd.items)){nuevoObj[cmd.id]=cmd;}});comandasActivas=nuevoObj;sincronizarVistaGustavo();});}
+function escucharChatFirebase(){db.ref('mensajes_chat').limitToLast(30).on('value',snap=>{const data=snap.val()||{};const box=document.getElementById('contenedorChatMjes');box.innerHTML='';Object.values(data).sort((a,b)=>(a.timestamp||0)-(b.timestamp||0)).forEach(m=>{const d=document.createElement('div');d.style.marginBottom='4px';d.innerHTML=`<span style="color:#fb923c;font-weight:800">[${m.hora||''}] ${m.remitente}:</span> <span style="color:#e5e7eb">${m.texto}</span>`;box.appendChild(d);});box.scrollTop=box.scrollHeight;});}
 function sincronizarFirebaseRemotoUnificado(mesaId){if(!mesaId||!comandasActivas[mesaId])return;const cmd=comandasActivas[mesaId];const nombreNuevo=MAPEO_VIEJO_A_NUEVO[cmd.id]||cmd.id;const idSeguro=nombreNuevo.replace(/[^a-zA-Z0-9]/g,'_');db.ref('comandas_activas/'+idSeguro).set({mesa:nombreNuevo,items:cmd.items.map(i=>({id:i.id,nombre:i.nombre,cantidad:i.cantidad,precio:i.precio,cat:i.cat||''})),total:cmd.items.reduce((a,b)=>a+b.precio*b.cantidad,0),timestamp:Date.now(),estado:cmd.estado||'INGRESO',estado_parrilla:cmd.estado_parrilla||cmd.estado||'INGRESO',estado_cocina:cmd.estado_cocina||'INGRESO'});}
 function construirBotonesCategorias(){const c=document.getElementById('contenedorCategorias');const cats=['Todos',...new Set(MENU.map(i=>i.cat))];c.innerHTML='';cats.forEach(cat=>{const b=document.createElement('button');b.className=`btn-cat ${cat===categoriaActiva?'activo':''}`;b.textContent=cat;b.onclick=()=>filtrarCategoria(cat,b);c.appendChild(b);});}
-function guardarDatosStorage(){localStorage.setItem('historialCaja',JSON.stringify(historialCaja));localStorage.setItem('listaEgresos',JSON.stringify(listaEgresos));localStorage.setItem('historialMensajes',JSON.stringify(historialMensajes));}
 function filtrarCategoria(cat,btn){categoriaActiva=cat;document.querySelectorAll('.btn-cat').forEach(b=>b.classList.remove('activo'));if(btn)btn.classList.add('activo');renderGrilla(cat);}
-function renderGrilla(cat){const cont=document.getElementById('grillaProductos');cont.innerHTML='';const f=(cat==='Todos')?MENU:MENU.filter(m=>m.cat===cat);if(f.length===0){cont.innerHTML='No hay productos';return;}f.forEach(p=>{const card=document.createElement('div');card.className='card-prod';card.onclick=()=>agregarAlCarrito(p);card.innerHTML=`<div class="nombre">${p.nombre}</div><div class="precio">$${p.precio}</div>`;cont.appendChild(card);});}
+function renderGrilla(cat){const cont=document.getElementById('grillaProductos');cont.innerHTML='';const f=(cat==='Todos')?MENU:MENU.filter(m=>m.cat===cat);if(f.length===0){cont.innerHTML='<div style="color:#666;padding:10px">No hay productos</div>';return;}f.forEach(p=>{const card=document.createElement('div');card.className='card-prod';card.onclick=()=>agregarAlCarrito(p);card.innerHTML=`<div class="nombre">${p.nombre}</div><div class="precio">$${p.precio}</div>`;cont.appendChild(card);});}
 function agregarAlCarrito(prod){const ex=carrito.find(i=>i.id===prod.id);if(ex)ex.cantidad++;else carrito.push({...prod,cantidad:1});renderCarrito();}
 function cambiarCantidad(id,delta){const it=carrito.find(i=>i.id===id);if(it){it.cantidad+=delta;if(it.cantidad<=0)carrito=carrito.filter(i=>i.id!==id);}renderCarrito();}
-function renderCarrito(){const cont=document.getElementById('resumenComanda');const totEl=document.getElementById('totalMonto');cont.innerHTML='';if(carrito.length===0){cont.innerHTML='No hay ítems';totEl.textContent='$0';return;}let total=0;carrito.forEach(item=>{total+=item.precio*item.cantidad;const row=document.createElement('div');row.className='item-carrito';row.innerHTML=`<div>${item.nombre}</div><div><button class="btn-qty" onclick="cambiarCantidad('${item.id}',-1)">-</button>${item.cantidad}<button class="btn-qty" onclick="cambiarCantidad('${item.id}',1)">+</button></div>`;cont.appendChild(row);});totEl.textContent=`$${total}`;}
+function renderCarrito(){const cont=document.getElementById('resumenComanda');const totEl=document.getElementById('totalMonto');cont.innerHTML='';if(carrito.length===0){cont.innerHTML='<div style="color:#666">No hay ítems</div>';totEl.textContent='$0';return;}let total=0;carrito.forEach(item=>{total+=item.precio*item.cantidad;const row=document.createElement('div');row.style.display='flex';row.style.justifyContent='space-between';row.style.padding='4px 0';row.style.borderBottom='1px solid #222';row.innerHTML=`<span>${item.nombre}</span><span><button onclick="cambiarCantidad('${item.id}',-1)" style="background:#27272a;color:#fff;border:none;width:20px;height:20px;border-radius:4px;cursor:pointer">-</button> ${item.cantidad} <button onclick="cambiarCantidad('${item.id}',1)" style="background:#27272a;color:#fff;border:none;width:20px;height:20px;border-radius:4px;cursor:pointer">+</button></span>`;cont.appendChild(row);});totEl.textContent=`$${total}`;}
 function enviarOActualizarComanda(){if(carrito.length===0){alert("Seleccioná producto");return;}const destino=document.getElementById('selectUbicacion').value;if(comandasActivas[destino]){carrito.forEach(ni=>{const ex=comandasActivas[destino].items.find(i=>i.id===ni.id);if(ex)ex.cantidad+=ni.cantidad;else comandasActivas[destino].items.push({...ni});});}else{comandasActivas[destino]={id:destino,items:[...carrito],estado:'INGRESO',estado_parrilla:'INGRESO',estado_cocina:'INGRESO',tiempoInicioEstado:Date.now()};}sincronizarFirebaseRemotoUnificado(destino);carrito=[];renderCarrito();}
-function sincronizarVistaGustavo(){const containerMesas=document.getElementById('planoMesasContainer');containerMesas.innerHTML='';const contKds=document.getElementById('contenedorTarjetasKds');contKds.innerHTML='';listadoMesasDefinidas.forEach(m=>{const cmd=comandasActivas[m.id];const card=document.createElement('div');let clase='';let estadoTxt='LIBRE';let itemsHtml='<div style="color:#666">Sin comanda</div>';let totalMesa=0;if(cmd){const analisis=analizarComanda(cmd);estadoTxt=cmd.estado_parrilla||cmd.estado;if(analisis.esSoloCocina){clase='solo-cocina';estadoTxt='COCINA: '+(cmd.estado_cocina||'');}else{clase=(cmd.estado_parrilla||'').includes('LISTO')?'lista':'ocupada';}itemsHtml='<ul style="list-style:none">';cmd.items.forEach(i=>{totalMesa+=i.precio*i.cantidad;if(esItemParrilla(i.nombre,i.cat))itemsHtml+=`<li><span class="item-parrilla-destacado">🔥 ${i.cantidad}x ${i.nombre}</span></li>`;else itemsHtml+=`<li><span class="item-cocina-solo-vista">👁️ [COCINA SOLO VISTA] ${i.cantidad}x ${i.nombre}</span></li>`;});itemsHtml+='</ul>';if(!analisis.esSoloCocina){const kds=document.createElement('div');kds.className='tarjeta-kds-flotante';kds.onclick=()=>clickUbicacion(m.id);kds.innerHTML=`<div style="font-weight:bold;color:#ff9900">${m.id} - ${cmd.estado_parrilla||''}</div>`;contKds.appendChild(kds);}}card.className=`mesa-card-ampliada ${clase}`;card.onclick=()=>clickUbicacion(m.id);card.innerHTML=`<div><div class="mesa-header-info"><span class="mesa-nombre">${m.nombre}</span><span class="mesa-estado-badge">${estadoTxt}</span></div><div>${itemsHtml}</div></div><div class="mesa-footer-info"><span>Total:</span><span>$${totalMesa}</span></div>`;containerMesas.appendChild(card);});}
-function actualizarContadoresTiempo(){}
-function clickUbicacion(id){if(comandasActivas[id]){idMesaGestion=id;const cmd=comandasActivas[id];const analisis=analizarComanda(cmd);document.getElementById('tituloOpcionesMesa').textContent=`Gestionar: ${id}`;const aviso=document.getElementById('infoPermisoAviso');const avisoMixta=document.getElementById('infoMixtaAviso');const btnPrep=document.getElementById('btnPrep');const btnListo=document.getElementById('btnListo');if(analisis.esSoloCocina){aviso.style.display='block';avisoMixta.style.display='none';btnPrep.disabled=true;btnListo.disabled=true;}else if(analisis.esMixta){aviso.style.display='none';avisoMixta.style.display='block';btnPrep.disabled=false;btnListo.disabled=false;}else{aviso.style.display='none';avisoMixta.style.display='none';btnPrep.disabled=false;btnListo.disabled=false;}document.getElementById('modalOpcionesMesa').style.display='flex';}else{document.getElementById('selectUbicacion').value=id;}}
-function cambiarEstadoCocina(nuevo){if(!idMesaGestion||!comandasActivas[idMesaGestion])return;const cmd=comandasActivas[idMesaGestion];const analisis=analizarComanda(cmd);if(analisis.esSoloCocina){alert("🔒 No podés tocar items de COCINA. Solo vista para carga operativa.");return;}cmd.estado_parrilla=nuevo;cmd.tiempoInicioEstado=Date.now();if(analisis.esSoloParrilla)cmd.estado=nuevo;if(analisis.esMixta&&nuevo.includes('LISTO')&&(cmd.estado_cocina||'').includes('LISTO')){const msg=`MESA ${idMesaGestion} MIXTA LISTA: Parrilla y Cocina listas para entregar - Avisar a Mariana`;db.ref('notificaciones_mariana').push({mesa:idMesaGestion,mensaje:msg,timestamp:Date.now()});}sincronizarFirebaseRemotoUnificado(idMesaGestion);cerrarModal('modalOpcionesMesa');}
-function imprimirComandaCocina(){}
-function abrirModalCierreCaja(){document.getElementById('modalCierreCaja').style.display='flex';}
-function abrirModalEgresos(){document.getElementById('modalEgresos').style.display='flex';}
-function guardarEgreso(){const c=document.getElementById('egresoConcepto').value;const m=parseFloat(document.getElementById('egresoMonto').value)||0;listaEgresos.push({concepto:c,monto:m});guardarDatosStorage();cerrarModal('modalEgresos');}
-function enviarMensajeChat(){const t=document.getElementById('inputNuevoMje').value.trim();if(!t)return;historialMensajes.push({remitente:'Gustavo',texto:t});db.ref('mensajes_chat').push({remitente:'Gustavo',texto:t,timestamp:Date.now()});guardarDatosStorage();document.getElementById('inputNuevoMje').value='';renderizarChatMjes();}
-function renderizarChatMjes(){const box=document.getElementById('contenedorChatMjes');if(!box)return;box.innerHTML='';historialMensajes.slice(-20).forEach(m=>{const d=document.createElement('div');d.innerHTML=`${m.remitente}: ${m.texto}`;box.appendChild(d);});}
+function sincronizarVistaGustavo(){
+  const containerMesas=document.getElementById('planoMesasContainer');containerMesas.innerHTML='';
+  const contKds=document.getElementById('contenedorTarjetasKds');contKds.innerHTML='';
+  listadoMesasDefinidas.forEach(m=>{
+    const cmd=comandasActivas[m.id];const card=document.createElement('div');let clase='';let estadoTxt='LIBRE';let itemsHtml='<div style="color:#52525b;font-size:11px">Sin comanda</div>';let totalMesa=0;let badgeClass='badge-recibido';
+    if(cmd){
+      const analisis=analizarComanda(cmd);
+      estadoTxt=cmd.estado_parrilla||cmd.estado;
+      if(analisis.esSoloCocina){ clase='solo-cocina'; estadoTxt='SOLO COCINA'; badgeClass='badge-recibido'; }
+      else if((cmd.estado_parrilla||'').includes('LISTO')){ clase='lista'; badgeClass='badge-listo'; }
+      else if((cmd.estado_parrilla||'').includes('PREP')){ clase='ocupada'; badgeClass='badge-prep'; }
+      else { clase='ocupada'; badgeClass='badge-recibido'; }
+      itemsHtml='<ul style="list-style:none">';
+      cmd.items.forEach(i=>{
+        totalMesa+=i.precio*i.cantidad;
+        descomponerItem(i.nombre).forEach(s=>{
+          if(s.estacion==='PARRILLA') itemsHtml+=`<li><span class="item-parrilla-destacado">🔥 ${i.cantidad}x ${s.texto}</span></li>`;
+          else itemsHtml+=`<li><span class="item-cocina-solo-vista">👁️ [COCINA: ${s.texto}]</span></li>`;
+        });
+      });
+      itemsHtml+='</ul>';
+      if(!analisis.esSoloCocina){
+        const kds=document.createElement('div');kds.style.background='linear-gradient(180deg,#1e1e1e,#181818)';kds.style.border='1px solid #2a2a2a';kds.style.borderLeft='4px solid #ea580c';kds.style.borderRadius='10px';kds.style.padding='10px';kds.style.cursor='pointer';
+        kds.onclick=()=>clickUbicacion(m.id);
+        kds.innerHTML=`<div style="font-weight:800;color:#fb923c;font-size:12px">${m.id} <span style="float:right" class="mesa-estado-badge ${analisis.esMixta?'badge-mixta':badgeClass}">${analisis.esMixta?'🔀 MIXTA':estadoTxt}</span></div><div style="font-size:10px;color:#a1a1aa;margin-top:4px">${cmd.items.length} items</div>`;
+        contKds.appendChild(kds);
+      }
+    }
+    card.className=`mesa-card-ampliada ${clase}`;card.onclick=()=>clickUbicacion(m.id);
+    card.innerHTML=`<div><div class="mesa-header-info"><span class="mesa-nombre">${m.nombre}</span><span class="mesa-estado-badge ${badgeClass}">${estadoTxt}</span></div><div>${itemsHtml}</div></div><div class="mesa-footer-info"><span>Total</span><span>$${totalMesa}</span></div>`;
+    containerMesas.appendChild(card);
+  });
+}
+function clickUbicacion(id){
+  if(comandasActivas[id]){
+    idMesaGestion=id;const cmd=comandasActivas[id];const analisis=analizarComanda(cmd);
+    document.getElementById('tituloOpcionesMesa').textContent=`${id} - ${analisis.esMixta?'🔀 MIXTA':analisis.esSoloCocina?'SOLO COCINA':'SOLO PARRILLA'}`;
+    const aviso=document.getElementById('infoPermisoAviso');const avisoMixta=document.getElementById('infoMixtaAviso');
+    const btnPrep=document.getElementById('btnPrep');const btnListo=document.getElementById('btnListo');
+    let det=''; cmd.items.forEach(it=>{ det+=`<div style="margin-bottom:6px;padding:6px;background:#111;border-radius:6px"><b>${it.nombre} x${it.cantidad}</b><br><span style="color:#71717a">${descomponerItem(it.nombre).map(s=>`<span style="color:${s.estacion==='PARRILLA'?'#fb923c':'#71717a'}">${s.estacion}: ${s.texto}</span>`).join(' + ')}</span></div>`; });
+    document.getElementById('detalleMesaModal').innerHTML=det;
+    if(analisis.esSoloCocina){ aviso.style.display='block'; avisoMixta.style.display='none'; btnPrep.disabled=true; btnListo.disabled=true; }
+    else if(analisis.esMixta){ aviso.style.display='none'; avisoMixta.style.display='block'; btnPrep.disabled=false; btnListo.disabled=false; }
+    else { aviso.style.display='none'; avisoMixta.style.display='none'; btnPrep.disabled=false; btnListo.disabled=false; }
+    document.getElementById('modalOpcionesMesa').style.display='flex';
+  } else { document.getElementById('selectUbicacion').value=id; }
+}
+function cambiarEstadoCocina(nuevo){
+  if(!idMesaGestion||!comandasActivas[idMesaGestion])return;
+  const cmd=comandasActivas[idMesaGestion];const analisis=analizarComanda(cmd);
+  if(analisis.esSoloCocina){ alert("🔒 Milanesa/Pechuga/Suprema/Tortilla es SOLO COCINA. Solo vista."); return; }
+  cmd.estado_parrilla=nuevo;cmd.tiempoInicioEstado=Date.now();
+  if(analisis.esSoloParrilla) cmd.estado=nuevo;
+  if(analisis.esMixta && nuevo.includes('LISTO') && (cmd.estado_cocina||'').includes('LISTO')){
+    db.ref('notificaciones_mariana').push({mesa:idMesaGestion,mensaje:`MESA ${idMesaGestion} MIXTA LISTA`,timestamp:Date.now()});
+    db.ref('mensajes_chat').push({remitente:'SISTEMA',texto:`✅ MESA ${idMesaGestion} MIXTA LISTA - Parrilla + Cocina listas`,hora:new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'}),timestamp:Date.now()});
+  }
+  sincronizarFirebaseRemotoUnificado(idMesaGestion);cerrarModal('modalOpcionesMesa');
+}
+function enviarMensajeChat(){const t=document.getElementById('inputNuevoMje').value.trim();if(!t)return;db.ref('mensajes_chat').push({remitente:'Gustavo',texto:t,hora:new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'}),timestamp:Date.now()});document.getElementById('inputNuevoMje').value='';}
 function cerrarModal(id){document.getElementById(id).style.display='none';}
 </script>
 </body>
