@@ -1,398 +1,134 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Comandera Hernán (Cocina) | Parrilla La Perseverancia</title>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
-    body{background-color:#0b0b0b;color:#fff;padding:10px}
-    header{background:linear-gradient(90deg,#b03a2e,#d35400);padding:10px 16px;border-radius:6px;display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;box-shadow:0 4px 10px rgba(0,0,0,.5)}
-  .header-izquierda{display:flex;align-items:center;gap:16px}
-    header h1{font-size:18px;font-weight:bold;text-transform:uppercase;letter-spacing:1px;display:flex;align-items:center;gap:8px}
-  .header-info-widget{display:flex;align-items:center;gap:12px;background:rgba(0,0,0,.3);padding:6px 12px;border-radius:6px;border:1px solid rgba(255,255,255,.15);font-size:12px;font-weight:bold}
-  .info-pill{display:flex;align-items:center;gap:5px;color:#f1c40f}
-  .info-pill.temp{color:#00ffcc}
-  .info-pill.dolar{color:#2ecc71}
-  .acciones-header{display:flex;align-items:center;gap:8px}
-  .btn-hdr{background-color:#1c2833;color:#fff;border:1px solid #34495e;padding:8px 14px;border-radius:5px;font-size:12px;font-weight:bold;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all.2s}
-  .btn-hdr:hover{background-color:#2c3e50;border-color:#5d6d7e}
-  .btn-hdr.btn-resumen{background-color:#1a5276;border-color:#2980b9;color:#aed6f1}
-  .btn-hdr.btn-resumen:hover{background-color:#21618c;color:#fff}
-  .btn-hdr.btn-agotados{background-color:#78281f;border-color:#b03a2e;color:#fadbd8}
-  .btn-hdr.btn-agotados:hover{background-color:#943126;color:#fff}
-  .btn-hdr.btn-alarma-activo{background-color:#196f3d;border-color:#27ae60;color:#abebc6}
-  .btn-hdr.btn-alarma-activo:hover{background-color:#219653;color:#fff}
-  .btn-hdr.btn-alarma-silenciado{background-color:#78281f;border-color:#c0392b;color:#f5b7b1}
-  .btn-hdr.btn-alarma-silenciado:hover{background-color:#922b21;color:#fff}
-  .badge-caja{background-color:#1c2833;color:#00ff66;border:1px solid #27ae60;padding:8px 14px;border-radius:5px;font-size:12px;font-weight:bold;display:flex;align-items:center;gap:6px}
-  .badge-live{background-color:#000;color:#ff9900;font-size:12px;font-weight:bold;padding:6px 10px;border-radius:12px;border:1px solid #ff9900}
-  .layout-cocina{display:grid;grid-template-columns:380px 1fr;gap:14px}
-  .panel-box{background-color:#141414;border:1px solid #222;border-radius:8px;padding:14px}
-  .seccion-titulo{font-size:14px;font-weight:bold;color:#ff9900;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
-  .contenedor-tickets-lateral{display:flex;flex-direction:column;gap:12px;max-height:calc(100vh - 120px);overflow-y:auto;padding-right:4px}
-  .item-cocina-card{background-color:#1c1c1c;border:2px solid #e74c3c;border-left:6px solid #e74c3c;border-radius:6px;padding:12px;display:flex;flex-direction:column;gap:8px;box-shadow:0 4px 12px rgba(0,0,0,.5);transition:all.2s}
-  .item-cocina-card.estado-recibido{border-left-color:#2980b9;border-color:#2980b9}
-  .item-cocina-card.estado-preparacion{border-left-color:#d35400;border-color:#d35400}
-  .item-cocina-card.estado-manos{border-left-color:#27ae60;border-color:#27ae60;background-color:#112218}
-  .item-cocina-card.urgente-card{border-left-color:#ff0000!important;border-color:#ff0000!important;background-color:#2b1111;animation:pulsoUrgenteCard 1s infinite}
-    @keyframes pulsoUrgenteCard{0%{box-shadow:0 0 0 0 rgba(255,0,0,.7)}70%{box-shadow:0 0 0 8px rgba(255,0,0,0)}100%{box-shadow:0 0 0 0 rgba(255,0,0,0)}}
-  .item-cocina-header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #333;padding-bottom:6px}
-  .item-cocina-mesa{font-size:14px;font-weight:bold;color:#ff9900;display:flex;align-items:center;gap:6px}
-  .badge-nro-orden{background-color:#000;color:#f1c40f;border:1px solid #f1c40f;font-size:11px;padding:1px 6px;border-radius:4px;font-family:monospace}
-  .item-cocina-estado{font-size:11px;font-weight:bold;padding:2px 6px;border-radius:4px;background:#333;color:#fff}
-  .item-cocina-cuerpo{display:flex;flex-direction:column;gap:4px}
-  .item-cocina-nombre{font-size:15px;font-weight:bold;color:#fff;display:flex;justify-content:space-between;align-items:center}
-  .item-cocina-cant{font-size:16px;font-weight:bold;color:#00ff66;background:#000;padding:2px 8px;border-radius:4px;border:1px solid #00ff66}
-  .btn-limpiar-comanda{background-color:#27ae60;color:#fff;border:none;padding:8px;border-radius:4px;font-size:12px;font-weight:bold;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;margin-top:4px;box-shadow:0 2px 5px rgba(0,0,0,.3);transition:background.2s}
-  .btn-limpiar-comanda:hover{background-color:#219653}
-  .mapa-contenedor{background-color:#0d0d0d;border:1px dashed #333;border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:16px;min-height:calc(100vh - 120px);overflow-y:auto}
-  .grupo-zona{background:#111;border:1px solid #222;border-radius:8px;padding:12px}
-  .etiqueta-zona{font-size:12px;font-weight:bold;color:#888;margin-bottom:10px;display:block;text-transform:uppercase;letter-spacing:.5px}
-  .grilla-mesas{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
-  .mesa-tarjeta{background-color:#1a1a1a;border:2px solid #333;border-radius:8px;padding:12px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;user-select:none;transition:all.2s;min-height:130px;position:relative}
-  .mesa-tarjeta:hover{border-color:#ff6600;transform:translateY(-2px)}
-  .mesa-tarjeta.ocupada{background-color:#241414;border-color:#c0392b}
-  .mesa-tarjeta.urgente{border:2px solid #ff0000!important;animation:pulsoUrgente 1.2s infinite}
-    @keyframes pulsoUrgente{0%{box-shadow:0 0 0 0 rgba(255,0,0,.6)}70%{box-shadow:0 0 0 10px rgba(255,0,0,0)}100%{box-shadow:0 0 0 0 rgba(255,0,0,0)}}
-  .mesa-hdr-info{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #333;padding-bottom:6px;margin-bottom:6px}
-  .mesa-nombre{font-size:13px;font-weight:bold;color:#fff;letter-spacing:.5px}
-  .mesa-items-lista{list-style:none;font-size:12px;color:#ddd;margin-bottom:8px;flex-grow:1}
-  .mesa-items-lista li{display:flex;justify-content:space-between;padding:2px 0}
-  .item-agotado-texto{text-decoration:line-through;color:#777}
-  .badge-agotado-tag{background-color:#900;color:#fff;font-size:9px;padding:1px 4px;border-radius:3px;margin-left:4px}
-  .timer-badge{background-color:#000;color:#00ffcc;font-family:monospace;font-size:11px;font-weight:bold;padding:4px 8px;border-radius:4px;border:1px solid #00ffcc;text-align:center;width:100%}
-  .timer-badge.alerta-roja{background-color:#900;color:#fff;border-color:#ff0000;animation:pulsoAlarma.8s infinite}
-  .timer-badge.alerta-naranja{background-color:#d35400;color:#fff;border-color:#ff9900}
-  .timer-badge.alerta-manos{background-color:#27ae60;color:#fff;border-color:#00ff66;animation:pulsoAlarma.5s infinite}
-    @keyframes pulsoAlarma{0%{transform:scale(1);opacity:1}50%{transform:scale(1.03);opacity:.75}100%{transform:scale(1);opacity:1}}
-  .modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);display:none;justify-content:center;align-items:center;z-index:1000}
-  .modal-contenido{background-color:#181818;border:1px solid #444;border-radius:8px;padding:20px;width:90%;max-width:450px;box-shadow:0 5px 20px rgba(0,0,0,.8)}
-  .modal-hdr{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #333;padding-bottom:8px;margin-bottom:12px}
-  .btn-cerrar-modal{background:none;border:none;color:#999;font-size:18px;cursor:pointer}
-  .btn-accion-cocina{width:100%;padding:12px;margin-bottom:8px;border:none;border-radius:6px;font-weight:bold;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:background.2s}
-  .btn-recibido{background-color:#2980b9;color:#fff}
-  .btn-recibido:hover{background-color:#1f618d}
-  .btn-preparacion{background-color:#d35400;color:#fff}
-  .btn-preparacion:hover{background-color:#a04000}
-  .btn-manos{background-color:#27ae60;color:#fff}
-  .btn-manos:hover{background-color:#1e8449}
-  .btn-urgente{background-color:#c0392b;color:#fff}
-  .btn-urgente:hover{background-color:#962d22}
-  .lista-agotados-grid{display:flex;flex-direction:column;gap:6px;max-height:250px;overflow-y:auto;margin-bottom:12px}
-  .item-agotado-row{display:flex;align-items:center;justify-content:space-between;background:#111;padding:8px 10px;border-radius:4px;border:1px solid #222;font-size:12px}
-  .item-agotado-row input[type="checkbox"]{width:16px;height:16px;cursor:pointer}
-  .tabla-resumen-acumulado{width:100%;border-collapse:collapse;font-size:13px}
-  .tabla-resumen-acumulado th{text-align:left;color:#ff9900;border-bottom:1px solid #333;padding:8px 4px}
-  .tabla-resumen-acumulado td{padding:8px 4px;border-bottom:1px solid #222}
-  </style>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LA PERSEVERANCIA | VISTA COCINA (HERNÁN)</title>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',sans-serif}
+body{background:#0b0b0b;color:#fff;padding:10px}
+header{background:linear-gradient(90deg,#b03a2e,#d35400);padding:10px 16px;border-radius:6px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+header h1{font-size:16px;font-weight:bold}
+.badge-live{background:#000;color:#00ff66;font-size:11px;padding:4px 10px;border-radius:12px;border:1px solid #00ff66}
+.layout{display:grid;grid-template-columns:360px 1fr;gap:12px}
+.panel{background:#141414;border:1px solid #222;border-radius:8px;padding:12px}
+.titulo{font-size:12px;color:#ff9900;font-weight:bold;margin-bottom:10px;text-transform:uppercase}
+.card{background:#1c1c1c;border:2px solid #e67e22;border-left:6px solid #e67e22;border-radius:6px;padding:10px;margin-bottom:10px}
+.card.recibido{border-color:#f39c12;background:#211a0e}
+.card.manos{border-color:#27ae60;background:#112218}
+.mesa{color:#ff9900;font-weight:bold;font-size:13px}
+.items{font-size:12px;margin-top:6px}
+.item{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px dashed #333}
+.cant{color:#00ff66;background:#000;padding:1px 6px;border-radius:4px;border:1px solid #00ff66;font-size:11px}
+.plano{display:flex;flex-direction:column;gap:14px;background:#0d0d0d;border:1px dashed #333;border-radius:8px;padding:14px;min-height:80vh}
+.zona{background:#111;border:1px solid #222;border-radius:8px;padding:10px}
+.zona-nombre{font-size:11px;color:#888;font-weight:bold;display:block;margin-bottom:8px;text-transform:uppercase}
+.grilla{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.mesa-box{background:#1a1a1a;border:2px solid #333;border-radius:8px;padding:10px;min-height:110px}
+.mesa-box.ocupada{background:#241414;border-color:#c0392b}
+.mesa-box.manos{background:#113822;border-color:#27ae60}
+.btn-limpiar{width:100%;background:#27ae60;color:#fff;border:none;padding:7px;border-radius:4px;font-weight:bold;cursor:pointer;margin-top:8px;font-size:12px}
+</style>
 </head>
 <body>
-  <header>
-    <div class="header-izquierda">
-      <h1>🔥 LA PERSEVERANCIA <span style="font-size:12px;opacity:.85;font-weight:normal;">| Vista Cocina (Hernán)</span></h1>
-      <div class="header-info-widget">
-        <div class="info-pill"><i class="fa-regular fa-clock"></i> <span id="relojHeader">--:--:--</span></div>
-        <div class="info-pill temp"><i class="fa-solid fa-temperature-half"></i> <span id="tempHeader">--°C</span></div>
-        <div class="info-pill dolar"><i class="fa-solid fa-dollar-sign"></i> <span id="dolarHeader">USD:...</span></div>
-      </div>
-    </div>
-    <div class="acciones-header">
-      <button id="btnAlarmaToggle" class="btn-hdr btn-alarma-activo" onclick="toggleAlarmaSonora()"><i id="iconoAlarma" class="fa-solid fa-volume-high"></i> <span id="textoAlarmaBtn">ALARMA ON</span></button>
-      <button class="btn-hdr btn-resumen" onclick="abrirResumenAcumulado()"><i class="fa-solid fa-list-check"></i> RESUMEN</button>
-      <button class="btn-hdr btn-agotados" onclick="abrirAgotadosModal()"><i class="fa-solid fa-ban"></i> AGOTAR (86)</button>
-      <div class="badge-caja">💰 CAJA: <span id="montoCaja">$0</span></div>
-      <span class="badge-live">• COCINA ACTIVA</span>
-    </div>
-  </header>
+<header><h1>🔥 LA PERSEVERANCIA | VISTA COCINA (HERNÁN) | <span id="reloj">--:--:--</span></h1><span class="badge-live">• COCINA - CONECTADA A MARIANA</span></header>
 
-  <div class="layout-cocina">
-    <aside class="panel-box">
-      <div class="seccion-titulo"><span>🍳 ÍTEMS DE COCINA (FIFO)</span><span id="cantComandas" style="color:#00ff66;font-size:13px;">0</span></div>
-      <div class="contenedor-tickets-lateral" id="contenedorTicketsLateral"><p style="color:#666;font-size:12px;text-align:center;margin-top:20px;">Sincronizando ítems...</p></div>
-    </aside>
-    <main class="panel-box">
-      <div class="seccion-titulo"><span>📍 PLANO DE COCINA (COMANDAS EN TIEMPO REAL)</span></div>
-      <div class="mapa-contenedor">
-        <div class="grupo-zona"><span class="etiqueta-zona">🍷 SALÓN PRINCIPAL</span><div class="grilla-mesas" id="grillaSalon">
-          <div class="mesa-tarjeta" data-id="Mesa 1" onclick="abrirModalEstado('Mesa 1')"><div class="mesa-hdr-info"><span class="mesa-nombre">MESA 1</span><small style="color:#666;">Libre</small></div><p style="color:#555;font-size:12px;text-align:center;margin:auto;">Sin comanda</p></div>
-          <div class="mesa-tarjeta" data-id="Mesa 2" onclick="abrirModalEstado('Mesa 2')"><div class="mesa-hdr-info"><span class="mesa-nombre">MESA 2</span><small style="color:#666;">Libre</small></div><p style="color:#555;font-size:12px;text-align:center;margin:auto;">Sin comanda</p></div>
-          <div class="mesa-tarjeta" data-id="Mesa 3" onclick="abrirModalEstado('Mesa 3')"><div class="mesa-hdr-info"><span class="mesa-nombre">MESA 3</span><small style="color:#666;">Libre</small></div><p style="color:#555;font-size:12px;text-align:center;margin:auto;">Sin comanda</p></div>
-          <div class="mesa-tarjeta" data-id="Mesa 4" onclick="abrirModalEstado('Mesa 4')"><div class="mesa-hdr-info"><span class="mesa-nombre">MESA 4</span><small style="color:#666;">Libre</small></div><p style="color:#555;font-size:12px;text-align:center;margin:auto;">Sin comanda</p></div>
-        </div></div>
-        <div class="grupo-zona"><span class="etiqueta-zona">⛱️ VEREDA</span><div class="grilla-mesas" id="grillaVereda">
-          <div class="mesa-tarjeta" data-id="Mesa 5 Vereda" onclick="abrirModalEstado('Mesa 5 Vereda')"><div class="mesa-hdr-info"><span class="mesa-nombre">MESA 5 VEREDA</span><small style="color:#666;">Libre</small></div><p style="color:#555;font-size:12px;text-align:center;margin:auto;">Sin comanda</p></div>
-          <div class="mesa-tarjeta" data-id="Mesa 6 Vereda" onclick="abrirModalEstado('Mesa 6 Vereda')"><div class="mesa-hdr-info"><span class="mesa-nombre">MESA 6 VEREDA</span><small style="color:#666;">Libre</small></div><p style="color:#555;font-size:12px;text-align:center;margin:auto;">Sin comanda</p></div>
-          <div class="mesa-tarjeta" data-id="Mesa 7 Vereda" onclick="abrirModalEstado('Mesa 7 Vereda')"><div class="mesa-hdr-info"><span class="mesa-nombre">MESA 7 VEREDA</span><small style="color:#666;">Libre</small></div><p style="color:#555;font-size:12px;text-align:center;margin:auto;">Sin comanda</p></div>
-        </div></div>
-        <div class="grupo-zona"><span class="etiqueta-zona">📦 MOSTRADOR / DELIVERY / PICKUP</span><div class="grilla-mesas" id="grillaExpress">
-          <div class="mesa-tarjeta" data-id="Mostrador" onclick="abrirModalEstado('Mostrador')"><div class="mesa-hdr-info"><span class="mesa-nombre">🛍️ MOSTRADOR</span><small style="color:#666;">Libre</small></div><p style="color:#555;font-size:12px;text-align:center;margin:auto;">Sin comanda</p></div>
-          <div class="mesa-tarjeta" data-id="Pickup" onclick="abrirModalEstado('Pickup')"><div class="mesa-hdr-info"><span class="mesa-nombre">🏃 PICKUP</span><small style="color:#666;">Libre</small></div><p style="color:#555;font-size:12px;text-align:center;margin:auto;">Sin comanda</p></div>
-          <div class="mesa-tarjeta" data-id="Delivery" onclick="abrirModalEstado('Delivery')"><div class="mesa-hdr-info"><span class="mesa-nombre">🛵 DELIVERY</span><small style="color:#666;">Libre</small></div><p style="color:#555;font-size:12px;text-align:center;margin:auto;">Sin comanda</p></div>
-        </div></div>
-      </div>
-    </main>
-  </div>
+<div class="layout">
+<aside class="panel"><div class="titulo">🍳 ÍTEMS DE COCINA (FIFO) - <span id="total">0</span></div><div id="lista"></div></aside>
+<main class="panel"><div class="titulo">📍 PLANO DE COCINA (COMANDAS EN TIEMPO REAL)</div><div class="plano" id="plano"></div></main>
+</div>
 
-  <div class="modal-overlay" id="modalEstadoCocina"><div class="modal-contenido"><div class="modal-hdr"><h3 id="tituloModalMesa" style="color:#ff9900;">Ubicación</h3><button class="btn-cerrar-modal" onclick="cerrarModal('modalEstadoCocina')">✕</button></div><div id="detallePlatosModal" style="background:#111;padding:10px;border-radius:6px;border:1px solid #333;margin-bottom:12px;font-size:13px;"></div><p style="font-size:11px;color:#aaa;margin-bottom:10px;text-align:center;font-weight:bold;">SELECCIONAR ESTADO DE COCINA:</p><button class="btn-accion-cocina btn-recibido" onclick="cambiarEstadoCocina('RECIBIDO')">📥 1. RECIBIDO (Máx 5 min)</button><button class="btn-accion-cocina btn-preparacion" onclick="cambiarEstadoCocina('PREPARACION')">🔥 2. EN PREPARACIÓN (7 a 15 min)</button><button class="btn-accion-cocina btn-manos" onclick="cambiarEstadoCocina('MANOS')">🖐️ 3. ¡MANOS! (1 min para retirar)</button><button class="btn-accion-cocina btn-urgente" onclick="toggleUrgente()">🚨 MARCAR / DESMARCAR URGENTE</button><button class="btn-accion-cocina" style="background-color:#444;color:#fff;" onclick="cerrarModal('modalEstadoCocina')">VOLVER</button></div></div>
-  <div class="modal-overlay" id="modalResumen"><div class="modal-contenido"><div class="modal-hdr"><h3 style="color:#2980b9;"><i class="fa-solid fa-list-check"></i> Resumen Acumulado de Platos</h3><button class="btn-cerrar-modal" onclick="cerrarModal('modalResumen')">✕</button></div><div id="contenidoResumen" style="background:#111;padding:12px;border-radius:6px;border:1px solid #333;margin-bottom:12px;"></div><button class="btn-accion-cocina" style="background-color:#444;color:#fff;" onclick="cerrarModal('modalResumen')">CERRAR</button></div></div>
-  <div class="modal-overlay" id="modalAgotados"><div class="modal-contenido"><div class="modal-hdr"><h3 style="color:#e74c3c;"><i class="fa-solid fa-ban"></i> Control de Agotados (86)</h3><button class="btn-cerrar-modal" onclick="cerrarModal('modalAgotados')">✕</button></div><div class="lista-agotados-grid" id="listaAgotadosContenedor"></div><button class="btn-accion-cocina" style="background-color:#27ae60;color:#fff;" onclick="cerrarModal('modalAgotados')">GUARDAR</button></div></div>
-  <audio id="alarmaSonora" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyAvrpQSDoq9S87j3J7V4-uhJnPFCylCU",
+  authDomain: "parrilla-la-perseveranci-f3f54.firebaseapp.com",
+  databaseURL: "https://parrilla-la-perseveranci-f3f54-default-rtdb.firebaseio.com",
+  projectId: "parrilla-la-perseveranci-f3f54",
+  storageBucket: "parrilla-la-perseveranci-f3f54.firebasestorage.app",
+  messagingSenderId: "899082319184",
+  appId: "1:899082319184:web:9876161963705785efe855"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
-  <script>
-    // CONFIG COMPLETA - ARREGLADA (MISMA QUE GUSTAVO Y MARIANA)
-    const firebaseConfig = {
-      apiKey: "AIzaSyAvrpQSDoq9S87j3J7V4-uhJnPFCylCU",
-      authDomain: "parrilla-la-perseveranci-f3f54.firebaseapp.com",
-      databaseURL: "https://parrilla-la-perseveranci-f3f54-default-rtdb.firebaseio.com",
-      projectId: "parrilla-la-perseveranci-f3f54",
-      storageBucket: "parrilla-la-perseveranci-f3f54.firebasestorage.app",
-      messagingSenderId: "899082319184",
-      appId: "1:899082319184:web:9876161963705785efe855"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+setInterval(()=>document.getElementById('reloj').textContent=new Date().toLocaleTimeString('es-AR'),1000);
 
-    let comandasActivas = {};
-    const platosAgotados = new Set();
-    let catalogoPlatos = [];
-    let mesaSeleccionadaId = null;
-    let alarmaHabilitada = true;
+const ZONAS = {
+  "SALÓN PRINCIPAL": ["Salón - Mesa 1","Salón - Mesa 2","Salón - Mesa 3","Salón - Mesa 4"],
+  "VEREDA": ["Vereda - Mesa 5","Vereda - Mesa 6","Vereda - Mesa 7"],
+  "MOSTRADOR / DELIVERY / PICKUP": ["Canal - Mostrador","Canal - Pickup","Canal - Delivery"]
+};
 
-    window.onload = () => {
-      sincronizarFirebase();
-      iniciarReloj();
-      obtenerClimaYDolar();
-      setInterval(obtenerClimaYDolar, 600000);
-    };
+db.ref('comandas_activas').on('value', snap=>{
+  const data = snap.val() || {};
+  const porMesa = {};
 
-    function iniciarReloj() {
-      const actualizarReloj = () => {
-        const ahora = new Date();
-        document.getElementById('relojHeader').textContent = ahora.toLocaleTimeString('es-AR');
-      };
-      actualizarReloj();
-      setInterval(actualizarReloj, 1000);
-    }
+  Object.entries(data).forEach(([key, cmd])=>{
+    if(!cmd ||!cmd.mesa) return;
+    const mesaNombre = String(cmd.mesa).trim();
+    if(!porMesa[mesaNombre]) porMesa[mesaNombre] = {mesa: mesaNombre, items:[], total:0, estado: cmd.estado||'PENDIENTE', keys:[], timestamp: cmd.timestamp||Date.now()};
+    porMesa[mesaNombre].items.push(...(cmd.items||[]));
+    porMesa[mesaNombre].total += Number(cmd.total||0);
+    porMesa[mesaNombre].keys.push(key);
+    porMesa[mesaNombre].estado = cmd.estado || porMesa[mesaNombre].estado;
+    if(cmd.timestamp > porMesa[mesaNombre].timestamp) porMesa[mesaNombre].timestamp = cmd.timestamp;
+  });
 
-    async function obtenerClimaYDolar() {
-      try {
-        const resDolar = await fetch('https://dolarapi.com/v1/dolares/blue');
-        const dataDolar = await resDolar.json();
-        if (dataDolar && dataDolar.venta) {
-          document.getElementById('dolarHeader').textContent = `$${dataDolar.venta}`;
-        }
-      } catch (e) {
-        document.getElementById('dolarHeader').textContent = 'USD: N/D';
+  render(porMesa);
+});
+
+function render(porMesa){
+  const lista = document.getElementById('lista');
+  const plano = document.getElementById('plano');
+  lista.innerHTML='';
+  plano.innerHTML='';
+
+  const orden = Object.values(porMesa).sort((a,b)=>a.timestamp-b.timestamp);
+  document.getElementById('total').textContent = orden.length;
+
+  orden.forEach((g, idx)=>{
+    const nro = String(idx+1).padStart(3,'0');
+    const esManos = g.estado.includes('MANOS') || g.estado.includes('LISTO');
+    const div = document.createElement('div');
+    div.className = 'card' + (esManos? ' manos' : (g.estado==='RECIBIDO'?' recibido':''));
+    div.innerHTML = `<div style="display:flex;justify-content:space-between"><span class="mesa">#${nro} 📍 ${g.mesa}</span><span style="font-size:10px;background:#333;padding:2px 6px;border-radius:4px">${g.estado}</span></div>
+      <div class="items">${g.items.map(i=>`<div class="item"><span>${i.nombre}</span><span class="cant">x${i.cantidad}</span></div>`).join('')}</div>
+      ${esManos?`<button class="btn-limpiar" onclick="limpiar('${g.mesa.replace(/'/g,"\\'")}')">✅ LIMPIAR / RETIRAR</button>`:''}`;
+    lista.appendChild(div);
+  });
+
+  if(orden.length===0) lista.innerHTML='<p style="color:#666;text-align:center">Sin comandas. Esperando a Mariana...</p>';
+
+  Object.entries(ZONAS).forEach(([nombreZona, mesas])=>{
+    const zonaDiv = document.createElement('div');
+    zonaDiv.className='zona';
+    zonaDiv.innerHTML=`<span class="zona-nombre">${nombreZona}</span><div class="grilla"></div>`;
+    const grilla = zonaDiv.querySelector('.grilla');
+    mesas.forEach(mesaId=>{
+      const g = porMesa[mesaId];
+      const box = document.createElement('div');
+      box.className='mesa-box' + (g? (g.estado.includes('MANOS')?' manos':' ocupada') : '');
+      if(g){
+        box.innerHTML=`<div style="display:flex;justify-content:space-between;border-bottom:1px solid #333;padding-bottom:4px;margin-bottom:4px"><strong style="font-size:12px">${mesaId.toUpperCase()}</strong><small style="color:#ff9900">${g.estado}</small></div>
+        <div style="font-size:11px">${g.items.map(i=>`• ${i.cantidad}x ${i.nombre}`).join('<br>')}</div>
+        <div style="margin-top:6px;font-size:11px;color:#00ff66;font-weight:bold">Total: $${g.total.toLocaleString('es-AR')}</div>`;
+      }else{
+        box.innerHTML=`<div style="display:flex;justify-content:space-between;border-bottom:1px solid #333;padding-bottom:4px"><strong style="font-size:12px">${mesaId.toUpperCase()}</strong><small style="color:#666">Libre</small></div><p style="color:#555;font-size:11px;text-align:center;margin-top:20px">Sin comanda</p>`;
       }
-      try {
-        const resClima = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-34.6132&longitude=-58.3772&current=temperature_2m');
-        const dataClima = await resClima.json();
-        if (dataClima && dataClima.current && dataClima.current.temperature_2m!== undefined) {
-          document.getElementById('tempHeader').textContent = `${Math.round(dataClima.current.temperature_2m)}°C`;
-        }
-      } catch (e) {
-        document.getElementById('tempHeader').textContent = '--°C';
-      }
-    }
+      grilla.appendChild(box);
+    });
+    plano.appendChild(zonaDiv);
+  });
+}
 
-    function sincronizarFirebase() {
-      db.ref('menu').on('value', (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-          catalogoPlatos = Array.isArray(data)? data.filter(i => i!== null).map(i => i.nombre || i.titulo) : Object.values(data).map(i => i.nombre || i.titulo);
-        }
-      });
-      actualizarDatosLocales();
-      setInterval(actualizarDatosLocales, 1000);
-    }
-
-    function toggleAlarmaSonora() {
-      alarmaHabilitada =!alarmaHabilitada;
-      const btn = document.getElementById('btnAlarmaToggle');
-      const icono = document.getElementById('iconoAlarma');
-      const texto = document.getElementById('textoAlarmaBtn');
-      if (alarmaHabilitada) {
-        btn.className = 'btn-hdr btn-alarma-activo';
-        icono.className = 'fa-solid fa-volume-high';
-        texto.textContent = 'ALARMA ON';
-      } else {
-        btn.className = 'btn-hdr btn-alarma-silenciado';
-        icono.className = 'fa-solid fa-volume-xmark';
-        texto.textContent = 'ALARMA OFF';
-      }
-    }
-
-    function actualizarDatosLocales() {
-      const stored = JSON.parse(localStorage.getItem('comandasActivas')) || {};
-      const hoyStr = new Date().toISOString().slice(0, 10);
-      Object.keys(stored).forEach(id => {
-        if (!comandasActivas[id]) {
-          let nroOrden = stored[id].nroOrden;
-          let fechaOrden = stored[id].fechaOrden;
-          if (!nroOrden || fechaOrden!== hoyStr) {
-            let controlDiario = JSON.parse(localStorage.getItem('controlOrdenesDiarias')) || { fecha: hoyStr, contador: 0 };
-            if (controlDiario.fecha!== hoyStr) { controlDiario = { fecha: hoyStr, contador: 0 }; }
-            controlDiario.contador += 1;
-            localStorage.setItem('controlOrdenesDiarias', JSON.stringify(controlDiario));
-            nroOrden = controlDiario.contador;
-            fechaOrden = hoyStr;
-          }
-          comandasActivas[id] = {...stored[id], nroOrden: nroOrden, fechaOrden: fechaOrden, estado: stored[id].estado || 'RECIBIDO', tiempoInicio: stored[id].tiempoInicio || Date.now()};
-        } else { comandasActivas[id].items = stored[id].items; }
-      });
-      Object.keys(comandasActivas).forEach(id => { if (!stored[id]) { delete comandasActivas[id]; } });
-      const historialCaja = JSON.parse(localStorage.getItem('historialCaja')) || [];
-      let totalCaja = 0;
-      historialCaja.forEach(h => totalCaja += h.total);
-      document.getElementById('montoCaja').textContent = `$${totalCaja.toLocaleString('es-AR')}`;
-      renderizarPlanoYLateral();
-    }
-
-    function guardarStorage() {
-      const obj = {};
-      Object.keys(comandasActivas).forEach(id => {
-        obj[id] = { id: comandasActivas[id].id, items: comandasActivas[id].items, estado: comandasActivas[id].estado, urgente: comandasActivas[id].urgente || false, tiempoInicio: comandasActivas[id].tiempoInicio, nroOrden: comandasActivas[id].nroOrden, fechaOrden: comandasActivas[id].fechaOrden };
-      });
-      localStorage.setItem('comandasActivas', JSON.stringify(obj));
-    }
-
-    function renderizarPlanoYLateral() {
-      const ids = Object.keys(comandasActivas);
-      document.getElementById('cantComandas').textContent = ids.length;
-      const contenedorLateral = document.getElementById('contenedorTicketsLateral');
-      if (ids.length === 0) { contenedorLateral.innerHTML = '<p style="color:#666; font-size:13px; text-align:center; margin-top:20px;">Sin ítems pendientes en cocina.</p>'; }
-      else {
-        contenedorLateral.innerHTML = '';
-        ids.forEach(id => {
-          const cmd = comandasActivas[id];
-          const card = document.createElement('div');
-          let claseEstado = 'estado-recibido';
-          if (cmd.estado === 'PREPARACION') claseEstado = 'estado-preparacion';
-          if (cmd.estado === 'MANOS') claseEstado = 'estado-manos';
-          card.className = `item-cocina-card ${claseEstado} ${cmd.urgente? 'urgente-card' : ''}`;
-          let itemsHtml = '';
-          cmd.items.forEach(i => { const agotado = platosAgotados.has(i.nombre); itemsHtml += `<div class="item-cocina-nombre"><span class="${agotado? 'item-agotado-texto' : ''}">${i.nombre}${agotado? '<span class="badge-agotado-tag">86</span>' : ''}</span><span class="item-cocina-cant">x${i.cantidad}</span></div>`; });
-          let botonLimpiarHtml = '';
-          if (cmd.estado === 'MANOS') { botonLimpiarHtml = `<button class="btn-limpiar-comanda" onclick="limpiarComanda('${id}')"><i class="fa-solid fa-check-double"></i> LIMPIAR / RETIRAR COMANDA</button>`; }
-          const nroOrdenTexto = cmd.nroOrden? `#${String(cmd.nroOrden).padStart(3, '0')}` : '#--';
-          card.innerHTML = `<div class="item-cocina-header"><span class="item-cocina-mesa"><span class="badge-nro-orden">${nroOrdenTexto}</span> 📍 ${cmd.id}</span><span class="item-cocina-estado" style="background:${cmd.estado==='MANOS'?'#27ae60':cmd.estado==='PREPARACION'?'#d35400':'#2980b9'}">${cmd.urgente? '🚨 URGENTE' : cmd.estado}</span></div><div class="item-cocina-cuerpo">${itemsHtml}</div>${botonLimpiarHtml}`;
-          contenedorLateral.appendChild(card);
-        });
-      }
-      const todasLasTarjetas = document.querySelectorAll('.mesa-tarjeta');
-      todasLasTarjetas.forEach(tarjeta => {
-        const idMesa = tarjeta.getAttribute('data-id');
-        const cmd = comandasActivas[idMesa];
-        const nombreMesa = tarjeta.querySelector('.mesa-nombre').textContent;
-        tarjeta.className = `mesa-tarjeta ${cmd? 'ocupada' : ''} ${cmd && cmd.urgente? 'urgente' : ''}`;
-        if (!cmd) { tarjeta.innerHTML = `<div class="mesa-hdr-info"><span class="mesa-nombre">${nombreMesa}</span><small style="color:#666;">Libre</small></div><p style="color:#555; font-size:12px; text-align:center; margin:auto;">Sin comanda</p>`; }
-        else {
-          const segundos = Math.floor((Date.now() - cmd.tiempoInicio) / 1000);
-          let badgeClass = 'timer-badge';
-          let textoTimer = '';
-          if (cmd.estado === 'RECIBIDO') {
-            const restante = 300 - segundos;
-            if (restante >= 0) { const m = String(Math.floor(restante / 60)).padStart(2, '0'); const s = String(restante % 60).padStart(2, '0'); textoTimer = `📥 Recibido ${m}:${s}`; }
-            else { textoTimer = `🚨 RECIBIDO VENCIDO (00:00)`; badgeClass += ' alerta-roja'; dispararAlarmaSonora(); }
-          } else if (cmd.estado === 'PREPARACION') {
-            const m = String(Math.floor(segundos / 60)).padStart(2, '0'); const s = String(segundos % 60).padStart(2, '0'); textoTimer = `🔥 Prep. ${m}:${s}`;
-            if (segundos > 900) { textoTimer = `🚨 PREP. DEMORADA (${m}:${s})`; badgeClass += ' alerta-roja'; dispararAlarmaSonora(); }
-            else if (segundos >= 420) { badgeClass += ' alerta-naranja'; }
-          } else if (cmd.estado === 'MANOS') {
-            const restante = 60 - segundos;
-            if (restante >= 0) { const s = String(restante).padStart(2, '0'); textoTimer = `🖐️ ¡MANOS! 00:${s}`; badgeClass += ' alerta-manos'; }
-            else { textoTimer = `🚨 ¡RETIRO VENCIDO (00:00)!`; badgeClass += ' alerta-roja'; dispararAlarmaSonora(); }
-          }
-          let listaHtml = '<ul class="mesa-items-lista">';
-          cmd.items.forEach(i => { const agotado = platosAgotados.has(i.nombre); listaHtml += `<li><span class="${agotado? 'item-agotado-texto' : ''}">• ${i.nombre}${agotado? '<span class="badge-agotado-tag">86</span>' : ''}</span><strong style="color:#00ff66;">x${i.cantidad}</strong></li>`; });
-          listaHtml += '</ul>';
-          const nroOrdenTexto = cmd.nroOrden? `#${String(cmd.nroOrden).padStart(3, '0')}` : '';
-          tarjeta.innerHTML = `<div class="mesa-hdr-info"><span class="mesa-nombre"><span style="color:#f1c40f; font-family:monospace; margin-right:4px;">${nroOrdenTexto}</span>${nombreMesa}</span><small style="color:${cmd.urgente?'#ff0000':'#ff9900'}; font-weight:bold;">${cmd.urgente? 'URGENTE' : cmd.estado}</small></div>${listaHtml}<div class="${badgeClass}">${textoTimer}</div>`;
-        }
-      });
-    }
-
-    let audioReproduciendose = false;
-    function dispararAlarmaSonora() {
-      if (!alarmaHabilitada) return;
-      if (audioReproduciendose) return;
-      audioReproduciendose = true;
-      const audio = document.getElementById('alarmaSonora');
-      audio.play().catch(e => console.log("Audio bloqueado", e));
-      setTimeout(() => { audioReproduciendose = false; }, 10000);
-    }
-
-    function abrirModalEstado(idMesa) {
-      mesaSeleccionadaId = idMesa;
-      const cmd = comandasActivas[idMesa];
-      const nroStr = cmd && cmd.nroOrden? `(Orden #${String(cmd.nroOrden).padStart(3, '0')})` : '';
-      document.getElementById('tituloModalMesa').textContent = `📍 ${idMesa} ${nroStr}`;
-      const detalleDiv = document.getElementById('detallePlatosModal');
-      if (!cmd) { detalleDiv.innerHTML = '<p style="color:#777; text-align:center;">Esta ubicación no tiene comanda activa en este momento.</p>'; }
-      else {
-        let html = '<ul style="list-style:none; padding:0;">';
-        cmd.items.forEach(i => { const agotado = platosAgotados.has(i.nombre); html += `<li style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px dashed #333;"><span class="${agotado? 'item-agotado-texto' : ''}">${i.nombre}</span><strong style="color:#00ff66;">x${i.cantidad}</strong></li>`; });
-        html += '</ul>'; detalleDiv.innerHTML = html;
-      }
-      document.getElementById('modalEstadoCocina').style.display = 'flex';
-    }
-
-    function cambiarEstadoCocina(nuevoEstado) {
-      if (!mesaSeleccionadaId ||!comandasActivas[mesaSeleccionadaId]) { alert("No hay comanda activa en esta mesa para cambiar estado."); cerrarModal('modalEstadoCocina'); return; }
-      const cmd = comandasActivas[mesaSeleccionadaId];
-      cmd.estado = nuevoEstado;
-      cmd.tiempoInicio = Date.now();
-      guardarStorage();
-      renderizarPlanoYLateral();
-      cerrarModal('modalEstadoCocina');
-    }
-
-    function toggleUrgente() {
-      if (!mesaSeleccionadaId ||!comandasActivas[mesaSeleccionadaId]) return;
-      const cmd = comandasActivas[mesaSeleccionadaId];
-      cmd.urgente =!cmd.urgente;
-      guardarStorage();
-      renderizarPlanoYLateral();
-      cerrarModal('modalEstadoCocina');
-    }
-
-    function limpiarComanda(idMesa) {
-      if (confirm(`¿Confirma que desea limpiar y dar por retirada la comanda de ${idMesa}?`)) {
-        delete comandasActivas[idMesa];
-        guardarStorage();
-        renderizarPlanoYLateral();
-      }
-    }
-
-    function abrirResumenAcumulado() {
-      const contenedor = document.getElementById('contenidoResumen');
-      const acumulado = {};
-      Object.values(comandasActivas).forEach(cmd => { cmd.items.forEach(i => { acumulado[i.nombre] = (acumulado[i.nombre] || 0) + i.cantidad; }); });
-      const keys = Object.keys(acumulado);
-      if (keys.length === 0) { contenedor.innerHTML = '<p style="color:#888; text-align:center; font-size:13px;">No hay platos activos.</p>'; }
-      else { let html = '<table class="tabla-resumen-acumulado"><thead><tr><th>PLATO</th><th style="text-align:right;">TOTAL</th></tr></thead><tbody>'; keys.forEach(p => { html += `<tr><td>${p}</td><td style="text-align:right; color:#00ff66; font-weight:bold;">x${acumulado[p]}</td></tr>`; }); html += '</tbody></table>'; contenedor.innerHTML = html; }
-      document.getElementById('modalResumen').style.display = 'flex';
-    }
-
-    function abrirAgotadosModal() {
-      const contenedor = document.getElementById('listaAgotadosContenedor');
-      contenedor.innerHTML = '';
-      if (catalogoPlatos.length === 0) { contenedor.innerHTML = '<p style="color:#888; font-size:12px; text-align:center;">Cargando catálogo...</p>'; }
-      else { catalogoPlatos.forEach(plato => { const checked = platosAgotados.has(plato)? 'checked' : ''; const row = document.createElement('div'); row.className = 'item-agotado-row'; row.innerHTML = `<span>${plato}</span><input type="checkbox" ${checked} onchange="toggleAgotado('${plato}')">`; contenedor.appendChild(row); }); }
-      document.getElementById('modalAgotados').style.display = 'flex';
-    }
-
-    function toggleAgotado(plato) {
-      if (platosAgotados.has(plato)) platosAgotados.delete(plato);
-      else platosAgotados.add(plato);
-      renderizarPlanoYLateral();
-    }
-
-    function cerrarModal(id) { document.getElementById(id).style.display = 'none'; }
-  </script>
+function limpiar(mesa){
+  if(!confirm('¿Limpiar '+mesa+'? Se borra de Mariana, Gustavo y Hernán.')) return;
+  db.ref('comandas_activas').once('value', s=>{
+    const data=s.val()||{};
+    Object.entries(data).forEach(([k,v])=>{ if(v.mesa===mesa) db.ref('comandas_activas/'+k).remove(); });
+  });
+}
+</script>
 </body>
 </html>
