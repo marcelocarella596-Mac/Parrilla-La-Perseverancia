@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PARRILLA GUSTAVO - COBRO</title>
+<title>PARRILLA GUSTAVO - FINAL COBRO - AV 5801</title>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <style>
@@ -11,33 +11,83 @@
 body{background:#0e0e0e;color:#fff;padding:8px}
 header{background:linear-gradient(90deg,#1a1a1a,#c0392b);padding:10px 14px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
 .btn{border:none;padding:7px 12px;border-radius:5px;font-size:11px;font-weight:bold;cursor:pointer;color:#fff;background:#000;border:1px solid #555}
-.btn-rojo{background:#c0392b;border-color:#e74c3c}
+.btn-rojo{background:#c0392b}
 .layout{display:grid;grid-template-columns:380px 1fr;gap:10px;margin-top:10px}
 @media(max-width:1100px){.layout{grid-template-columns:1fr}}
 .panel{background:#161616;border:1px solid #2a2a2a;border-radius:8px;padding:10px;min-height:400px}
 .panel-titulo{color:#ff9900;font-size:11px;font-weight:bold;margin-bottom:8px;display:flex;justify-content:space-between}
-.ticket{background:#1c1c1c;border-left:4px solid #c0392b;border-radius:6px;padding:8px;margin-bottom:8px}
-.plano-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px}
-.mesa-card{background:#1b1b1b;border:1px solid #333;border-radius:8px;padding:10px;min-height:120px}
+.ticket{background:#1c1c1c;border-left:4px solid #c0392b;border-radius:6px;padding:8px;margin-bottom:8px;cursor:pointer}
+.ticket.COBRADA{border-left-color:#f1c40f;opacity:0.6}
+.mesa-card{background:#1b1b1b;border:1px solid #333;border-radius:8px;padding:10px;min-height:110px;cursor:pointer}
+.mesa-card.ocupada{border-color:#c0392b;background:#2a1414}
+.plano-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px}
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.88);display:none;justify-content:center;align-items:center;z-index:9999}
+.modal{background:#181818;border:1px solid #444;border-radius:10px;padding:18px;width:95%;max-width:500px}
 </style>
 </head>
 <body>
 <header>
-<div><b>🔥 LA PERSEVERANCIA</b> <span style="font-size:11px">| PARRILLA GUSTAVO - AV. ARGENTINA 5801</span></div>
-<div style="display:flex;gap:6px">
-<button class="btn" onclick="alert('Caja: $0 - Conecta Firebase')">💰 CAJA</button>
-<button class="btn" onclick="location.href='https://v0.app/marcelocarella596'">👁️ VER MENU CLIENTE</button>
-<span style="font-size:11px;color:#ff6b6b;border:1px solid #ff6b6b;padding:5px 8px;border-radius:5px">• CONECTADO</span>
+<div><b>🔥 LA PERSEVERANCIA</b> <span style="font-size:11px;opacity:.8">| PARRILLA GUSTAVO - AV. ARGENTINA 5801</span></div>
+<div style="display:flex;gap:6px;flex-wrap:wrap">
+<button class="btn" style="border-color:#f1c40f;color:#f1c40f" onclick="abrirCaja()">💰 CAJA / ARQUEO</button>
+<button class="btn" style="border-color:#3498db;color:#3498db" onclick="alert('Mensajes conectados a WhatsApp Exclusivo')">💬 MENSAJES</button>
+<button class="btn" onclick="alert('Resumen del día')">📋 RESUMEN</button>
+<span style="font-size:11px;color:#ff6b6b;border:1px solid #ff6b6b;padding:5px 8px;border-radius:5px">• PARRILLA - COBRA - CLOVER + CLARO</span>
 </div>
 </header>
+
 <div class="layout">
-<div class="panel"><div class="panel-titulo"><span>ÍTEMS PARRILLA (FIFO)</span><span id="cant">0 pedidos</span></div><div id="listaFIFO">Acá caen los pedidos del tótem McDonald's cuando el cliente toca VER PEDIDO</div></div>
-<div class="panel"><div class="panel-titulo"><span>PLANO MESAS</span></div><div class="plano-grid"><div class="mesa-card">MESA 1<br><small>Libre</small></div><div class="mesa-card">MESA 2<br><small>Libre</small></div><div class="mesa-card">DELIVERY<br><small>WhatsApp Exclusivo</small></div></div></div>
+<div class="panel">
+<div class="panel-titulo"><span>ÍTEMS PARRILLA (FIFO)</span><span id="cant">0 pedidos</span></div>
+<div id="listaFIFO"></div>
 </div>
+
+<div class="panel">
+<div class="panel-titulo"><span>PLANO MESAS</span><span style="color:#27ae60">● CONECTADO</span></div>
+<div class="plano-grid" id="plano"></div>
+</div>
+</div>
+
+<div class="modal-overlay" id="modalMesa" onclick="cerrarModal()"><div class="modal" onclick="event.stopPropagation()"><h3 id="modalTitulo">MESA</h3><div id="modalDetalle" style="margin:10px 0;text-align:left;font-size:12px"></div><button class="btn btn-rojo" style="width:100%;padding:12px" onclick="cobrarMesa()">💰 COBRAR Y CERRAR MESA</button><button class="btn" style="width:100%;margin-top:8px" onclick="cerrarModal()">Cerrar</button></div></div>
+
 <script>
-// ACÁ VA TU FIREBASE - el mismo que usa el menú v0
+// --- CONFIG FIREBASE - CAMBIA ESTO SI TENES OTRO ---
 const firebaseConfig = { databaseURL: "https://la-perseverancia-5801-default-rtdb.firebaseio.com/" };
 firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+let mesaSeleccionada = null;
+const mesasBase = [{id:1,nombre:"MESA 1"}, {id:2,nombre:"MESA 2"}, {id:3,nombre:"MESA 3"}, {id:4,nombre:"MESA 4"}, {id:5,nombre:"MESA 5"}, {id:6,nombre:"MESA 6"}, {id:"D1",nombre:"DELIVERY WPP"}];
+
+function renderMesas(snapshot){
+  const plano = document.getElementById('plano');
+  plano.innerHTML='';
+  const pedidos = snapshot.val() || {};
+  mesasBase.forEach(m=>{
+    const pedido = Object.values(pedidos).find(p=>p.mesa==m.id && p.estado!='COBRADA');
+    const div = document.createElement('div');
+    div.className = `mesa-card ${pedido?'ocupada':''}`;
+    div.innerHTML = `<b>${m.nombre}</b><br><small>${pedido?pedido.items.map(i=>i.nombre).join('<br>')+'<br><b style=color:#ff9900>$'+pedido.total+'</b>':'Libre - Tótem Cliente'}</small><div style="margin-top:6px;font-size:10px;background:#000;padding:2px;border-radius:3px;text-align:center">${pedido?pedido.estado||'RECIBIDO':'DISPONIBLE'}</div>`;
+    div.onclick = ()=>{ if(pedido){ mesaSeleccionada=m.id; document.getElementById('modalTitulo').innerText=m.nombre; document.getElementById('modalDetalle').innerHTML=pedido.items.map(i=>`${i.nombre} - $${i.precio}`).join('<br>')+`<br><br><b>TOTAL $${pedido.total}</b>`; document.getElementById('modalMesa').style.display='flex'; } };
+    plano.appendChild(div);
+  });
+}
+
+function renderFIFO(snapshot){
+  const lista = document.getElementById('listaFIFO');
+  const pedidos = snapshot.val()? Object.values(snapshot.val()).filter(p=>p.estado!='COBRADA').reverse() : [];
+  document.getElementById('cant').innerText = pedidos.length + ' pedidos';
+  lista.innerHTML = pedidos.length==0? '<small style=opacity:.5>Esperando pedidos del tótem...</small>' : '';
+  pedidos.forEach(p=>{
+    lista.innerHTML += `<div class="ticket ${p.estado||'RECIBIDO'}"><div style="display:flex;justify-content:space-between"><b>${p.mesaNombre||'MESA '+p.mesa}</b><span style="font-size:9px;border:1px solid;padding:1px 5px;border-radius:10px">${p.estado||'RECIBIDO'}</span></div><div style="font-size:11px;margin-top:4px">${p.items.map(i=>i.nombre).join(', ')}</div><div style="font-size:11px;color:#ff9900;font-weight:bold">$${p.total}</div></div>`;
+  });
+}
+
+db.ref('pedidos').on('value', (snap)=>{ renderMesas(snap); renderFIFO(snap); });
+
+function cerrarModal(){ document.getElementById('modalMesa').style.display='none'; }
+function cobrarMesa(){ if(!mesaSeleccionada) return; if(confirm('¿Cobrar '+mesaSeleccionada+'?')){ db.ref('pedidos').once('value', s=>{ const val=s.val(); if(!val) return; Object.keys(val).forEach(k=>{ if(val[k].mesa==mesaSeleccionada) db.ref('pedidos/'+k).update({estado:'COBRADA'}); }); }); cerrarModal(); } }
+function abrirCaja(){ let total=0; db.ref('pedidos').once('value',s=>{ const v=s.val(); if(v) Object.values(v).forEach(p=>{ if(p.estado=='COBRADA') total+=p.total; }); alert('💰 CAJA DEL DÍA - LA PERSEVERANCIA\n\nTotal cobrado: $'+total.toLocaleString()+'\n\nClover + Chip Claro\nAv. Argentina 5801'); }); }
 </script>
 </body>
 </html>
