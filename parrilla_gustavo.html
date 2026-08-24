@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LA PERSEVERANCIA | PARRILLA GUSTAVO - FIX TOTAL AUTO + ALARMAS 5/15/1.5</title>
+<title>LA PERSEVERANCIA | PARRILLA GUSTAVO - FIX TOTAL AUTO + ALARMAS 5/15/1.5 + CAJA REAL</title>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <style>
@@ -14,8 +14,6 @@ header{background:linear-gradient(90deg,#1a1a1a,#c0392b);padding:10px;border-rad
 .btn-caja{background:#000;border:1px solid #f1c40f;color:#f1c40f}
 .btn-msj{background:#000;border:1px solid #3498db;color:#3498db}
 .layout{display:grid;grid-template-columns:340px 1fr 360px;gap:8px;margin-top:8px}
-@media(max-width:1300px){.layout{grid-template-columns:340px 1fr}.col-plano{grid-column:1/-1}}
-@media(max-width:800px){.layout{grid-template-columns:1fr}}
 .panel{background:#161616;border:1px solid #2a2a2a;border-radius:8px;padding:8px;max-height:92vh;overflow:auto}
 .panel-titulo{color:#ff9900;font-size:11px;font-weight:bold;margin-bottom:8px}
 .menu-cat{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px}
@@ -37,9 +35,6 @@ header{background:linear-gradient(90deg,#1a1a1a,#c0392b);padding:10px;border-rad
 .mesa-card{background:#1b1b1b;border:1px solid #333;border-radius:8px;padding:8px;margin-bottom:8px;cursor:pointer}
 .mesa-card.ocupada{border-color:#c0392b;background:#2a1414}
 .mesa-card.cobrada{border-color:#f1c40f;background:#1a1a00}
-.mesa-card.alarm-recibido{border-color:#e67e22;box-shadow:0 0 12px #e67e22}
-.mesa-card.alarm-prep{border-color:#c0392b;box-shadow:0 0 16px #c0392b;animation:parp 1s infinite}
-.mesa-card.alarm-manos{border-color:#f1c40f;box-shadow:0 0 20px #f1c40f;animation:parp.4s infinite}
 .timer{background:#000;border:1px solid #c0392b;color:#ff6b6b;text-align:center;padding:2px;border-radius:4px;font-family:monospace;font-size:11px;margin-top:4px}
 .modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.88);display:none;justify-content:center;align-items:center;z-index:9999}
 .modal{background:#181818;border:1px solid #444;border-radius:10px;padding:14px;width:95%;max-width:500px}
@@ -48,8 +43,8 @@ header{background:linear-gradient(90deg,#1a1a1a,#c0392b);padding:10px;border-rad
 </head>
 <body>
 <header>
-<div><b>🔥 LA PERSEVERANCIA</b> | PARRILLA GUSTAVO - FIX AUTO TOTAL + ALARMAS</div>
-<div style="display:flex;gap:5px"><button class="btn btn-caja" onclick="abrirCaja()">💰 CAJA</button><button class="btn btn-msj" onclick="abrirResumen()">📋 RESUMEN</button><span style="font-size:10px;border:1px solid #f1c40f;padding:4px 6px;border-radius:4px;color:#f1c40f">• AUTO TOTAL + 5/15/1.5 MIN</span></div>
+<div><b>🔥 LA PERSEVERANCIA</b> | PARRILLA GUSTAVO - FIX CAJA REAL</div>
+<div style="display:flex;gap:5px"><button class="btn btn-caja" onclick="abrirCaja()">💰 CAJA / ARQUEO</button><button class="btn btn-msj" onclick="abrirResumen()">📋 RESUMEN</button></div>
 </header>
 <div class="layout">
 <div class="panel">
@@ -67,8 +62,9 @@ header{background:linear-gradient(90deg,#1a1a1a,#c0392b);padding:10px;border-rad
 </div>
 </div>
 <div class="panel"><div class="panel-titulo">ÍTEMS PARRILLA (FIFO) - <span id="cant">0</span></div><div id="listaFIFO"></div></div>
-<div class="panel col-plano"><div class="panel-titulo">📍 PLANO - AMARILLO = COBRADA | NARANJA/ROJO = ALARMAS</div><div id="plano"></div></div>
+<div class="panel"><div class="panel-titulo">📍 PLANO - AMARILLO = COBRADA</div><div id="plano"></div></div>
 </div>
+
 <div class="modal-overlay" id="modal"><div class="modal">
 <h3 id="modalTitulo" style="color:#ff6b6b;margin-bottom:8px"></h3>
 <div id="modalDetalle" style="font-size:11px;background:#111;padding:8px;border-radius:6px;margin-bottom:10px"></div>
@@ -82,6 +78,22 @@ header{background:linear-gradient(90deg,#1a1a1a,#c0392b);padding:10px;border-rad
 <button class="btn-estado" style="background:#333" onclick="cerrar()">CERRAR</button>
 <div id="modalTimer" style="font-family:monospace;font-size:11px;margin-top:6px;color:#aaa"></div>
 </div></div>
+
+<div class="modal-overlay" id="cajaOverlay"><div class="modal" style="max-width:850px;width:98%">
+<h3 style="color:#f1c40f;margin-bottom:10px">💰 CAJA / ARQUEO + EGRESOS - SUP GUSTAVO</h3>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:10px 0">
+<div style="background:#111;padding:10px;border-radius:8px">Ingresos: <b id="tIngresos" style="color:#2ecc71">$0</b></div>
+<div style="background:#111;padding:10px;border-radius:8px">Egresos Hernán: <b id="tEgresos" style="color:#e74c3c">$0</b></div>
+<div style="background:#111;padding:10px;border-radius:8px">NETO: <b id="tNeto" style="color:#f1c40f;font-size:18px">$0</b></div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+<div style="background:#0f0f0f;padding:8px;border-radius:6px"><h4 style="font-size:11px;color:#2ecc71">INGRESOS</h4><div id="tablaIngresos" style="font-size:11px;max-height:260px;overflow:auto"></div></div>
+<div style="background:#0f0f0f;padding:8px;border-radius:6px"><h4 style="font-size:11px;color:#e74c3c">EGRESOS HERNÁN</h4><div id="tablaEgresos" style="font-size:11px;max-height:260px;overflow:auto"></div></div>
+</div>
+<div style="margin-top:10px;background:#111;padding:8px;border-radius:6px">Propinas hoy: <b id="tPropinas" style="color:#3498db">$0</b><div id="listaPropinas" style="font-size:10px;color:#aaa;margin-top:4px"></div></div>
+<div style="margin-top:12px;display:flex;gap:8px"><button onclick="cerrarCaja()" style="flex:1;padding:10px;background:#333;color:#fff;border:none;border-radius:6px">CERRAR</button><button onclick="if(confirm('Reset?')){db.ref('caja_diaria').remove()}" style="padding:10px;background:#c0392b;color:#fff;border:none;border-radius:6px">RESET DÍA</button></div>
+</div></div>
+
 <script>
 const firebaseConfig={apiKey:"AIzaSyAvrpQSDoq9S87j3J7V4-uhJnPFCylCU",authDomain:"parrilla-la-perseveranci-f3f54.firebaseapp.com",databaseURL:"https://parrilla-la-perseveranci-f3f54-default-rtdb.firebaseio.com",projectId:"parrilla-la-perseveranci-f3f54"};
 firebase.initializeApp(firebaseConfig);const db=firebase.database();
@@ -98,51 +110,30 @@ const CATS=["Todos","Parrilla","Guarniciones","Minutas","Entradas"];
 function renderMenu(){const cDiv=document.getElementById('cats');cDiv.innerHTML='';CATS.forEach(c=>{const b=document.createElement('button');b.textContent=c;b.className=c===filtro?'activo':'';b.onclick=()=>{filtro=c;renderMenu();};cDiv.appendChild(b);});const pDiv=document.getElementById('prods');pDiv.innerHTML='';PRODUCTOS.filter(p=>filtro==='Todos'||p.cat===filtro).forEach(p=>{const d=document.createElement('div');d.className='prod';d.innerHTML=`<b>${p.nombre}</b><small>$${p.precio}</small>`;d.onclick=()=>addProd(p);pDiv.appendChild(d);});}
 function addProd(p){const ex=carrito.find(x=>x.nombre===p.nombre);if(ex)ex.cantidad++;else carrito.push({nombre:p.nombre,precio:p.precio,cantidad:1});renderCarrito();}
 function renderCarrito(){let tot=0;const div=document.getElementById('seleccion');div.innerHTML='';carrito.forEach((it,i)=>{tot+=it.precio*it.cantidad;const r=document.createElement('div');r.className='sel-item';r.innerHTML=`<span>${it.nombre} x${it.cantidad}</span><span>$${it.precio*it.cantidad} <b style="color:#c0392b;cursor:pointer" onclick="carrito.splice(${i},1);renderCarrito()">X</b></span>`;div.appendChild(r);});document.getElementById('total').textContent='$'+tot;}
-function enviarComanda(){if(!carrito.length){alert('Carrito vacío');return;}const mesa=document.getElementById('ubicacion').value;const idSeguro=limpiarKey(mesa);const ahora=Date.now();const items=carrito.map(c=>({nombre:c.nombre,cantidad:c.cantidad,precio:c.precio}));const total=carrito.reduce((a,c)=>a+(c.precio*c.cantidad),0);db.ref('comandas_activas/'+idSeguro).once('value').then(snap=>{const ex=snap.val();let itemsFinal=items;let totFinal=total;if(ex&&ex.items){const mapa={};ex.items.forEach(i=>mapa[i.nombre]=i);items.forEach(n=>{if(mapa[n.nombre])mapa[n.nombre].cantidad+=n.cantidad;else mapa[n.nombre]=n;});itemsFinal=Object.values(mapa);totFinal=itemsFinal.reduce((a,c)=>a+(c.precio*c.cantidad),0);}db.ref('comandas_activas/'+idSeguro).set({mesa:mesa,items:itemsFinal,total:totFinal,estado:'RECIBIDO',estado_parrilla:'RECIBIDO',estado_cocina:'RECIBIDO',timestamp:ex?ex.timestamp:ahora,timestamp_estado:ahora,timestamp_recibido:ex?ex.timestamp_recibido||ex.timestamp:ahora,nroOrden:ex?ex.nroOrden:Math.floor(Math.random()*900+100)});carrito=[];renderCarrito();});}
-db.ref('comandas_activas').on('value',s=>{const data=s.val()||{};const nuevo={};Object.values(data).forEach(cmd=>{if(!cmd.mesa)return;const idV=MAPEO[cmd.mesa]||cmd.mesa;if(!NOMBRES[idV])return;if(!nuevo[idV])nuevo[idV]={id:idV,mesa:cmd.mesa,items:[],estado:(cmd.estado||'RECIBIDO').toUpperCase(),estado_parrilla:(cmd.estado_parrilla||cmd.estado||'RECIBIDO').toUpperCase(),estado_cocina:(cmd.estado_cocina||cmd.estado||'RECIBIDO').toUpperCase(),total:(cmd.total||0),total_cobrado:cmd.total_cobrado||0,timestamp:cmd.timestamp||Date.now(),timestamp_estado:cmd.timestamp_estado||cmd.timestamp||Date.now(),nroOrden:cmd.nroOrden||100};nuevo[idV].items=cmd.items||[];nuevo[idV].estado=cmd.estado||nuevo[idV].estado;nuevo[idV].estado_parrilla=cmd.estado_parrilla||cmd.estado;nuevo[idV].estado_cocina=cmd.estado_cocina||cmd.estado;nuevo[idV].total=cmd.total||cmd.total_cobrado||0;nuevo[idV].total_cobrado=cmd.total_cobrado||0;nuevo[idV].timestamp=cmd.timestamp||nuevo[idV].timestamp;nuevo[idV].timestamp_estado=cmd.timestamp_estado||nuevo[idV].timestamp_estado;});comandas=nuevo;render();checkAlarmas();});
-function checkAlarmas(){Object.values(comandas).forEach(cmd=>{const mins=(Date.now()-(cmd.timestamp_estado||cmd.timestamp))/1000/60; const estado=cmd.estado_parrilla||cmd.estado||'RECIBIDO'; let debe=null; if(estado==='RECIBIDO'&&mins>=5) debe='RECIBIDO'; if(estado==='PREPARACION'&&mins>=15) debe='PREPARACION'; if((estado==='MANOS'||estado.includes('LISTO'))&&mins>=1.5) debe='MANOS'; if(debe){const k=limpiarKey(cmd.mesa)+'_'+debe; if(!ultimaAlarma[k]||Date.now()-ultimaAlarma[k]>30000){alarmaTipo(debe); ultimaAlarma[k]=Date.now(); console.log('ALARMA GUSTAVO',cmd.mesa,debe,mins.toFixed(1));}}});}
-setInterval(checkAlarmas,5000);
-function render(){const ids=Object.keys(comandas);document.getElementById('cant').textContent=ids.length;const fifo=document.getElementById('listaFIFO');fifo.innerHTML='';ids.sort((a,b)=>comandas[a].timestamp-comandas[b].timestamp).forEach(id=>{const cmd=comandas[id];const esCobrada=cmd.estado==='COBRADA';const mins=(Date.now()-(cmd.timestamp_estado||cmd.timestamp))/1000/60; let alarmClass=''; if(!esCobrada){ if(cmd.estado_parrilla==='RECIBIDO'&&mins>=5) alarmClass=' alarm-recibido'; else if(cmd.estado_parrilla==='PREPARACION'&&mins>=15) alarmClass=' alarm-prep'; else if(cmd.estado_parrilla==='MANOS'&&mins>=1.5) alarmClass=' alarm-manos';} const div=document.createElement('div');div.className=`ticket ${esCobrada?'COBRADA':cmd.estado_parrilla} ${alarmClass}`;div.onclick=()=>abrir(id);div.innerHTML=`<div style="display:flex;justify-content:space-between"><b>#${String(cmd.nroOrden).slice(-3)} ${id}</b><span>${esCobrada?'COBRADA $'+(cmd.total_cobrado||cmd.total):cmd.estado_parrilla} - ${mins.toFixed(1)}min</span></div><div style="font-size:10px">${cmd.items.map(i=>i.nombre+' x'+i.cantidad).join('<br>')}<br><b>$${cmd.total_cobrado||cmd.total||0}</b></div>`;fifo.appendChild(div);});const plano=document.getElementById('plano');plano.innerHTML='';Object.keys(NOMBRES).forEach(id=>{const cmd=comandas[id];const esCobrada=cmd&&cmd.estado==='COBRADA';const card=document.createElement('div');card.className=`mesa-card ${cmd?'ocupada':''} ${esCobrada?'cobrada':''}`;if(cmd&&!esCobrada){const mins=(Date.now()-(cmd.timestamp_estado||cmd.timestamp))/1000/60; if(cmd.estado_parrilla==='RECIBIDO'&&mins>=5) card.classList.add('alarm-recibido'); else if(cmd.estado_parrilla==='PREPARACION'&&mins>=15) card.classList.add('alarm-prep'); else if(cmd.estado_parrilla==='MANOS'&&mins>=1.5) card.classList.add('alarm-manos');}card.onclick=()=>{if(cmd)abrir(id);};if(!cmd){card.innerHTML=`<b>${NOMBRES[id]}</b><br><small style="color:#666">Sin comanda</small><div style="color:#27ae60">$0</div>`;}else{const seg=Math.floor((Date.now()-cmd.timestamp)/1000);const mm=String(Math.floor(seg/60)).padStart(2,'0');const ss=String(seg%60).padStart(2,'0');const minsE=((Date.now()-(cmd.timestamp_estado||cmd.timestamp))/1000/60).toFixed(1); if(esCobrada){card.innerHTML=`<b>${NOMBRES[id]}</b><div style="text-align:center;color:#f1c40f;font-weight:800;margin-top:8px">💰 COBRADA<br>$${cmd.total_cobrado||cmd.total}</div>`;}else{card.innerHTML=`<b>${NOMBRES[id]}</b><div style="font-size:10px">${cmd.items.map(i=>`• ${i.nombre} x${i.cantidad}`).join('<br>')}</div><div style="font-size:11px;color:#f1c40f;font-weight:bold">$${cmd.total||0}</div><div class="timer">${mm}:${ss} - ${cmd.estado_parrilla} | ${minsE}min</div>`;}}plano.appendChild(card);});}
-function abrir(id){
-sel=id;const cmd=comandas[id];
-const minsE=((Date.now()-(cmd.timestamp_estado||cmd.timestamp))/1000/60).toFixed(1);
-document.getElementById('modalTitulo').textContent=id + ' - TOTAL $'+(cmd.total||cmd.total_cobrado||0)+' - '+minsE+'min en '+cmd.estado_parrilla;
-document.getElementById('modalDetalle').innerHTML=cmd.items.map(i=>`${i.nombre} x${i.cantidad} - $${(i.precio*i.cantidad)||''}`).join('<br>') + `<br><br><b style="color:#f1c40f">TOTAL: $${cmd.total||cmd.total_cobrado||0}</b>`;
-document.getElementById('modalTimer').textContent=`Estado: ${cmd.estado_parrilla} - ${minsE}min`;
-const totalCalc = cmd.total_cobrado || cmd.total || cmd.items.reduce((a,c)=>a+(c.precio*c.cantidad),0);
-document.getElementById('totalCobro').value = totalCalc;
-document.getElementById('modal').style.display='flex';
-}
+function enviarComanda(){if(!carrito.length){alert('Carrito vacío');return;}const mesa=document.getElementById('ubicacion').value;const idSeguro=limpiarKey(mesa);const ahora=Date.now();const items=carrito.map(c=>({nombre:c.nombre,cantidad:c.cantidad,precio:c.precio}));const total=carrito.reduce((a,c)=>a+(c.precio*c.cantidad),0);db.ref('comandas_activas/'+idSeguro).once('value').then(snap=>{const ex=snap.val();let itemsFinal=items;let totFinal=total;if(ex&&ex.items){const mapa={};ex.items.forEach(i=>mapa[i.nombre]=i);items.forEach(n=>{if(mapa[n.nombre])mapa[n.nombre].cantidad+=n.cantidad;else mapa[n.nombre]=n;});itemsFinal=Object.values(mapa);totFinal=itemsFinal.reduce((a,c)=>a+(c.precio*c.cantidad),0);}db.ref('comandas_activas/'+idSeguro).set({mesa:mesa,items:itemsFinal,total:totFinal,estado:'RECIBIDO',estado_parrilla:'RECIBIDO',estado_cocina:'RECIBIDO',timestamp:ex?ex.timestamp:ahora,timestamp_estado:ahora,timestamp_recibido:ahora,nroOrden:ex?ex.nroOrden:Math.floor(Math.random()*900+100)});carrito=[];renderCarrito();});}
+db.ref('comandas_activas').on('value',s=>{const data=s.val()||{};const nuevo={};Object.values(data).forEach(cmd=>{if(!cmd.mesa)return;const idV=MAPEO[cmd.mesa]||cmd.mesa;if(!NOMBRES[idV])return;nuevo[idV]={id:idV,mesa:cmd.mesa,items:cmd.items||[],estado:(cmd.estado||'RECIBIDO').toUpperCase(),estado_parrilla:(cmd.estado_parrilla||cmd.estado||'RECIBIDO').toUpperCase(),estado_cocina:(cmd.estado_cocina||cmd.estado||'RECIBIDO').toUpperCase(),total:(cmd.total||0),total_cobrado:cmd.total_cobrado||0,timestamp:cmd.timestamp||Date.now(),timestamp_estado:cmd.timestamp_estado||cmd.timestamp||Date.now(),nroOrden:cmd.nroOrden||100};});comandas=nuevo;render();});
+function render(){const ids=Object.keys(comandas);document.getElementById('cant').textContent=ids.length;const fifo=document.getElementById('listaFIFO');fifo.innerHTML='';ids.sort((a,b)=>comandas[a].timestamp-comandas[b].timestamp).forEach(id=>{const cmd=comandas[id];const esCobrada=cmd.estado==='COBRADA';const mins=(Date.now()-(cmd.timestamp_estado||cmd.timestamp))/1000/60; let alarmClass=''; if(!esCobrada){ if(cmd.estado_parrilla==='RECIBIDO'&&mins>=5) alarmClass=' alarm-recibido'; else if(cmd.estado_parrilla==='PREPARACION'&&mins>=15) alarmClass=' alarm-prep'; else if(cmd.estado_parrilla==='MANOS'&&mins>=1.5) alarmClass=' alarm-manos';} const div=document.createElement('div');div.className=`ticket ${esCobrada?'COBRADA':cmd.estado_parrilla} ${alarmClass}`;div.onclick=()=>abrir(id);div.innerHTML=`<div style="display:flex;justify-content:space-between"><b>#${String(cmd.nroOrden).slice(-3)} ${id}</b><span>${esCobrada?'COBRADA $'+(cmd.total_cobrado||cmd.total):cmd.estado_parrilla} - ${mins.toFixed(1)}min</span></div><div style="font-size:10px">${cmd.items.map(i=>i.nombre+' x'+i.cantidad).join('<br>')}<br><b>$${cmd.total_cobrado||cmd.total||0}</b></div>`;fifo.appendChild(div);});const plano=document.getElementById('plano');plano.innerHTML='';Object.keys(NOMBRES).forEach(id=>{const cmd=comandas[id];const esCobrada=cmd&&cmd.estado==='COBRADA';const card=document.createElement('div');card.className=`mesa-card ${cmd?'ocupada':''} ${esCobrada?'cobrada':''}`;card.onclick=()=>{if(cmd)abrir(id);};if(!cmd){card.innerHTML=`<b>${NOMBRES[id]}</b><br><small style="color:#666">Sin comanda</small><div style="color:#27ae60">$0</div>`;}else{const seg=Math.floor((Date.now()-cmd.timestamp)/1000);const mm=String(Math.floor(seg/60)).padStart(2,'0');const ss=String(seg%60).padStart(2,'0');const minsE=((Date.now()-(cmd.timestamp_estado||cmd.timestamp))/1000/60).toFixed(1); if(esCobrada){card.innerHTML=`<b>${NOMBRES[id]}</b><div style="text-align:center;color:#f1c40f;font-weight:800;margin-top:8px">💰 COBRADA<br>$${cmd.total_cobrado||cmd.total}</div>`;}else{card.innerHTML=`<b>${NOMBRES[id]}</b><div style="font-size:10px">${cmd.items.map(i=>`• ${i.nombre} x${i.cantidad}`).join('<br>')}</div><div style="font-size:11px;color:#f1c40f;font-weight:bold">$${cmd.total||0}</div><div class="timer">${mm}:${ss} - ${cmd.estado_parrilla} | ${minsE}min</div>`;}}plano.appendChild(card);});}
+function abrir(id){sel=id;const cmd=comandas[id];const minsE=((Date.now()-(cmd.timestamp_estado||cmd.timestamp))/1000/60).toFixed(1);document.getElementById('modalTitulo').textContent=id + ' - TOTAL $'+(cmd.total||cmd.total_cobrado||0)+' - '+minsE+'min en '+cmd.estado_parrilla;document.getElementById('modalDetalle').innerHTML=cmd.items.map(i=>`${i.nombre} x${i.cantidad} - $${(i.precio*i.cantidad)||''}`).join('<br>') + `<br><br><b style="color:#f1c40f">TOTAL: $${cmd.total||cmd.total_cobrado||0}</b>`;document.getElementById('modalTimer').textContent=`Estado: ${cmd.estado_parrilla} - ${minsE}min`;document.getElementById('totalCobro').value=cmd.total_cobrado||cmd.total||cmd.items.reduce((a,c)=>a+(c.precio*c.cantidad),0);document.getElementById('modal').style.display='flex';}
 function cerrar(){document.getElementById('modal').style.display='none';}
-function setEstado(n){
-if(!sel)return;
-const idSeguro=limpiarKey(comandas[sel].mesa);
-const ahora=Date.now();
-db.ref('comandas_activas/'+idSeguro+'/estado_parrilla').set(n);
-db.ref('comandas_activas/'+idSeguro+'/estado').set(n);
-db.ref('comandas_activas/'+idSeguro+'/timestamp_estado').set(ahora);
-db.ref('comandas_activas/'+idSeguro+'/timestamp_'+n.toLowerCase()).set(ahora);
-cerrar();
-}
-function cobrarMesa(){
-if(!sel)return;
-const total=Number(document.getElementById('totalCobro').value);
-if(!total)return alert('Poné total');
-const cmd=comandas[sel];
-const idSeguro=limpiarKey(cmd.mesa);
-const ahora=Date.now();
-db.ref('comandas_activas/'+idSeguro+'/estado').set('COBRADA');
-db.ref('comandas_activas/'+idSeguro+'/estado_parrilla').set('COBRADA');
-db.ref('comandas_activas/'+idSeguro+'/total_cobrado').set(total);
-db.ref('comandas_activas/'+idSeguro+'/total').set(total);
-db.ref('comandas_activas/'+idSeguro+'/timestamp_estado').set(ahora);
-db.ref('historial_caja/'+ahora).set({mesaId:sel,mesa:cmd.mesa,total:total,timestamp:ahora,items:cmd.items});
-db.ref('caja_diaria/movimientos/'+idSeguro).set({mesa:cmd.mesa,total:total,items:cmd.items,timestamp:ahora,estado:'COBRADA'});
-document.getElementById('totalCobro').value='';
-cerrar();
-}
-function abrirCaja(){alert('Caja: ver en Firebase historial_caja y caja_diaria/movimientos');}
+function setEstado(n){if(!sel)return;const idSeguro=limpiarKey(comandas[sel].mesa);const ahora=Date.now();db.ref('comandas_activas/'+idSeguro+'/estado_parrilla').set(n);db.ref('comandas_activas/'+idSeguro+'/estado').set(n);db.ref('comandas_activas/'+idSeguro+'/timestamp_estado').set(ahora);cerrar();}
+function cobrarMesa(){if(!sel)return;const totalCobro=Number(document.getElementById('totalCobro').value);if(!totalCobro)return alert('Poné total');const cmd=comandas[sel];const idSeguro=limpiarKey(cmd.mesa);const ahora=Date.now();const totalOriginal=cmd.total||0;const propina=totalCobro>totalOriginal?totalCobro-totalOriginal:0;db.ref('comandas_activas/'+idSeguro+'/estado').set('COBRADA');db.ref('comandas_activas/'+idSeguro+'/estado_parrilla').set('COBRADA');db.ref('comandas_activas/'+idSeguro+'/total_cobrado').set(totalCobro);db.ref('comandas_activas/'+idSeguro+'/total').set(totalCobro);db.ref('comandas_activas/'+idSeguro+'/timestamp_estado').set(ahora);db.ref('historial_caja/'+ahora).set({mesaId:sel,mesa:cmd.mesa,total:totalCobro,timestamp:ahora,items:cmd.items});db.ref('caja_diaria/movimientos/'+idSeguro).set({mesa:cmd.mesa,total:totalCobro,items:cmd.items,timestamp:ahora,estado:'COBRADA'});if(propina>0){db.ref('propinas_dia/'+ahora).set({mesa:cmd.mesa,monto:propina,timestamp:ahora});}cerrar();}
 function abrirResumen(){let html='';Object.keys(comandas).forEach(id=>{html+=id+': '+comandas[id].items.map(i=>i.nombre).join(', ')+' $'+(comandas[id].total||0)+'\n';});alert(html||'Sin comandas');}
+function abrirCaja(){document.getElementById('cajaOverlay').style.display='flex'; cargarCajaReal();}
+function cerrarCaja(){document.getElementById('cajaOverlay').style.display='none';}
+function cargarCajaReal(){
+  Promise.all([db.ref('historial_caja').once('value'),db.ref('caja_diaria/movimientos').once('value')]).then(([h,m])=>{
+    let totalDia=0; const hoy=new Date().toDateString(); let html='';
+    Object.values(h.val()||{}).forEach(r=>{if(new Date(r.timestamp).toDateString()===hoy){totalDia+=parseInt(r.total||0); html+=`<div style="display:flex;justify-content:space-between;border-bottom:1px solid #222;padding:3px 0"><span>${new Date(r.timestamp).toLocaleTimeString()} ${r.mesa||''}</span><b>$${r.total}</b></div>`;}});
+    document.getElementById('tablaIngresos').innerHTML=html||'Sin ingresos hoy'; document.getElementById('tIngresos').innerText='$'+totalDia; window._ing=totalDia; calcNeto();
+  });
+  Promise.all([db.ref('egresos_caja').once('value'),db.ref('caja_diaria/egresos').once('value'),db.ref('egresos').once('value')]).then(arr=>{
+    let totalE=0,html='';
+    arr.forEach(s=>{Object.values(s.val()||{}).forEach(r=>{const monto=parseInt(r.monto||r.importe||0); if(monto>0){totalE+=monto; html+=`<div style="display:flex;justify-content:space-between;border-bottom:1px solid #222;padding:3px 0"><span>${new Date(r.timestamp||Date.now()).toLocaleTimeString()} ${r.detalle||r.motivo||'Compra'}</span><b style="color:#e74c3c">-$${monto}</b></div>`;}});});
+    document.getElementById('tablaEgresos').innerHTML=html||'Sin egresos de Hernán'; document.getElementById('tEgresos').innerText='$'+totalE; window._egr=totalE; calcNeto();
+  });
+  db.ref('propinas_dia').once('value').then(s=>{let tot=0,list='';Object.values(s.val()||{}).forEach(r=>{tot+=parseInt(r.monto||0); list+=`${r.mesa}: $${r.monto}<br>`;});document.getElementById('tPropinas').innerText='$'+tot; document.getElementById('listaPropinas').innerHTML=list;});
+}
+function calcNeto(){const neto=(window._ing||0)-(window._egr||0);document.getElementById('tNeto').innerText='$'+neto;}
 renderMenu();setInterval(render,1000);
 </script>
 </body>
