@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LA PERSEVERANCIA | PARRILLA GUSTAVO - COBRA Y CARGA</title>
+<title>LA PERSEVERANCIA | PARRILLA GUSTAVO - FIX TOTAL AUTO</title>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <style>
@@ -41,12 +41,10 @@ header{background:linear-gradient(90deg,#1a1a1a,#c0392b);padding:10px;border-rad
 </head>
 <body>
 <header>
-<div><b>🔥 LA PERSEVERANCIA</b> | PARRILLA GUSTAVO - CARGA Y COBRA</div>
-<div style="display:flex;gap:5px"><button class="btn btn-caja" onclick="abrirCaja()">💰 CAJA</button><button class="btn btn-msj" onclick="abrirResumen()">📋 RESUMEN</button><span style="font-size:10px;border:1px solid #ff6b6b;padding:4px 6px;border-radius:4px;color:#ff6b6b">• PARRILLA - COBRA Y CARGA</span></div>
+<div><b>🔥 LA PERSEVERANCIA</b> | PARRILLA GUSTAVO - FIX AUTO TOTAL</div>
+<div style="display:flex;gap:5px"><button class="btn btn-caja" onclick="abrirCaja()">💰 CAJA</button><button class="btn btn-msj" onclick="abrirResumen()">📋 RESUMEN</button><span style="font-size:10px;border:1px solid #f1c40f;padding:4px 6px;border-radius:4px;color:#f1c40f">• FIX COBRO AUTO</span></div>
 </header>
-
 <div class="layout">
-<!-- COL 1: CARGA COMO MARIANA -->
 <div class="panel">
 <div class="panel-titulo">1. UBICACIÓN</div>
 <select id="ubicacion" style="width:100%;padding:7px;background:#111;color:#fff;border:1px solid #444;border-radius:4px;margin-bottom:8px">
@@ -61,60 +59,64 @@ header{background:linear-gradient(90deg,#1a1a1a,#c0392b);padding:10px;border-rad
 <button onclick="enviarComanda()" style="width:100%;padding:10px;background:#c0392b;border:none;color:#fff;border-radius:6px;font-weight:bold;margin-top:6px;cursor:pointer">🚀 ENVIAR A COCINA / PARRILLA</button>
 </div>
 </div>
-
-<!-- COL 2: FIFO PARRILLA -->
 <div class="panel"><div class="panel-titulo">ÍTEMS PARRILLA (FIFO) - <span id="cant">0</span></div><div id="listaFIFO"></div></div>
-
-<!-- COL 3: PLANO -->
 <div class="panel col-plano"><div class="panel-titulo">📍 PLANO - AMARILLO = COBRADA PARA LIBERAR</div><div id="plano"></div></div>
 </div>
-
 <div class="modal-overlay" id="modal"><div class="modal">
 <h3 id="modalTitulo" style="color:#ff6b6b;margin-bottom:8px"></h3>
 <div id="modalDetalle" style="font-size:11px;background:#111;padding:8px;border-radius:6px;margin-bottom:10px"></div>
 <button class="btn-estado" style="background:#2980b9" onclick="setEstado('RECIBIDO')">📥 RECIBIDO</button>
 <button class="btn-estado" style="background:#d35400" onclick="setEstado('PREPARACION')">🔥 PREPARACIÓN</button>
 <button class="btn-estado" style="background:#27ae60" onclick="setEstado('MANOS')">🖐️ MANOS</button>
-<div style="background:#1a1a00;border:1px solid #f1c40f;border-radius:6px;padding:8px;margin:8px 0"><input id="totalCobro" type="number" placeholder="$ Total a cobrar" style="width:100%;padding:8px;background:#000;border:1px solid #f1c40f;color:#f1c40f;border-radius:4px;margin-bottom:6px"><button onclick="cobrarMesa()" style="width:100%;background:#f1c40f;color:#000;border:none;padding:8px;border-radius:4px;font-weight:900;cursor:pointer">💰 COBRAR MESA</button></div>
+<div style="background:#1a1a00;border:1px solid #f1c40f;border-radius:6px;padding:8px;margin:8px 0">
+<div style="font-size:10px;color:#f1c40f;margin-bottom:4px">TOTAL AUTO (editable si hay descuento/propina)</div>
+<input id="totalCobro" type="number" style="width:100%;padding:8px;background:#000;border:1px solid #f1c40f;color:#f1c40f;border-radius:4px;margin-bottom:6px">
+<button onclick="cobrarMesa()" style="width:100%;background:#f1c40f;color:#000;border:none;padding:8px;border-radius:4px;font-weight:900;cursor:pointer">💰 COBRAR MESA</button></div>
 <button class="btn-estado" style="background:#333" onclick="cerrar()">CERRAR</button>
 </div></div>
-
 <script>
 const firebaseConfig={apiKey:"AIzaSyAvrpQSDoq9S87j3J7V4-uhJnPFCylCU",authDomain:"parrilla-la-perseveranci-f3f54.firebaseapp.com",databaseURL:"https://parrilla-la-perseveranci-f3f54-default-rtdb.firebaseio.com",projectId:"parrilla-la-perseveranci-f3f54",storageBucket:"parrilla-la-perseveranci-f3f54.firebasestorage.app",messagingSenderId:"899082319184",appId:"1:899082319184:web:9876161963705785efe855"};
 firebase.initializeApp(firebaseConfig);const db=firebase.database();
 const MAPEO={"Salón - Mesa 1":"Mesa 1","Salón - Mesa 2":"Mesa 2","Salón - Mesa 3":"Mesa 3","Salón - Mesa 4":"Mesa 4","Vereda - Mesa 5":"Mesa 5 Vereda","Vereda - Mesa 6":"Mesa 6 Vereda","Vereda - Mesa 7":"Mesa 7 Vereda","Canal - Mostrador":"Mostrador","Canal - Pickup":"Pickup","Canal - Delivery":"Delivery"};
 const NOMBRES={"Mesa 1":"MESA 1","Mesa 2":"MESA 2","Mesa 3":"MESA 3","Mesa 4":"MESA 4","Mesa 5 Vereda":"MESA 5 VEREDA","Mesa 6 Vereda":"MESA 6 VEREDA","Mesa 7 Vereda":"MESA 7 VEREDA","Mostrador":"MOSTRADOR","Pickup":"PICKUP","Delivery":"DELIVERY"};
 let comandas={}, sel=null, carrito=[], filtro='Todos';
-const PRODUCTOS=[
-{nombre:"Asado c/fritas",precio:25000,cat:"Parrilla"},{nombre:"Asado 1/2",precio:26000,cat:"Parrilla"},
-{nombre:"Vacio c/fritas",precio:29000,cat:"Parrilla"},{nombre:"Vacio 1/2",precio:32000,cat:"Parrilla"},
-{nombre:"Entraña c/fritas",precio:32000,cat:"Parrilla"},{nombre:"Entraña sola",precio:34000,cat:"Parrilla"},
-{nombre:"Mini bife de chorizo c/frita",precio:20000,cat:"Parrilla"},{nombre:"Bife de costilla c/fritas",precio:17000,cat:"Parrilla"},
-{nombre:"Bife de chorizo c/fritas",precio:28000,cat:"Parrilla"},{nombre:"Bondiola c/fritas",precio:19000,cat:"Parrilla"},
-{nombre:"Choripan",precio:8000,cat:"Parrilla"},{nombre:"Morcipan",precio:8000,cat:"Parrilla"},
-{nombre:"Provoleta",precio:9000,cat:"Guarniciones"},{nombre:"Papas fritas",precio:6000,cat:"Guarniciones"},
-{nombre:"Ensalada mixta",precio:5500,cat:"Guarniciones"},{nombre:"Milanesa napolitana c/fritas",precio:22000,cat:"Minutas"},
-{nombre:"Milanesa c/fritas y 2 huevos",precio:20000,cat:"Minutas"},{nombre:"Suprema c/fritas",precio:21000,cat:"Minutas"},
-{nombre:"Tortilla",precio:7000,cat:"Entradas"}
-];
+function limpiarKey(str){return (str||'').normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-zA-Z0-9]/g,'_').replace(/__+/g,'_').toLowerCase();}
+const PRODUCTOS=[{nombre:"Asado c/fritas",precio:25000,cat:"Parrilla"},{nombre:"Asado 1/2",precio:26000,cat:"Parrilla"},{nombre:"Vacio c/fritas",precio:29000,cat:"Parrilla"},{nombre:"Vacio 1/2",precio:32000,cat:"Parrilla"},{nombre:"Entraña c/fritas",precio:32000,cat:"Parrilla"},{nombre:"Entraña sola",precio:34000,cat:"Parrilla"},{nombre:"Mini bife de chorizo c/frita",precio:20000,cat:"Parrilla"},{nombre:"Bife de costilla c/fritas",precio:17000,cat:"Parrilla"},{nombre:"Bife de chorizo c/fritas",precio:28000,cat:"Parrilla"},{nombre:"Bondiola c/fritas",precio:19000,cat:"Parrilla"},{nombre:"Choripan",precio:8000,cat:"Parrilla"},{nombre:"Morcipan",precio:8000,cat:"Parrilla"},{nombre:"Provoleta",precio:9000,cat:"Guarniciones"},{nombre:"Papas fritas",precio:6000,cat:"Guarniciones"},{nombre:"Ensalada mixta",precio:5500,cat:"Guarniciones"},{nombre:"Milanesa napolitana c/fritas",precio:22000,cat:"Minutas"},{nombre:"Milanesa c/fritas y 2 huevos",precio:20000,cat:"Minutas"},{nombre:"Suprema c/fritas",precio:21000,cat:"Minutas"},{nombre:"Tortilla",precio:7000,cat:"Entradas"}];
 const CATS=["Todos","Parrilla","Guarniciones","Minutas","Entradas"];
-function renderMenu(){
-const cDiv=document.getElementById('cats');cDiv.innerHTML='';CATS.forEach(c=>{const b=document.createElement('button');b.textContent=c;b.className=c===filtro?'activo':'';b.onclick=()=>{filtro=c;renderMenu();};cDiv.appendChild(b);});
-const pDiv=document.getElementById('prods');pDiv.innerHTML='';PRODUCTOS.filter(p=>filtro==='Todos'||p.cat===filtro).forEach(p=>{
-const d=document.createElement('div');d.className='prod';d.innerHTML=`<b>${p.nombre}</b><small>$${p.precio}</small>`;d.onclick=()=>addProd(p);pDiv.appendChild(d);
-});
-}
+function renderMenu(){const cDiv=document.getElementById('cats');cDiv.innerHTML='';CATS.forEach(c=>{const b=document.createElement('button');b.textContent=c;b.className=c===filtro?'activo':'';b.onclick=()=>{filtro=c;renderMenu();};cDiv.appendChild(b);});const pDiv=document.getElementById('prods');pDiv.innerHTML='';PRODUCTOS.filter(p=>filtro==='Todos'||p.cat===filtro).forEach(p=>{const d=document.createElement('div');d.className='prod';d.innerHTML=`<b>${p.nombre}</b><small>$${p.precio}</small>`;d.onclick=()=>addProd(p);pDiv.appendChild(d);});}
 function addProd(p){const ex=carrito.find(x=>x.nombre===p.nombre);if(ex)ex.cantidad++;else carrito.push({nombre:p.nombre,precio:p.precio,cantidad:1});renderCarrito();}
 function renderCarrito(){let tot=0;const div=document.getElementById('seleccion');div.innerHTML='';carrito.forEach((it,i)=>{tot+=it.precio*it.cantidad;const r=document.createElement('div');r.className='sel-item';r.innerHTML=`<span>${it.nombre} x${it.cantidad}</span><span>$${it.precio*it.cantidad} <b style="color:#c0392b;cursor:pointer" onclick="carrito.splice(${i},1);renderCarrito()">X</b></span>`;div.appendChild(r);});document.getElementById('total').textContent='$'+tot;}
-function enviarComanda(){if(!carrito.length){alert('Carrito vacío');return;}const mesa=document.getElementById('ubicacion').value;const idSeguro=mesa.replace(/[^a-zA-Z0-9]/g,'_');const ahora=Date.now();const items=carrito.map(c=>({nombre:c.nombre,cantidad:c.cantidad,precio:c.precio}));db.ref('comandas_activas/'+idSeguro).set({mesa:mesa,items:items,estado:'RECIBIDO',estado_parrilla:'RECIBIDO',estado_cocina:'RECIBIDO',timestamp:ahora,nroOrden:Math.floor(Math.random()*900+100)});carrito=[];renderCarrito();alert('Enviado a '+mesa);}
-db.ref('comandas_activas').on('value',s=>{const data=s.val()||{};const nuevo={};Object.values(data).forEach(cmd=>{if(!cmd.mesa)return;const idV=MAPEO[cmd.mesa]||cmd.mesa;if(!NOMBRES[idV])return;if(!nuevo[idV])nuevo[idV]={id:idV,mesa:cmd.mesa,items:[],estado:(cmd.estado||'RECIBIDO').toUpperCase(),estado_parrilla:(cmd.estado_parrilla||cmd.estado||'RECIBIDO').toUpperCase(),total_cobrado:cmd.total_cobrado||0,timestamp:cmd.timestamp||Date.now(),nroOrden:cmd.nroOrden||100};(cmd.items||[]).forEach(it=>{nuevo[idV].items.push(it);});nuevo[idV].estado=cmd.estado||nuevo[idV].estado;});comandas=nuevo;render();});
-function render(){const ids=Object.keys(comandas);document.getElementById('cant').textContent=ids.length;const fifo=document.getElementById('listaFIFO');fifo.innerHTML='';ids.sort((a,b)=>comandas[a].timestamp-comandas[b].timestamp).forEach(id=>{const cmd=comandas[id];const esCobrada=cmd.estado==='COBRADA';const div=document.createElement('div');div.className=`ticket ${esCobrada?'COBRADA':cmd.estado_parrilla}`;div.onclick=()=>abrir(id);div.innerHTML=`<div style="display:flex;justify-content:space-between"><b>#${String(cmd.nroOrden).slice(-3)} ${id}</b><span>${esCobrada?'COBRADA':cmd.estado_parrilla}</span></div><div style="font-size:10px">${cmd.items.map(i=>i.nombre+' x'+i.cantidad).join('<br>')}</div>`;fifo.appendChild(div);});const plano=document.getElementById('plano');plano.innerHTML='';Object.keys(NOMBRES).forEach(id=>{const cmd=comandas[id];const esCobrada=cmd&&cmd.estado==='COBRADA';const card=document.createElement('div');card.className=`mesa-card ${cmd?'ocupada':''} ${esCobrada?'cobrada':''}`;card.onclick=()=>{if(cmd)abrir(id);};if(!cmd){card.innerHTML=`<b>${NOMBRES[id]}</b><br><small style="color:#666">Sin comanda</small><div style="color:#27ae60">$0</div>`;}else{const seg=Math.floor((Date.now()-cmd.timestamp)/1000);const mm=String(Math.floor(seg/60)).padStart(2,'0');const ss=String(seg%60).padStart(2,'0');if(esCobrada){card.innerHTML=`<b>${NOMBRES[id]}</b><div style="text-align:center;color:#f1c40f;font-weight:800;margin-top:8px">💰 COBRADA<br>$${cmd.total_cobrado||''}</div>`;}else{card.innerHTML=`<b>${NOMBRES[id]}</b><div style="font-size:10px">${cmd.items.map(i=>`• ${i.nombre} x${i.cantidad}`).join('<br>')}</div><div class="timer">${mm}:${ss} - ${cmd.estado_parrilla}</div>`;}}plano.appendChild(card);});}
-function abrir(id){sel=id;const cmd=comandas[id];document.getElementById('modalTitulo').textContent=id;document.getElementById('modalDetalle').innerHTML=cmd.items.map(i=>`${i.nombre} x${i.cantidad} - $${i.precio||''}`).join('<br>');document.getElementById('modal').style.display='flex';}
+function enviarComanda(){if(!carrito.length){alert('Carrito vacío');return;}const mesa=document.getElementById('ubicacion').value;const idSeguro=limpiarKey(mesa);const ahora=Date.now();const items=carrito.map(c=>({nombre:c.nombre,cantidad:c.cantidad,precio:c.precio}));const total=carrito.reduce((a,c)=>a+(c.precio*c.cantidad),0);db.ref('comandas_activas/'+idSeguro).once('value').then(snap=>{const ex=snap.val();let itemsFinal=items;let totFinal=total;if(ex&&ex.items){const mapa={};ex.items.forEach(i=>mapa[i.nombre]=i);items.forEach(n=>{if(mapa[n.nombre])mapa[n.nombre].cantidad+=n.cantidad;else mapa[n.nombre]=n;});itemsFinal=Object.values(mapa);totFinal=itemsFinal.reduce((a,c)=>a+(c.precio*c.cantidad),0);}db.ref('comandas_activas/'+idSeguro).set({mesa:mesa,items:itemsFinal,total:totFinal,estado:'RECIBIDO',estado_parrilla:'RECIBIDO',estado_cocina:'RECIBIDO',timestamp:ex?ex.timestamp:ahora,nroOrden:ex?ex.nroOrden:Math.floor(Math.random()*900+100)});carrito=[];renderCarrito();});}
+db.ref('comandas_activas').on('value',s=>{const data=s.val()||{};const nuevo={};Object.values(data).forEach(cmd=>{if(!cmd.mesa)return;const idV=MAPEO[cmd.mesa]||cmd.mesa;if(!NOMBRES[idV])return;if(!nuevo[idV])nuevo[idV]={id:idV,mesa:cmd.mesa,items:[],estado:(cmd.estado||'RECIBIDO').toUpperCase(),estado_parrilla:(cmd.estado_parrilla||cmd.estado||'RECIBIDO').toUpperCase(),total:(cmd.total||0),total_cobrado:cmd.total_cobrado||0,timestamp:cmd.timestamp||Date.now(),nroOrden:cmd.nroOrden||100};nuevo[idV].items=cmd.items||[];nuevo[idV].estado=cmd.estado||nuevo[idV].estado;nuevo[idV].estado_parrilla=cmd.estado_parrilla||cmd.estado;nuevo[idV].total=cmd.total||cmd.total_cobrado||0;nuevo[idV].total_cobrado=cmd.total_cobrado||0;});comandas=nuevo;render();});
+function render(){const ids=Object.keys(comandas);document.getElementById('cant').textContent=ids.length;const fifo=document.getElementById('listaFIFO');fifo.innerHTML='';ids.sort((a,b)=>comandas[a].timestamp-comandas[b].timestamp).forEach(id=>{const cmd=comandas[id];const esCobrada=cmd.estado==='COBRADA';const div=document.createElement('div');div.className=`ticket ${esCobrada?'COBRADA':cmd.estado_parrilla}`;div.onclick=()=>abrir(id);div.innerHTML=`<div style="display:flex;justify-content:space-between"><b>#${String(cmd.nroOrden).slice(-3)} ${id}</b><span>${esCobrada?'COBRADA $'+(cmd.total_cobrado||cmd.total):cmd.estado_parrilla}</span></div><div style="font-size:10px">${cmd.items.map(i=>i.nombre+' x'+i.cantidad).join('<br>')}<br><b>$${cmd.total_cobrado||cmd.total||0}</b></div>`;fifo.appendChild(div);});const plano=document.getElementById('plano');plano.innerHTML='';Object.keys(NOMBRES).forEach(id=>{const cmd=comandas[id];const esCobrada=cmd&&cmd.estado==='COBRADA';const card=document.createElement('div');card.className=`mesa-card ${cmd?'ocupada':''} ${esCobrada?'cobrada':''}`;card.onclick=()=>{if(cmd)abrir(id);};if(!cmd){card.innerHTML=`<b>${NOMBRES[id]}</b><br><small style="color:#666">Sin comanda</small><div style="color:#27ae60">$0</div>`;}else{const seg=Math.floor((Date.now()-cmd.timestamp)/1000);const mm=String(Math.floor(seg/60)).padStart(2,'0');const ss=String(seg%60).padStart(2,'0');if(esCobrada){card.innerHTML=`<b>${NOMBRES[id]}</b><div style="text-align:center;color:#f1c40f;font-weight:800;margin-top:8px">💰 COBRADA<br>$${cmd.total_cobrado||cmd.total}</div>`;}else{card.innerHTML=`<b>${NOMBRES[id]}</b><div style="font-size:10px">${cmd.items.map(i=>`• ${i.nombre} x${i.cantidad}`).join('<br>')}</div><div style="font-size:11px;color:#f1c40f;font-weight:bold">$${cmd.total||0}</div><div class="timer">${mm}:${ss} - ${cmd.estado_parrilla}</div>`;}}plano.appendChild(card);});}
+function abrir(id){
+sel=id;const cmd=comandas[id];
+document.getElementById('modalTitulo').textContent=id + ' - TOTAL $'+(cmd.total||cmd.total_cobrado||0);
+document.getElementById('modalDetalle').innerHTML=cmd.items.map(i=>`${i.nombre} x${i.cantidad} - $${(i.precio*i.cantidad)||''}`).join('<br>') + `<br><br><b style="color:#f1c40f">TOTAL: $${cmd.total||cmd.total_cobrado||0}</b>`;
+const totalCalc = cmd.total_cobrado || cmd.total || cmd.items.reduce((a,c)=>a+(c.precio*c.cantidad),0);
+document.getElementById('totalCobro').value = totalCalc;
+document.getElementById('modal').style.display='flex';
+}
 function cerrar(){document.getElementById('modal').style.display='none';}
-function setEstado(n){if(!sel)return;const idSeguro=comandas[sel].mesa.replace(/[^a-zA-Z0-9]/g,'_');db.ref('comandas_activas/'+idSeguro+'/estado_parrilla').set(n);db.ref('comandas_activas/'+idSeguro+'/estado').set(n);cerrar();}
-function cobrarMesa(){if(!sel)return;const total=Number(document.getElementById('totalCobro').value);if(!total)return alert('Poné total');const cmd=comandas[sel];const idSeguro=cmd.mesa.replace(/[^a-zA-Z0-9]/g,'_');const ahora=Date.now();db.ref('comandas_activas/'+idSeguro+'/estado').set('COBRADA');db.ref('comandas_activas/'+idSeguro+'/total_cobrado').set(total);db.ref('historial_caja/'+ahora).set({mesaId:sel,mesa:cmd.mesa,total:total,timestamp:ahora});document.getElementById('totalCobro').value='';cerrar();}
-function abrirCaja(){alert('Caja: ver en Firebase historial_caja');}
-function abrirResumen(){let html='';Object.keys(comandas).forEach(id=>{html+=id+': '+comandas[id].items.map(i=>i.nombre).join(', ')+'<br>';});alert(html||'Sin comandas');}
+function setEstado(n){if(!sel)return;const idSeguro=limpiarKey(comandas[sel].mesa);db.ref('comandas_activas/'+idSeguro+'/estado_parrilla').set(n);db.ref('comandas_activas/'+idSeguro+'/estado').set(n);cerrar();}
+function cobrarMesa(){
+if(!sel)return;
+const total=Number(document.getElementById('totalCobro').value);
+if(!total)return alert('Poné total');
+const cmd=comandas[sel];
+const idSeguro=limpiarKey(cmd.mesa);
+const ahora=Date.now();
+db.ref('comandas_activas/'+idSeguro+'/estado').set('COBRADA');
+db.ref('comandas_activas/'+idSeguro+'/estado_parrilla').set('COBRADA');
+db.ref('comandas_activas/'+idSeguro+'/total_cobrado').set(total);
+db.ref('comandas_activas/'+idSeguro+'/total').set(total);
+db.ref('historial_caja/'+ahora).set({mesaId:sel,mesa:cmd.mesa,total:total,timestamp:ahora,items:cmd.items});
+db.ref('caja_diaria/movimientos/'+idSeguro).set({mesa:cmd.mesa,total:total,items:cmd.items,timestamp:ahora,estado:'COBRADA'});
+document.getElementById('totalCobro').value='';
+cerrar();
+}
+function abrirCaja(){alert('Caja: ver en Firebase historial_caja y caja_diaria/movimientos');}
+function abrirResumen(){let html='';Object.keys(comandas).forEach(id=>{html+=id+': '+comandas[id].items.map(i=>i.nombre).join(', ')+' $'+(comandas[id].total||0)+'\n';});alert(html||'Sin comandas');}
 renderMenu();setInterval(render,1000);
 </script>
 </body>
