@@ -1,21 +1,55 @@
-<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LA PERSEVERANCIA - SISTEMA</title>
-<style>*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',sans-serif}body{background:#0e0e0e;color:#fff;padding:20px;text-align:center}h1{color:#f1c40f;margin-bottom:20px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;max-width:1000px;margin:0 auto}.card{background:#1c1c1c;border:2px solid #333;border-radius:12px;padding:20px;cursor:pointer;transition:.2s;text-decoration:none;color:#fff;display:block}.card:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,.5)}.card.gustavo{border-color:#c0392b}.card.hernan{border-color:#27ae60}.card.mariana{border-color:#2980b9}.card.caja{border-color:#f1c40f}.badge{font-size:10px;padding:3px 8px;border-radius:10px;background:#000;border:1px solid #555}</style></head><body>
-<h1>🔥 LA PERSEVERANCIA - SISTEMA FINAL FIX</h1>
-<p style="color:#aaa;margin-bottom:20px">Gustavo cobra → Hernán carga egresos → Mariana libera</p>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LA PERSEVERANCIA - DUEÑO</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Segoe UI,sans-serif}
+body{background:#0e0e0e;color:#fff;text-align:center;padding:20px}
+h1{color:#f1c40f;font-size:20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;max-width:950px;margin:20px auto}
+.card{background:#161616;border:2px solid #333;border-radius:12px;padding:18px;cursor:pointer;position:relative}
+.card.gustavo{border-color:#c0392b}.card.hernan{border-color:#27ae60}.card.mariana{border-color:#3498db}.card.caja{border-color:#f1c40f;display:none}
+.btn-sup{position:absolute;top:8px;right:8px;font-size:9px;padding:4px 7px;border-radius:4px;border:1px solid #555;background:#000;color:#aaa;cursor:pointer;z-index:2}
+.btn-sup.caja{border-color:#f1c40f;color:#f1c40f}
+.btn-sup.prop{border-color:#3498db;color:#3498db}
+</style>
+</head>
+<body>
+<h1>🔥 LA PERSEVERANCIA - SISTEMA DUEÑO</h1>
+<p style="font-size:11px;color:#666">Gustavo cobra • Hernán carga egresos • Mariana libera • Vos ves todo</p>
+
 <div class="grid">
-<a class="card gustavo" href="parrilla_gustavo.html"><div style="font-size:40px">🔥</div><h2>GUSTAVO PARRILLA</h2><p style="font-size:12px;color:#aaa;margin:8px 0">Único que puede COBRAR<br>Ve parrilla y mixta<br>Caja con egresos</p><span class="badge" style="color:#e74c3c;border-color:#e74c3c">● COBRA - ACTIVO</span></a>
-<a class="card hernan" href="cocina_hernan.html"><div style="font-size:40px">🍳</div><h2>HERNÁN COCINA - JEFE</h2><p style="font-size:12px;color:#aaa;margin:8px 0">Milanesa/Pechuga solo vos<br>Bondiola/Vacio + agregados = ves agregados<br>Cargás EGRESOS compras</p><span class="badge" style="color:#27ae60;border-color:#27ae60">● CAJA + EGRESOS</span></a>
-<a class="card mariana" href="mariana_mozo.html"><div style="font-size:40px">💁‍♀️</div><h2>MARIANA MOZO</h2><p style="font-size:12px;color:#aaa;margin:8px 0">Ve mesas COBRADAS amarillo<br>Solo libera mesas<br>Libera para todos</p><span class="badge" style="color:#3498db;border-color:#3498db">● LIBERA MESAS</span></a>
-<a class="card caja" href="cocina_hernan.html"><div style="font-size:40px">💰</div><h2>CAJA / ARQUEO + EGRESOS</h2><p style="font-size:12px;color:#aaa;margin:8px 0">Ingresos Gustavo<br>Egresos Hernán (compras)<br>Neto real</p><span class="badge" style="color:#f1c40f;border-color:#f1c40f">● ARQUEO NETO</span></a>
+  <div class="card gustavo" onclick="location.href='parrilla_gustavo.html'">
+    <button class="btn-sup caja" onclick="event.stopPropagation();location.href='parrilla_gustavo.html?sup=1'">SUP • CAJA / ARQUEO</button>
+    <div style="font-size:28px">🔥</div><b>GUSTAVO PARRILLA</b>
+    <small>Cobra mesas<br>Parrilla y mixta<br><b style="color:#f1c40f">SUP ve caja + egresos Hernán</b></small>
+  </div>
+
+  <div class="card hernan" onclick="location.href='cocina_hernan.html'">
+    <button class="btn-sup caja" onclick="event.stopPropagation();location.href='cocina_hernan.html?caja=1'">CAJA + EGRESOS</button>
+    <div style="font-size:28px">🍳</div><b>HERNÁN COCINA - JEFE</b>
+    <small>Carga compras<br>Ve neto con egresos</small>
+  </div>
+
+  <div class="card mariana" onclick="location.href='mariana_mozo.html'">
+    <button class="btn-sup prop" onclick="event.stopPropagation();location.href='mariana_mozo.html?propinas=1'">💸 PROPINAS</button>
+    <div style="font-size:28px">💁‍♀️</div><b>MARIANA MOZO</b>
+    <small>Libera mesas cobradas<br>Consulta propinas</small>
+  </div>
+
+  <div class="card caja" id="cardCaja" onclick="location.href='caja_arqueo.html'">
+    <div style="font-size:28px">💰</div><b>CAJA / ARQUEO + EGRESOS (SOLO VOS)</b>
+    <small>Ingresos Gustavo<br>Egresos Hernán<br>Neto real + Propinas</small>
+  </div>
 </div>
-<div style="margin-top:30px;background:#1a1a00;border:1px solid #f1c40f;border-radius:8px;padding:12px;max-width:1000px;margin:20px auto">
-<div style="color:#f1c40f;font-weight:800">📋 REGLAS FINALES + EGRESOS</div>
-<div style="font-size:11px;color:#ccc;text-align:left;margin-top:8px;line-height:1.6">
-• MILANESA / PECHUGA / SUPREMA = SOLO HERNÁN<br>
-• BONDIOLA / VACIO / CHORIPAN / MORCIPAN SOLO = SOLO GUSTAVO<br>
-• BONDIOLA / VACIO / CHORIPAN / MORCIPAN + agregados = MIXTA<br>
-• GUSTAVO cobra → queda amarillo → MARIANA libera → HERNÁN ve neto con EGRESOS<br>
-• EGRESOS: Hernán carga compras (carne, verdura, carbón) en CAJA / ARQUEO
-</div>
-</div>
-</body></html>
+
+<script>
+const p=new URLSearchParams(location.search);
+if(p.get('admin')==='sili' || p.get('sup')==='1' || localStorage.getItem('soy_dueno')==='1'){
+  document.getElementById('cardCaja').style.display='block';
+}
+if(p.get('admin')==='sili'){localStorage.setItem('soy_dueno','1');}
+</script>
+</body>
+</html>
