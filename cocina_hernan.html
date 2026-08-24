@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>COCINA HERNÁN - JEFE - COMPLETO FINAL - FIX MIXTA + CAJA EGRESOS + MSJ</title>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>COCINA HERNÁN - FIX MIXTA LISTA + ALARMAS 5/15/1.5 + CAJA</title>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <style>
@@ -22,16 +21,19 @@ header{background:linear-gradient(90deg,#b03a2e,#d35400);padding:10px 14px;borde
 .ticket.PREPARACION{border-left-color:#e67e22;background:#2a2011}
 .ticket.MANOS{border-left-color:#27ae60;background:#112a18}
 .ticket.RECIBIDO{border-left-color:#2980b9}
-.ticket.COBRADA{border-left-color:#f1c40f;background:#1a1a00;opacity:0.6}
+.ticket.alarm-recibido{box-shadow:0 0 10px #e67e22}
+.ticket.alarm-prep{box-shadow:0 0 14px #c0392b;animation:parp 1s infinite}
+.ticket.alarm-manos{box-shadow:0 0 18px #f1c40f;animation:parp.4s infinite}
+@keyframes parp{0%,100%{opacity:1}50%{opacity:.6}}
 .badge-tipo{font-size:8px;padding:2px 6px;border-radius:10px;border:1px solid;font-weight:bold}
-.tachado{text-decoration:line-through;opacity:0.35}
 .guarnicion{background:rgba(39,174,96,0.25);border-left:3px solid #27ae60;padding:1px 5px;border-radius:3px;font-weight:900;color:#fff!important}
-.solo-parrilla{opacity:0.5;border-style:dashed!important}
 .plano-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px}
 .mesa-card{background:#1b1b1b;border:1px solid #333;border-radius:8px;padding:8px;min-height:130px;cursor:pointer}
 .mesa-card.ocupada{border-color:#00ff66;background:#122a18}
+.mesa-card.alarm-recibido{border-color:#e67e22;box-shadow:0 0 12px #e67e22}
+.mesa-card.alarm-prep{border-color:#c0392b;box-shadow:0 0 16px #c0392b;animation:parp 1s infinite}
+.mesa-card.alarm-manos{border-color:#f1c40f;box-shadow:0 0 20px #f1c40f;animation:parp.4s infinite}
 .mesa-card.cobrada{border-color:#f1c40f;background:#1a1a00;opacity:0.7}
-.mesa-card.solo-parrilla{border-color:#ff3d00;background:#2a1412;opacity:0.6}
 .timer{background:#000;border:1px solid #00ff66;color:#00ff66;text-align:center;padding:3px;border-radius:4px;font-family:monospace;font-size:11px;margin-top:6px}
 .modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.88);display:none;justify-content:center;align-items:center;z-index:9999}
 .modal{background:#181818;border:1px solid #444;border-radius:10px;padding:18px;width:95%;max-width:650px;text-align:center}
@@ -43,234 +45,114 @@ header{background:linear-gradient(90deg,#b03a2e,#d35400);padding:10px 14px;borde
 </head>
 <body>
 <header>
-<div><b>🔥 LA PERSEVERANCIA</b> <span style="font-size:11px;opacity:.8">| COCINA HERNÁN - JEFE</span></div>
+<div><b>🔥 LA PERSEVERANCIA</b> <span style="font-size:11px;opacity:.8">| COCINA HERNÁN - FIX MIXTA + ALARMA 5/15/1.5</span></div>
 <div style="display:flex;gap:6px;flex-wrap:wrap">
 <button class="btn btn-caja" onclick="abrirCaja()">💰 CAJA / ARQUEO + EGRESOS</button>
 <button class="btn btn-msj" onclick="abrirMensajes()">💬 MENSAJES</button>
 <button class="btn" onclick="abrirResumen()">📋 RESUMEN</button>
 <button class="btn btn-rojo" onclick="abrirAgotar()">🚫 AGOTAR (86)</button>
-<span style="font-size:11px;color:#00ff66;border:1px solid #00ff66;padding:5px 8px;border-radius:5px">• ACTIVA - VE TODO</span>
+<span style="font-size:11px;color:#00ff66;border:1px solid #00ff66;padding:5px 8px;border-radius:5px">• ACTIVA - ALARMA FIX</span>
 </div>
 </header>
 <div class="layout">
-<div class="panel">
-<div class="panel-titulo"><span>ÍTEMS COCINA (FIFO)</span><span id="cant">0</span></div>
-<div id="listaFIFO"></div>
+<div class="panel"><div class="panel-titulo"><span>ÍTEMS COCINA (FIFO)</span><span id="cant">0</span></div><div id="listaFIFO"></div></div>
+<div class="panel"><div class="panel-titulo"><span>📍 PLANO</span></div><div id="plano"></div></div>
 </div>
-<div class="panel">
-<div class="panel-titulo"><span>📍 PLANO</span></div>
-<div id="plano"></div>
-</div>
-</div>
-<div class="modal-overlay" id="modal"><div class="modal" style="max-width:420px">
-<h3 id="modalTitulo" style="color:#00ff66;margin-bottom:8px"></h3>
-<div id="modalDetalle" style="font-size:11px;text-align:left;background:#111;padding:8px;border-radius:6px;margin-bottom:10px"></div>
-<button id="b1" class="btn-estado" style="background:#2980b9" onclick="setEstado('RECIBIDO')">📥 RECIBIDO</button>
-<button id="b2" class="btn-estado" style="background:#d35400" onclick="setEstado('PREPARACION')">🔥 PREPARACIÓN</button>
-<button id="b3" class="btn-estado" style="background:#27ae60" onclick="setEstado('MANOS')">🖐️ MANOS / LISTO</button>
-<hr style="margin:10px 0;border-color:#333">
-<button class="btn-estado" style="background:#333" onclick="cerrar()">CANCELAR</button>
-</div></div>
-<div class="modal-overlay" id="modalResumen"><div class="modal" style="max-width:550px;text-align:left">
-<h3 style="color:#ff9900;margin-bottom:10px">📋 RESUMEN</h3>
-<div id="contenidoResumen" style="font-size:12px;background:#111;padding:10px;border-radius:6px;max-height:60vh;overflow-y:auto"></div>
-<button class="btn-estado" style="background:#333;margin-top:10px" onclick="document.getElementById('modalResumen').style.display='none'">CERRAR</button>
-</div></div>
-
-<div class="modal-overlay" id="modalCaja"><div class="modal" style="text-align:left">
-<h3 style="color:#f1c40f;margin-bottom:10px">💰 CAJA / ARQUEO - CHEF</h3>
-<div style="display:flex;gap:6px;margin-bottom:10px">
-<div style="flex:1;background:#000;border:1px solid #27ae60;padding:8px;border-radius:6px;text-align:center"><div style="font-size:9px;color:#aaa">INGRESOS HOY (Gustavo cobra)</div><div id="cajaTotal" style="font-size:16px;font-weight:900;color:#27ae60">$0</div><small id="cajaTickets" style="color:#666">0 tickets</small></div>
-<div style="flex:1;background:#000;border:1px solid #c0392b;padding:8px;border-radius:6px;text-align:center"><div style="font-size:9px;color:#aaa">EGRESOS HOY (Tus compras)</div><div id="cajaEgresosTotal" style="font-size:16px;font-weight:900;color:#e74c3c">$0</div><small id="cajaEgresosCant" style="color:#666">0 compras</small></div>
-<div style="flex:1;background:#111;border:2px solid #f1c40f;padding:8px;border-radius:6px;text-align:center"><div style="font-size:9px;color:#aaa">NETO CAJA</div><div id="cajaNeto" style="font-size:18px;font-weight:900;color:#f1c40f">$0</div></div>
-</div>
-<div style="background:#1a1212;border:1px solid #c0392b;border-radius:6px;padding:8px;margin-bottom:10px">
-<div style="font-size:10px;color:#e74c3c;font-weight:bold;margin-bottom:4px">➕ CARGAR EGRESO / COMPRA (Hernán)</div>
-<div style="display:flex;gap:4px">
-<input id="egrConcepto" placeholder="Concepto: Carne, Verdura, Carbón" style="flex:2;padding:7px;background:#111;border:1px solid #444;color:#fff;border-radius:4px;font-size:11px">
-<input id="egrMonto" type="number" placeholder="$" style="flex:1;padding:7px;background:#111;border:1px solid #444;color:#fff;border-radius:4px;font-size:11px">
-<button onclick="agregarEgreso()" style="background:#c0392b;color:#fff;border:none;padding:7px 12px;border-radius:4px;font-weight:bold;font-size:11px;cursor:pointer">CARGAR</button>
-</div>
-</div>
-<div style="display:flex;gap:6px;margin-bottom:6px">
-<button class="btn" style="flex:1;border-color:#27ae60;color:#27ae60" onclick="verTabCaja('ingresos')">💵 INGRESOS</button>
-<button class="btn" style="flex:1;border-color:#e74c3c;color:#e74c3c" onclick="verTabCaja('egresos')">🛒 EGRESOS</button>
-</div>
-<div id="cajaLista" style="font-size:11px;background:#111;padding:10px;border-radius:6px;max-height:45vh;overflow-y:auto"></div>
-<button class="btn-estado" style="background:#333;margin-top:10px" onclick="document.getElementById('modalCaja').style.display='none'">CERRAR</button>
-</div></div>
-
-<div class="modal-overlay" id="modalMensajes"><div class="modal" style="text-align:left">
-<h3 style="color:#3498db;margin-bottom:10px">💬 MENSAJES - GUSTAVO / MARIANA</h3>
-<div class="chat-box" id="chatMensajes"></div>
-<input type="text" id="inputMensaje" placeholder="Escribir aviso..." style="width:100%;padding:10px;background:#111;border:1px solid #444;color:#fff;border-radius:6px" onkeypress="if(event.key==='Enter')enviarMensaje()">
-<button style="margin-top:8px;width:100%;padding:10px;background:#27ae60;border:none;color:#fff;border-radius:6px;font-weight:bold;cursor:pointer" onclick="enviarMensaje()">📤 ENVIAR MENSAJE</button>
-<button class="btn-estado" style="background:#333;margin-top:8px" onclick="document.getElementById('modalMensajes').style.display='none'">CERRAR</button>
-</div></div>
-
-<div class="modal-overlay" id="modalAgotar"><div class="modal" style="max-width:550px;text-align:left">
-<h3 style="color:#e74c3c;margin-bottom:8px">🚫 AGOTAR STOCK</h3>
-<div id="listaAgotar" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;max-height:60vh;overflow-y:auto"></div>
-<button class="btn-estado" style="background:#333;margin-top:10px" onclick="document.getElementById('modalAgotar').style.display='none'">CERRAR</button>
-</div></div>
+<div class="modal-overlay" id="modal"><div class="modal" style="max-width:420px"><h3 id="modalTitulo" style="color:#00ff66;margin-bottom:8px"></h3><div id="modalDetalle" style="font-size:11px;text-align:left;background:#111;padding:8px;border-radius:6px;margin-bottom:10px"></div><button id="b1" class="btn-estado" style="background:#2980b9" onclick="setEstado('RECIBIDO')">📥 RECIBIDO</button><button id="b2" class="btn-estado" style="background:#d35400" onclick="setEstado('PREPARACION')">🔥 PREPARACIÓN</button><button id="b3" class="btn-estado" style="background:#27ae60" onclick="setEstado('MANOS')">🖐️ MANOS / LISTO</button><hr style="margin:10px 0;border-color:#333"><button class="btn-estado" style="background:#333" onclick="cerrar()">CANCELAR</button></div></div>
+<div class="modal-overlay" id="modalResumen"><div class="modal" style="max-width:550px;text-align:left"><h3 style="color:#ff9900;margin-bottom:10px">📋 RESUMEN</h3><div id="contenidoResumen" style="font-size:12px;background:#111;padding:10px;border-radius:6px;max-height:60vh;overflow-y:auto"></div><button class="btn-estado" style="background:#333;margin-top:10px" onclick="document.getElementById('modalResumen').style.display='none'">CERRAR</button></div></div>
+<div class="modal-overlay" id="modalCaja"><div class="modal" style="text-align:left"><h3 style="color:#f1c40f;margin-bottom:10px">💰 CAJA / ARQUEO - CHEF</h3><div style="display:flex;gap:6px;margin-bottom:10px"><div style="flex:1;background:#000;border:1px solid #27ae60;padding:8px;border-radius:6px;text-align:center"><div style="font-size:9px;color:#aaa">INGRESOS HOY</div><div id="cajaTotal" style="font-size:16px;font-weight:900;color:#27ae60">$0</div><small id="cajaTickets" style="color:#666">0 tickets</small></div><div style="flex:1;background:#000;border:1px solid #c0392b;padding:8px;border-radius:6px;text-align:center"><div style="font-size:9px;color:#aaa">EGRESOS HOY</div><div id="cajaEgresosTotal" style="font-size:16px;font-weight:900;color:#e74c3c">$0</div><small id="cajaEgresosCant" style="color:#666">0 compras</small></div><div style="flex:1;background:#111;border:2px solid #f1c40f;padding:8px;border-radius:6px;text-align:center"><div style="font-size:9px;color:#aaa">NETO CAJA</div><div id="cajaNeto" style="font-size:18px;font-weight:900;color:#f1c40f">$0</div></div></div><div style="background:#1a1212;border:1px solid #c0392b;border-radius:6px;padding:8px;margin-bottom:10px"><div style="font-size:10px;color:#e74c3c;font-weight:bold;margin-bottom:4px">➕ CARGAR EGRESO / COMPRA</div><div style="display:flex;gap:4px"><input id="egrConcepto" placeholder="Concepto: Carne, Verdura" style="flex:2;padding:7px;background:#111;border:1px solid #444;color:#fff;border-radius:4px;font-size:11px"><input id="egrMonto" type="number" placeholder="$" style="flex:1;padding:7px;background:#111;border:1px solid #444;color:#fff;border-radius:4px;font-size:11px"><button onclick="agregarEgreso()" style="background:#c0392b;color:#fff;border:none;padding:7px 12px;border-radius:4px;font-weight:bold;font-size:11px;cursor:pointer">CARGAR</button></div></div><div style="display:flex;gap:6px;margin-bottom:6px"><button class="btn" style="flex:1;border-color:#27ae60;color:#27ae60" onclick="verTabCaja('ingresos')">💵 INGRESOS</button><button class="btn" style="flex:1;border-color:#e74c3c;color:#e74c3c" onclick="verTabCaja('egresos')">🛒 EGRESOS</button></div><div id="cajaLista" style="font-size:11px;background:#111;padding:10px;border-radius:6px;max-height:45vh;overflow-y:auto"></div><button class="btn-estado" style="background:#333;margin-top:10px" onclick="document.getElementById('modalCaja').style.display='none'">CERRAR</button></div></div>
+<div class="modal-overlay" id="modalMensajes"><div class="modal" style="text-align:left"><h3 style="color:#3498db;margin-bottom:10px">💬 MENSAJES</h3><div class="chat-box" id="chatMensajes"></div><input type="text" id="inputMensaje" placeholder="Escribir aviso..." style="width:100%;padding:10px;background:#111;border:1px solid #444;color:#fff;border-radius:6px" onkeypress="if(event.key==='Enter')enviarMensaje()"><button style="margin-top:8px;width:100%;padding:10px;background:#27ae60;border:none;color:#fff;border-radius:6px;font-weight:bold;cursor:pointer" onclick="enviarMensaje()">📤 ENVIAR</button><button class="btn-estado" style="background:#333;margin-top:8px" onclick="document.getElementById('modalMensajes').style.display='none'">CERRAR</button></div></div>
+<div class="modal-overlay" id="modalAgotar"><div class="modal" style="max-width:550px;text-align:left"><h3 style="color:#e74c3c;margin-bottom:8px">🚫 AGOTAR STOCK</h3><div id="listaAgotar" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;max-height:60vh;overflow-y:auto"></div><button class="btn-estado" style="background:#333;margin-top:10px" onclick="document.getElementById('modalAgotar').style.display='none'">CERRAR</button></div></div>
 <script>
-const firebaseConfig={apiKey:"AIzaSyAvrpQSDoq9S87j3J7V4-uhJnPFCylCU",authDomain:"parrilla-la-perseveranci-f3f54.firebaseapp.com",databaseURL:"https://parrilla-la-perseveranci-f3f54-default-rtdb.firebaseio.com",projectId:"parrilla-la-perseveranci-f3f54",storageBucket:"parrilla-la-perseveranci-f3f54.firebasestorage.app",messagingSenderId:"899082319184",appId:"1:899082319184:web:9876161963705785efe855"};
+const firebaseConfig={apiKey:"AIzaSyAvrpQSDoq9S87j3J7V4-uhJnPFCylCU",authDomain:"parrilla-la-perseveranci-f3f54.firebaseapp.com",databaseURL:"https://parrilla-la-perseveranci-f3f54-default-rtdb.firebaseio.com",projectId:"parrilla-la-perseveranci-f3f54"};
 firebase.initializeApp(firebaseConfig);const db=firebase.database();
+function limpiarKey(str){return (str||'').normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-zA-Z0-9]/g,'_').replace(/__+/g,'_').toLowerCase();}
 const MAPEO={"Salón - Mesa 1":"Mesa 1","Salón - Mesa 2":"Mesa 2","Salón - Mesa 3":"Mesa 3","Salón - Mesa 4":"Mesa 4","Vereda - Mesa 5":"Mesa 5 Vereda","Vereda - Mesa 6":"Mesa 6 Vereda","Vereda - Mesa 7":"Mesa 7 Vereda","Canal - Mostrador":"Mostrador","Canal - Pickup":"Pickup","Canal - Delivery":"Delivery"};
 const NOMBRES={"Mesa 1":"MESA 1","Mesa 2":"MESA 2","Mesa 3":"MESA 3","Mesa 4":"MESA 4","Mesa 5 Vereda":"MESA 5 VEREDA","Mesa 6 Vereda":"MESA 6 VEREDA","Mesa 7 Vereda":"MESA 7 VEREDA","Mostrador":"MOSTRADOR","Pickup":"PICKUP","Delivery":"DELIVERY"};
 const MENU_COMPLETO=["Asado 1/2","Asado c/fritas","Vacio","Bife de chorizo","Entraña","Chorizo","Morcilla","Chinchulin","Molleja","Provoleta","Milanesa","Milanesa napolitana","Milanesa napo c/fritas","Fritas","Papas fritas","Ensalada Mixta","Ensalada Completa","Puré","Matambre","Pechuga","Suprema","Bondiola","Choripan","Morcipan"];
-let comandas={}, sel=null, agotadosCache={}, historialCaja=[], historialEgresos=[], tabCaja='ingresos';
+let comandas={},sel=null,agotadosCache={},historialCaja=[],historialEgresos=[],tabCaja='ingresos',audioCtx=null,ultimaAlarma={};
+function initAudio(){if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();}
+function beep(f,d){initAudio();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.frequency.value=f;o.connect(g);g.connect(audioCtx.destination);g.gain.value=.5;o.start();setTimeout(()=>{try{o.stop()}catch{}},d);}
+function alarmaTipo(t){beep(t.includes('RECIBIDO')?600:t.includes('PREP')?900:1200, t.includes('MANOS')?600:400);}
 const PARRILLA_BASE=['asado','vacio','vacío','bife','entraña','morcilla','chinchulin','chorizo','provoleta','molleja','costillar','matambre','bondiola','choripan','morcipan','parrillada','pollo'];
 const AGREGADOS_COCINA=['lechuga','tomate','jamon','jamón','queso','huevo','frita','papas'];
 const COCINA_PURA=['milanesa','suprema','pechuga','tortilla','buñuelo'];
-function descomponerItem(nombreCompleto){
-  const n=(nombreCompleto||'').toLowerCase();
-  if(COCINA_PURA.some(k=>n.includes(k))) return [{texto:nombreCompleto, estacion:'COCINA'}];
-  const esParrillaBase=PARRILLA_BASE.some(k=>n.includes(k));
-  const tieneAgregado=AGREGADOS_COCINA.some(k=>n.includes(k));
-  const esSandwichParrilla=(n.includes('vacio')||n.includes('bondiola')||n.includes('choripan')||n.includes('morcipan')||n.includes('chorizo')||n.includes('morcilla')||n.includes('asado')||n.includes('bife'))&&tieneAgregado;
-  if(esSandwichParrilla){
-    let carne=nombreCompleto; let agregado='';
-    const m=n.match(/(lechuga|tomate|jamon|jamón|queso|huevo|frita|papas)/);
-    if(m){ const idx=n.indexOf(m[0]); if(idx>2){ carne=nombreCompleto.substring(0,idx).trim(); agregado=nombreCompleto.substring(idx).trim(); } }
-    if(n.includes('c/fritas')){ const p=nombreCompleto.split(/c\/fritas/i); carne=p[0].trim(); agregado='FRITAS'; }
-    if(n.includes(' solo')) return [{texto:carne, estacion:'PARRILLA'}];
-    const res=[]; if(carne) res.push({texto:carne, estacion:'PARRILLA'}); if(agregado) res.push({texto:agregado.toUpperCase(), estacion:'COCINA', esGuarnicion:true});
-    return res.length?res:[{texto:nombreCompleto, estacion:'PARRILLA'}];
-  }
-  if(esParrillaBase && tieneAgregado){
-    const carne=nombreCompleto.split(/c\/fritas/i)[0].trim();
-    return [{texto:carne, estacion:'PARRILLA'}, {texto:'FRITAS', estacion:'COCINA', esGuarnicion:true}];
-  }
-  if(esParrillaBase) return [{texto:nombreCompleto, estacion:'PARRILLA'}];
-  return [{texto:nombreCompleto, estacion:'COCINA'}];
-}
-function esParrilla(n){ return descomponerItem(n).some(s=>s.estacion==='PARRILLA'); }
-function esGuarnicion(n){ return AGREGADOS_COCINA.some(k=>n.toLowerCase().includes(k)); }
-function getTipo(items){
-  let p=false,c=false;
-  (items||[]).forEach(it=>{ descomponerItem(it.nombre).forEach(s=>{ if(s.estacion==='PARRILLA') p=true; else c=true; }); });
-  if(p&&c) return 'MIXTA';
-  if(p) return 'PARRILLA';
-  return 'COCINA';
-}
+function descomponerItem(nom){const n=(nom||'').toLowerCase(); if(COCINA_PURA.some(k=>n.includes(k))) return [{texto:nom, estacion:'COCINA'}]; const esParr=PARRILLA_BASE.some(k=>n.includes(k)); const tiene=AGREGADOS_COCINA.some(k=>n.includes(k)); const esSand=(n.includes('vacio')||n.includes('bondiola')||n.includes('choripan')||n.includes('morcipan')||n.includes('chorizo')||n.includes('morcilla')||n.includes('asado')||n.includes('bife'))&&tiene; if(esSand){let carne=nom,agr='';const m=n.match(/(lechuga|tomate|jamon|jamón|queso|huevo|frita|papas)/); if(m){const idx=n.indexOf(m[0]); if(idx>2){carne=nom.substring(0,idx).trim(); agr=nom.substring(idx).trim();}} if(n.includes('c/fritas')){const p=nom.split(/c\/fritas/i); carne=p[0].trim(); agr='FRITAS';} if(n.includes(' solo')) return [{texto:carne, estacion:'PARRILLA'}]; const res=[]; if(carne) res.push({texto:carne, estacion:'PARRILLA'}); if(agr) res.push({texto:agr.toUpperCase(), estacion:'COCINA', esGuarnicion:true}); return res.length?res:[{texto:nom, estacion:'PARRILLA'}];} if(esParr&&tiene){const carne=nom.split(/c\/fritas/i)[0].trim(); return [{texto:carne, estacion:'PARRILLA'}, {texto:'FRITAS', estacion:'COCINA', esGuarnicion:true}];} if(esParr) return [{texto:nom, estacion:'PARRILLA'}]; return [{texto:nom, estacion:'COCINA'}];}
+function getTipo(items){let p=false,c=false;(items||[]).forEach(it=>{descomponerItem(it.nombre).forEach(s=>{if(s.estacion==='PARRILLA') p=true; else c=true;});}); if(p&&c) return 'MIXTA'; if(p) return 'PARRILLA'; return 'COCINA';}
 db.ref('comandas_activas').on('value',s=>{
 const data=s.val()||{};const nuevo={};
 Object.values(data).forEach(cmd=>{
 if(!cmd.mesa) return;const idV=MAPEO[cmd.mesa]||cmd.mesa;if(!NOMBRES[idV]) return;
-if(!nuevo[idV]) nuevo[idV]={id:idV,mesa:cmd.mesa,items:[],estado:(cmd.estado||'RECIBIDO').toUpperCase().replace('PENDIENTE','RECIBIDO'),estado_cocina:(cmd.estado_cocina||cmd.estado||'RECIBIDO').toUpperCase(),estado_parrilla:(cmd.estado_parrilla||cmd.estado||'RECIBIDO').toUpperCase(),total_cobrado:cmd.total_cobrado||0,timestamp:cmd.timestamp||Date.now(),nroOrden:cmd.nroOrden||Math.floor(Math.random()*900+100)};
+if(!nuevo[idV]) nuevo[idV]={id:idV,mesa:cmd.mesa,items:[],estado:(cmd.estado||'RECIBIDO').toUpperCase(),estado_cocina:(cmd.estado_cocina||cmd.estado||'RECIBIDO').toUpperCase(),estado_parrilla:(cmd.estado_parrilla||cmd.estado||'RECIBIDO').toUpperCase(),total_cobrado:cmd.total_cobrado||0,timestamp:cmd.timestamp||Date.now(),timestamp_estado:cmd.timestamp_estado||cmd.timestamp||Date.now(),nroOrden:cmd.nroOrden||100};
 (cmd.items||[]).forEach(it=>{if(!it.nombre||it.nombre.toLowerCase().includes('undefined')) return;const ex=nuevo[idV].items.find(x=>x.nombre===it.nombre);if(ex) ex.cantidad+=parseInt(it.cantidad||1);else nuevo[idV].items.push({nombre:it.nombre,cantidad:parseInt(it.cantidad||1)});});
-nuevo[idV].estado=cmd.estado||nuevo[idV].estado; nuevo[idV].estado_cocina=cmd.estado_cocina||nuevo[idV].estado; nuevo[idV].estado_parrilla=cmd.estado_parrilla||nuevo[idV].estado; nuevo[idV].total_cobrado=cmd.total_cobrado||0;
+nuevo[idV].estado=cmd.estado||nuevo[idV].estado; nuevo[idV].estado_cocina=cmd.estado_cocina||nuevo[idV].estado; nuevo[idV].estado_parrilla=cmd.estado_parrilla||nuevo[idV].estado; nuevo[idV].total_cobrado=cmd.total_cobrado||0; nuevo[idV].timestamp=cmd.timestamp||nuevo[idV].timestamp; nuevo[idV].timestamp_estado=cmd.timestamp_estado||nuevo[idV].timestamp_estado;
 });
-comandas=nuevo;render();
+comandas=nuevo;render();checkAlarmas();
 });
 db.ref('platos_agotados').on('value',s=>{agotadosCache=s.val()||{};render();});
-db.ref('historial_caja').on('value',s=>{const data=s.val()||{};historialCaja=Object.values(data).sort((a,b)=>(b.timestamp||0)-(a.timestamp||0));actualizarResumenCaja();});
-db.ref('egresos_caja').on('value',s=>{const data=s.val()||{};historialEgresos=Object.values(data).sort((a,b)=>(b.timestamp||0)-(a.timestamp||0));actualizarResumenCaja();});
+db.ref('historial_caja').on('value',s=>{historialCaja=Object.values(s.val()||{}).sort((a,b)=>(b.timestamp||0)-(a.timestamp||0));actualizarResumenCaja();});
+db.ref('egresos_caja').on('value',s=>{historialEgresos=Object.values(s.val()||{}).sort((a,b)=>(b.timestamp||0)-(a.timestamp||0));actualizarResumenCaja();});
 db.ref('mensajes_chat').limitToLast(50).on('value',snap=>{
-const box=document.getElementById('chatMensajes'); if(!box) return; box.innerHTML='';
-const data=snap.val(); if(!data){box.innerHTML='<div style="color:#666;text-align:center">Sin mensajes</div>';return;}
+const box=document.getElementById('chatMensajes'); if(!box) return; box.innerHTML='';const data=snap.val(); if(!data) return;
 Object.values(data).sort((a,b)=>(a.timestamp||0)-(b.timestamp||0)).forEach(m=>{
-const d=document.createElement('div'); d.className=`chat-msg ${m.remitente==='Hernán'?'mio':''}`;
-d.innerHTML=`<strong style="color:${m.remitente==='Hernán'?'#00ff66':m.remitente==='Mariana'?'#e74c3c':'#3498db'}">${m.remitente}</strong> <small>(${m.hora||''})</small><br>${m.texto}`;
-box.appendChild(d);
+const d=document.createElement('div'); d.className=`chat-msg ${m.remitente==='Hernán'?'mio':''}`;d.innerHTML=`<strong style="color:${m.remitente==='Hernán'?'#00ff66':m.remitente==='Mariana'?'#e74c3c':'#3498db'}">${m.remitente}</strong> <small>(${m.hora||''})</small><br>${m.texto}`;box.appendChild(d);
 }); box.scrollTop=box.scrollHeight;
 });
-function actualizarResumenCaja(){
-const hoy=new Date().toDateString(); let totalIng=0,tickets=0,totalEgr=0,cantEgr=0;
-historialCaja.forEach(r=>{if(new Date(r.timestamp||Date.now()).toDateString()===hoy){totalIng+=Number(r.total||r.total_cobrado||0);tickets++;}});
-historialEgresos.forEach(r=>{if(new Date(r.timestamp||Date.now()).toDateString()===hoy){totalEgr+=Number(r.monto||0);cantEgr++;}});
-const el=document.getElementById('cajaTotal'); if(el){el.textContent='$'+totalIng; document.getElementById('cajaTickets').textContent=tickets+' tickets'; document.getElementById('cajaEgresosTotal').textContent='$'+totalEgr; document.getElementById('cajaEgresosCant').textContent=cantEgr+' compras'; document.getElementById('cajaNeto').textContent='$'+(totalIng-totalEgr);}
-if(document.getElementById('modalCaja').style.display==='flex') renderListaCaja();
-}
-function renderListaCaja(){
-let html='';
-if(tabCaja==='ingresos'){
-if(historialCaja.length===0) html='<div style="color:#666;text-align:center">Sin ingresos hoy</div>';
-else historialCaja.slice(0,50).forEach(r=>{const f=new Date(r.timestamp||Date.now()).toLocaleString('es-AR'); html+=`<div style="display:flex;justify-content:space-between;border-bottom:1px solid #222;padding:5px 0"><div><b style="color:#27ae60">+ $${r.total||r.total_cobrado||0}</b> ${r.mesaId||r.mesa||''}<br><small style="color:#aaa">${f} - ${(r.items||[]).map(i=>i.nombre).join(', ').slice(0,50)}</small></div></div>`;});
-}else{
-if(historialEgresos.length===0) html='<div style="color:#666;text-align:center">Sin egresos hoy - Cargá tus compras</div>';
-else historialEgresos.slice(0,50).forEach(r=>{const f=new Date(r.timestamp||Date.now()).toLocaleString('es-AR'); html+=`<div style="display:flex;justify-content:space-between;border-bottom:1px solid #222;padding:5px 0"><div><b style="color:#e74c3c">- $${r.monto}</b> ${r.concepto}<br><small style="color:#aaa">${f} - ${r.por||'Hernán'}</small></div><button onclick="borrarEgreso('${r.id}')" style="background:none;border:1px solid #c0392b;color:#c0392b;padding:2px 6px;border-radius:3px;font-size:9px;cursor:pointer">X</button></div>`;});
-}
-document.getElementById('cajaLista').innerHTML=html;
-}
+function checkAlarmas(){Object.values(comandas).forEach(cmd=>{const tipo=getTipo(cmd.items); if(tipo==='PARRILLA') return; const ep=cmd.estado_parrilla||'',ec=cmd.estado_cocina||cmd.estado||'RECIBIDO'; const estadoEval=tipo==='MIXTA'?(ec.includes('MANOS')&&ep.includes('MANOS')?'MIXTA LISTA':ec):ec; const mins=(Date.now()-(cmd.timestamp_estado||cmd.timestamp))/1000/60; let debe=null; if(estadoEval==='RECIBIDO'&&mins>=5) debe='RECIBIDO'; if(estadoEval.includes('PREPARACION')&&mins>=15) debe='PREPARACION'; if((estadoEval.includes('MANOS')||estadoEval.includes('LISTA'))&&mins>=1.5) debe=estadoEval; if(debe){const k=limpiarKey(cmd.mesa)+'_'+debe; if(!ultimaAlarma[k]||Date.now()-ultimaAlarma[k]>30000){alarmaTipo(debe); ultimaAlarma[k]=Date.now(); console.log('ALARMA HERNAN',cmd.mesa,debe,mins.toFixed(1));}}});}
+setInterval(checkAlarmas,5000);
+document.addEventListener('click',initAudio,{once:true});
+function actualizarResumenCaja(){const hoy=new Date().toDateString(); let ti=0,tk=0,te=0,ce=0;historialCaja.forEach(r=>{if(new Date(r.timestamp||Date.now()).toDateString()===hoy){ti+=Number(r.total||r.total_cobrado||0);tk++;}});historialEgresos.forEach(r=>{if(new Date(r.timestamp||Date.now()).toDateString()===hoy){te+=Number(r.monto||0);ce++;}});const el=document.getElementById('cajaTotal'); if(el){el.textContent='$'+ti; document.getElementById('cajaTickets').textContent=tk+' tickets'; document.getElementById('cajaEgresosTotal').textContent='$'+te; document.getElementById('cajaEgresosCant').textContent=ce+' compras'; document.getElementById('cajaNeto').textContent='$'+(ti-te);} if(document.getElementById('modalCaja').style.display==='flex') renderListaCaja();}
+function renderListaCaja(){let html='';if(tabCaja==='ingresos'){if(historialCaja.length===0) html='Sin ingresos'; else historialCaja.slice(0,50).forEach(r=>{const f=new Date(r.timestamp||Date.now()).toLocaleString('es-AR'); html+=`<div style="display:flex;justify-content:space-between;border-bottom:1px solid #222;padding:5px 0"><div><b style="color:#27ae60">+ $${r.total||r.total_cobrado||0}</b> ${r.mesaId||r.mesa||''}<br><small>${f}</small></div></div>`;});}else{if(historialEgresos.length===0) html='Sin egresos'; else historialEgresos.slice(0,50).forEach(r=>{const f=new Date(r.timestamp||Date.now()).toLocaleString('es-AR'); html+=`<div style="display:flex;justify-content:space-between;border-bottom:1px solid #222;padding:5px 0"><div><b style="color:#e74c3c">- $${r.monto}</b> ${r.concepto}<br><small>${f}</small></div><button onclick="borrarEgreso('${r.id}')" style="background:none;border:1px solid #c0392b;color:#c0392b;padding:2px 6px;border-radius:3px">X</button></div>`;});} document.getElementById('cajaLista').innerHTML=html;}
 function verTabCaja(t){tabCaja=t; renderListaCaja();}
-function agregarEgreso(){
-const concepto=document.getElementById('egrConcepto').value.trim();
-const monto=Number(document.getElementById('egrMonto').value);
-if(!concepto||!monto){alert('Poné concepto y monto');return;}
-const id=Date.now();
-db.ref('egresos_caja/'+id).set({id:id, concepto:concepto, monto:monto, timestamp:id, por:'Hernán'});
-document.getElementById('egrConcepto').value=''; document.getElementById('egrMonto').value='';
-}
-function borrarEgreso(id){if(!confirm('¿Borrar egreso?'))return; db.ref('egresos_caja/'+id).remove();}
+function agregarEgreso(){const c=document.getElementById('egrConcepto').value.trim();const m=Number(document.getElementById('egrMonto').value);if(!c||!m){alert('Poné concepto y monto');return;}const id=Date.now();db.ref('egresos_caja/'+id).set({id:id,concepto:c,monto:m,timestamp:id,por:'Hernán'});document.getElementById('egrConcepto').value='';document.getElementById('egrMonto').value='';}
+function borrarEgreso(id){if(!confirm('¿Borrar?'))return; db.ref('egresos_caja/'+id).remove();}
 function render(){
 const ids=Object.keys(comandas);document.getElementById('cant').textContent=ids.length;
 const fifo=document.getElementById('listaFIFO');fifo.innerHTML='';
 ids.sort((a,b)=>comandas[a].timestamp-comandas[b].timestamp).forEach(id=>{
-const cmd=comandas[id];const tipo=getTipo(cmd.items);const nro=String(cmd.nroOrden).slice(-3);
-if(tipo==='PARRILLA'){ return; }
-const esCobrada=cmd.estado==='COBRADA'||cmd.estado_cocina==='COBRADA';
-let items='';cmd.items.forEach(it=>{
-  descomponerItem(it.nombre).forEach(s=>{
-    let cls=''; if(s.estacion==='PARRILLA') cls='tachado'; else if(s.esGuarnicion) cls='guarnicion';
-    let agotado=!!agotadosCache[it.nombre]; if(agotado) cls+=' tachado';
-    items+=`<div class="${cls}" style="display:flex;justify-content:space-between;font-size:12px"><span>• ${s.texto} ${agotado?'❌':''}</span><b style="color:${esCobrada?'#f1c40f':'#00ff66'}">x${it.cantidad}</b></div>`;
-  });
-});
-const div=document.createElement('div');div.className=`ticket ${esCobrada?'COBRADA':cmd.estado} ${tipo==='PARRILLA'?'solo-parrilla':''}`;div.onclick=()=>abrir(id);
-div.innerHTML=`<div style="display:flex;justify-content:space-between"><span><span style="background:#000;color:#f1c40f;border:1px solid #f1c40f;padding:1px 4px;border-radius:4px;font-family:monospace">#${nro}</span> ${id}</span><span class="badge-tipo" style="color:${esCobrada?'#f1c40f':tipo==='MIXTA'?'#f1c40f':'#00ff66'};border-color:${esCobrada?'#f1c40f':tipo==='MIXTA'?'#f1c40f':'#00ff66'}">${esCobrada?'💰 COBRADA $'+cmd.total_cobrado:tipo}</span></div><div style="font-size:10px;color:${esCobrada?'#f1c40f':'#aaa'};margin:4px 0">${cmd.estado} ${esCobrada?' - ESPERA MARIANA':''}</div>${items}`;
-fifo.appendChild(div);
+const cmd=comandas[id];const tipo=getTipo(cmd.items);if(tipo==='PARRILLA') return;const nro=String(cmd.nroOrden).slice(-3);const esCobrada=cmd.estado==='COBRADA'||cmd.estado_cocina==='COBRADA';
+const mins=(Date.now()-(cmd.timestamp_estado||cmd.timestamp))/1000/60; let alarmClass=''; if(!esCobrada){ if(cmd.estado==='RECIBIDO'&&mins>=5) alarmClass=' alarm-recibido'; else if((cmd.estado_cocina||'').includes('PREPARACION')&&mins>=15) alarmClass=' alarm-prep'; else if((cmd.estado_cocina||'').includes('MANOS')&&mins>=1.5) alarmClass=' alarm-manos';}
+let items='';cmd.items.forEach(it=>{descomponerItem(it.nombre).forEach(s=>{let cls=''; if(s.estacion==='PARRILLA') cls='tachado'; else if(s.esGuarnicion) cls='guarnicion'; if(agotadosCache[it.nombre]) cls+=' tachado'; items+=`<div class="${cls}" style="display:flex;justify-content:space-between;font-size:12px"><span>• ${s.texto}</span><b>x${it.cantidad}</b></div>`;});});
+const div=document.createElement('div');div.className=`ticket ${esCobrada?'COBRADA':cmd.estado_cocina||cmd.estado} ${alarmClass}`;div.onclick=()=>abrir(id);
+div.innerHTML=`<div style="display:flex;justify-content:space-between"><span><span style="background:#000;color:#f1c40f;border:1px solid #f1c40f;padding:1px 4px;border-radius:4px;font-family:monospace">#${nro}</span> ${id}</span><span class="badge-tipo" style="color:${esCobrada?'#f1c40f':tipo==='MIXTA'?'#f1c40f':'#00ff66'}">${esCobrada?'💰 COBRADA':tipo}</span></div><div style="font-size:10px;color:#aaa;margin:4px 0">${cmd.estado_cocina||cmd.estado} - ${mins.toFixed(1)}min</div>${items}`;fifo.appendChild(div);
 });
 const plano=document.getElementById('plano');plano.innerHTML='<div class="plano-grid" id="g"></div>';const g=document.getElementById('g');
 Object.keys(NOMBRES).forEach(id=>{
-const cmd=comandas[id];const tipo=cmd?getTipo(cmd.items):null;
-const esCobrada=cmd&&(cmd.estado==='COBRADA'||cmd.estado_cocina==='COBRADA');
-const card=document.createElement('div');card.className=`mesa-card ${cmd?'ocupada':''} ${tipo==='PARRILLA'?'solo-parrilla':''} ${esCobrada?'cobrada':''}`;card.onclick=()=>{if(cmd) abrir(id);};
-if(!cmd){card.innerHTML=`<b>${NOMBRES[id]}</b><br><small style="color:#666">Libre</small>`;}
-else{
-if(tipo==='PARRILLA'){ return; }
-if(esCobrada){card.innerHTML=`<b>${NOMBRES[id]}</b><div style="text-align:center;color:#f1c40f;font-weight:800;margin-top:8px">💰 COBRADA<br>$${cmd.total_cobrado||''}<br><small style="color:#fff">Espera Mariana</small></div>`;}
-else{
-const nro=String(cmd.nroOrden).slice(-3);const seg=Math.floor((Date.now()-cmd.timestamp)/1000);const mm=String(Math.floor(seg/60)).padStart(2,'0');const ss=String(seg%60).padStart(2,'0');
-let lista='';cmd.items.forEach(it=>{
-  descomponerItem(it.nombre).forEach(s=>{
-    let style='';if(s.estacion==='PARRILLA') style='text-decoration:line-through;opacity:0.4';
-    else if(s.esGuarnicion) style='font-weight:900;color:#fff;background:rgba(39,174,96,0.2);padding:1px 3px;border-radius:3px';
-    if(agotadosCache[it.nombre]) style='text-decoration:line-through;color:#ff0000';
-    lista+=`<li style="${style}">• ${s.texto} x${it.cantidad}</li>`;
-  });
-});
-card.innerHTML=`<div style="display:flex;justify-content:space-between"><span><span style="color:#f1c40f">#${nro}</span> ${NOMBRES[id]}</span><span class="badge-tipo" style="color:${tipo==='MIXTA'?'#f1c40f':'#00ff66'};border-color:${tipo==='MIXTA'?'#f1c40f':'#00ff66'}">${tipo}</span></div><div style="font-size:10px;color:#00ff66">${cmd.estado}</div><ul style="list-style:none;font-size:11px;margin:4px 0">${lista}</ul><div class="timer">${mm}:${ss}</div>`;
-}
-}
+const cmd=comandas[id];if(!cmd) {const card=document.createElement('div');card.className='mesa-card';card.innerHTML=`<b>${NOMBRES[id]}</b><br><small style="color:#666">Libre</small>`;g.appendChild(card); return;}const tipo=getTipo(cmd.items);if(tipo==='PARRILLA') return;const esCobrada=cmd.estado==='COBRADA'||cmd.estado_cocina==='COBRADA';
+const mins=(Date.now()-(cmd.timestamp_estado||cmd.timestamp))/1000/60; let alarmClass=''; if(!esCobrada){ if(cmd.estado==='RECIBIDO'&&mins>=5) alarmClass=' alarm-recibido'; else if((cmd.estado_cocina||'').includes('PREPARACION')&&mins>=15) alarmClass=' alarm-prep'; else if((cmd.estado_cocina||'').includes('MANOS')&&mins>=1.5) alarmClass=' alarm-manos';}
+const card=document.createElement('div');card.className=`mesa-card ocupada ${alarmClass} ${esCobrada?'cobrada':''}`;card.onclick=()=>{if(cmd) abrir(id);};
+if(esCobrada){card.innerHTML=`<b>${NOMBRES[id]}</b><div style="text-align:center;color:#f1c40f;font-weight:800;margin-top:8px">💰 COBRADA<br>$${cmd.total_cobrado||''}</div>`;}
+else{const seg=Math.floor((Date.now()-cmd.timestamp)/1000);const mm=String(Math.floor(seg/60)).padStart(2,'0');const ss=String(seg%60).padStart(2,'0');let lista='';cmd.items.forEach(it=>{descomponerItem(it.nombre).forEach(s=>{let style='';if(s.estacion==='PARRILLA') style='text-decoration:line-through;opacity:0.4'; else if(s.esGuarnicion) style='font-weight:900;color:#fff;background:rgba(39,174,96,0.2)'; lista+=`<li style="${style}">• ${s.texto} x${it.cantidad}</li>`;});}); card.innerHTML=`<div style="display:flex;justify-content:space-between"><span><span style="color:#f1c40f">#${String(cmd.nroOrden).slice(-3)}</span> ${NOMBRES[id]}</span><span class="badge-tipo" style="color:${tipo==='MIXTA'?'#f1c40f':'#00ff66'}">${tipo}</span></div><div style="font-size:10px;color:#00ff66">${cmd.estado_cocina||cmd.estado} - ${mins.toFixed(1)}min</div><ul style="list-style:none;font-size:11px;margin:4px 0">${lista}</ul><div class="timer">${mm}:${ss}</div>`;}
 g.appendChild(card);
 });
 }
 function abrir(id){
-sel=id;const cmd=comandas[id];const tipo=getTipo(cmd.items);
-const esCobrada=cmd.estado==='COBRADA'||cmd.estado_cocina==='COBRADA';
-if(esCobrada){
-document.getElementById('modalTitulo').textContent=id+' - 💰 COBRADA POR GUSTAVO';
-document.getElementById('modalDetalle').innerHTML=`<div style="text-align:center"><b style="color:#f1c40f">COBRADA $${cmd.total_cobrado||''}</b><br>Esperando Mariana libere.<br><br><small>${cmd.items.map(i=>i.nombre).join(', ')}</small></div>`;
-document.getElementById('b1').style.display='none';document.getElementById('b2').style.display='none';document.getElementById('b3').style.display='none';
-document.getElementById('modal').style.display='flex';return;
-}
+sel=id;const cmd=comandas[id];const tipo=getTipo(cmd.items);const esCobrada=cmd.estado==='COBRADA'||cmd.estado_cocina==='COBRADA';
+if(esCobrada){document.getElementById('modalTitulo').textContent=id+' - 💰 COBRADA';document.getElementById('modalDetalle').innerHTML=`COBRADA $${cmd.total_cobrado||''}<br>Espera Mariana`;document.getElementById('b1').style.display='none';document.getElementById('b2').style.display='none';document.getElementById('b3').style.display='none';document.getElementById('modal').style.display='flex';return;}
 document.getElementById('b1').style.display='block';document.getElementById('b2').style.display='block';document.getElementById('b3').style.display='block';
-if(tipo==='PARRILLA'){ return; }
+if(tipo==='PARRILLA') return;
 document.getElementById('modalTitulo').textContent=id+' - '+tipo;
-let det=`<b>Estado: ${cmd.estado}</b><br><br>`;cmd.items.forEach(it=>{det+=`${it.nombre} x${it.cantidad} => ${descomponerItem(it.nombre).map(s=>s.estacion+':'+s.texto).join(' + ')}<br>`;});
+let det=`<b>Estado: ${cmd.estado_cocina||cmd.estado}</b> - ${((Date.now()-(cmd.timestamp_estado||cmd.timestamp))/1000/60).toFixed(1)}min<br><br>`;cmd.items.forEach(it=>{det+=`${it.nombre} x${it.cantidad} => ${descomponerItem(it.nombre).map(s=>s.estacion+':'+s.texto).join(' + ')}<br>`;});
 document.getElementById('modalDetalle').innerHTML=det;
 document.getElementById('modal').style.display='flex';
 }
 function cerrar(){document.getElementById('modal').style.display='none';}
-function setEstado(n){if(!sel) return;const t=getTipo(comandas[sel].items);if(t==='PARRILLA') return;const esCobrada=comandas[sel].estado==='COBRADA';if(esCobrada){alert('Mesa cobrada, espera Mariana');return;}const idSeguro=comandas[sel].mesa.replace(/[^a-zA-Z0-9]/g,'_');db.ref('comandas_activas/'+idSeguro+'/estado').set(n);db.ref('comandas_activas/'+idSeguro+'/estado_cocina').set(n);db.ref('comandas_activas/'+idSeguro+'/timestamp').set(Date.now());cerrar();}
-function abrirResumen(){const ids=Object.keys(comandas);let html='';ids.forEach(id=>{const c=comandas[id];html+=`• ${id} [${getTipo(c.items)}] ${c.estado} - ${c.items.map(i=>i.nombre).join(', ')}<br>`;});document.getElementById('contenidoResumen').innerHTML=html||'Sin comandas';document.getElementById('modalResumen').style.display='flex';}
+function setEstado(n){
+if(!sel) return;const t=getTipo(comandas[sel].items);if(t==='PARRILLA') return;const esCobrada=comandas[sel].estado==='COBRADA';if(esCobrada){alert('Cobrada, espera Mariana');return;}
+const idSeguro=limpiarKey(comandas[sel].mesa);
+const ahora=Date.now();
+db.ref('comandas_activas/'+idSeguro+'/estado_cocina').set(n);
+db.ref('comandas_activas/'+idSeguro+'/timestamp_estado').set(ahora);
+db.ref('comandas_activas/'+idSeguro+'/timestamp_'+n.toLowerCase()).set(ahora);
+// Si es solo cocina, también actualiza estado general para Mariana
+if(t==='COCINA'){ db.ref('comandas_activas/'+idSeguro+'/estado').set(n); }
+cerrar();
+}
+function abrirResumen(){let html='';Object.keys(comandas).forEach(id=>{const c=comandas[id];html+=`• ${id} [${getTipo(c.items)}] ${c.estado_cocina||c.estado} - ${c.items.map(i=>i.nombre).join(', ')}<br>`;});document.getElementById('contenidoResumen').innerHTML=html||'Sin comandas';document.getElementById('modalResumen').style.display='flex';}
 function abrirCaja(){tabCaja='ingresos';actualizarResumenCaja();renderListaCaja();document.getElementById('modalCaja').style.display='flex';}
-function abrirMensajes(){document.getElementById('modalMensajes').style.display='flex'; setTimeout(()=>{const b=document.getElementById('chatMensajes'); if(b) b.scrollTop=b.scrollHeight;},100);}
+function abrirMensajes(){document.getElementById('modalMensajes').style.display='flex';}
 function enviarMensaje(){const inp=document.getElementById('inputMensaje');const txt=inp.value.trim();if(!txt)return;db.ref('mensajes_chat').push({remitente:'Hernán',texto:txt,hora:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),timestamp:Date.now()});inp.value='';}
-function abrirAgotar(){const cont=document.getElementById('listaAgotar');cont.innerHTML='';MENU_COMPLETO.forEach(plato=>{const esta=!!agotadosCache[plato];const d=document.createElement('div');d.style.cssText=`padding:10px;border-radius:6px;cursor:pointer;font-size:11px;border:1px solid ${esta?'#c0392b':'#333'};background:${esta?'#3a1212':'#1e1e1e'};color:${esta?'#ff6b6b':'#fff'};text-align:center`;d.textContent=(esta?'❌ ':'')+plato;d.onclick=()=>toggleAgotar(plato,esta);cont.appendChild(d);});document.getElementById('modalAgotar').style.display='flex';}
-function toggleAgotar(plato,esta){if(esta) db.ref('platos_agotados/'+plato).remove();else db.ref('platos_agotados/'+plato).set({timestamp:Date.now(),por:'Hernán'});setTimeout(abrirAgotar,300);}
+function abrirAgotar(){const cont=document.getElementById('listaAgotar');cont.innerHTML='';MENU_COMPLETO.forEach(plato=>{const esta=!!agotadosCache[plato];const d=document.createElement('div');d.style.cssText=`padding:10px;border-radius:6px;cursor:pointer;font-size:11px;border:1px solid ${esta?'#c0392b':'#333'};background:${esta?'#3a1212':'#1e1e1e'};color:${esta?'#ff6b6b':'#fff'};text-align:center`;d.textContent=(esta?'❌ ':'')+plato;d.onclick=()=>{if(esta) db.ref('platos_agotados/'+plato).remove();else db.ref('platos_agotados/'+plato).set({timestamp:Date.now(),por:'Hernán'}); setTimeout(abrirAgotar,300);};cont.appendChild(d);});document.getElementById('modalAgotar').style.display='flex';}
 setInterval(render,1000);
 </script>
 </body>
