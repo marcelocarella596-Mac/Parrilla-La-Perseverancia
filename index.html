@@ -40,10 +40,9 @@ h1{color:#f1c40f;font-size:20px}
   </div>
 </div>
 <script>
-// FIX QR → PDF - 6 lineas - ASOCIA TUS 9 QR IMPRESOS AL MENU
 const q=new URLSearchParams(location.search);
 if(q.get('mesa')||q.get('delivery')){
-  location.href='menu-ejecutivo_1.pdf';
+  location.href='menu-ejecutivo.pdf';
 }
 const p=new URLSearchParams(location.search);
 if(p.get('admin')==='sili' || p.get('sup')==='1' || localStorage.getItem('soy_dueno')==='1'){
