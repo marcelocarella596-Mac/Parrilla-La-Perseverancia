@@ -1,169 +1,55 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>GUSTAVO v2.3 - FIX MINUTAS</title>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LA PERSEVERANCIA - DUEÑO</title>
 <style>
-*{box-sizing:border-box;margin:0;font-family:system-ui}
-body{background:#0f0f0f;color:#fff;height:100vh;overflow:hidden}
-.layout{display:grid;grid-template-columns:360px 1fr 380px;height:100vh;gap:10px;padding:10px}
-.col{background:#1a1a1a;border-radius:12px;display:flex;flex-direction:column;overflow:hidden}
-.header{padding:10px 12px;background:#111;font-weight:900;border-bottom:1px solid #222;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px}
-#buscador{width:100%;padding:12px;border-radius:10px;border:0;background:#222;color:#fff;margin:8px 0;font-size:16px}
-.cats{display:flex;gap:6px;flex-wrap:wrap;padding:0 8px 10px;max-height:110px;overflow:auto}
-.cat{background:#222;padding:7px 12px;border-radius:20px;font-size:12px;cursor:pointer;white-space:nowrap;border:1px solid #333}
-.cat.act{background:#ffcc00;color:#000;border-color:#ffcc00;font-weight:900}
-.prod{display:flex;gap:10px;padding:10px;border-bottom:1px solid #222;align-items:center}
-.prod img{width:56px;height:56px;border-radius:10px;object-fit:cover;background:#222}
-.prod.i{flex:1;min-width:0}
-.prod.p{font-weight:900;color:#ffcc00}
-.add{background:#ffcc00;color:#000;border:0;width:38px;height:38px;border-radius:50%;font-weight:900;font-size:20px;cursor:pointer}
-#plano{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:12px;flex:1;align-content:start;overflow:auto}
-.mesa-card{border-radius:14px;padding:14px;min-height:110px;cursor:pointer;position:relative;border:2px solid transparent}
-.mesa-card.libre{background:#2a2a2a;color:#777}.mesa-card.ocupado{background:#0a3d1f;border-color:#00ff88}.mesa-card.cobrado{background:#ffcc00;color:#000;animation:pulse 1.2s infinite}
-@keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.03)}100%{transform:scale(1)}}
-.mesa-card.tot{font-size:20px;font-weight:900}.mesa-card.timer{font-size:11px;background:#0008;padding:2px 6px;border-radius:10px;position:absolute;top:8px;right:8px}
-.kds-item{background:#fff;color:#000;border-radius:10px;padding:10px;margin:8px;border-left:6px solid #ff9900}
-.kds-item.coccion{border-left-color:#00aaff}.kds-item.cobrado-kds{border-left-color:#ffcc00;background:#fff9c4}
-.kds-head{display:flex;justify-content:space-between;font-weight:900}
-.scroll{overflow:auto;flex:1}
-.btn{padding:10px;border-radius:8px;border:0;font-weight:800;cursor:pointer;margin-top:6px;width:100%}
-.btn-coccion{background:#00aaff;color:#fff}.btn-entregar{background:#00cc66;color:#fff}.btn-cobrar{background:#ffcc00;color:#000}
-.caja-box{padding:10px;background:#111;border-top:1px solid #222;font-size:12px}
-.fab{display:none}
-@media(max-width:900px){
-.layout{grid-template-columns:1fr;grid-template-rows:auto 1fr auto;height:100dvh;gap:6px;padding:6px;overflow:auto}
-.col:nth-child(1){order:3}.col:nth-child(2){order:1}.col:nth-child(3){order:2}
-#plano{grid-template-columns:1fr 1fr;gap:8px}
-.fab{display:block;position:fixed;bottom:14px;right:14px;background:#ffcc00;color:#000;border:none;padding:14px 22px;border-radius:30px;font-weight:900;z-index:30;box-shadow:0 6px 20px #000}
-#col-menu{position:fixed;bottom:0;left:0;right:0;max-height:84vh;transform:translateY(100%);transition:.28s;z-index:25;border-top-left-radius:18px;border-top-right-radius:18px}
-#col-menu.open{transform:translateY(0)}
-}
+*{box-sizing:border-box;margin:0;padding:0;font-family:Segoe UI,sans-serif}
+body{background:#0e0e0e;color:#fff;text-align:center;padding:20px}
+h1{color:#f1c40f;font-size:20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;max-width:950px;margin:20px auto}
+.card{background:#161616;border:2px solid #333;border-radius:12px;padding:18px;cursor:pointer;position:relative}
+.card.gustavo{border-color:#c0392b}.card.hernan{border-color:#27ae60}.card.mariana{border-color:#3498db}.card.caja{border-color:#f1c40f;display:none}
+.btn-sup{position:absolute;top:8px;right:8px;font-size:9px;padding:4px 7px;border-radius:4px;border:1px solid #555;background:#000;color:#aaa;cursor:pointer;z-index:2}
+.btn-sup.caja{border-color:#f1c40f;color:#f1c40f}
+.btn-sup.prop{border-color:#3498db;color:#3498db}
 </style>
 </head>
 <body>
-<div class="layout">
-<div class="col" id="col-menu">
-<div class="header">🍖 MENÚ <small id="menuCount">cargando...</small> <button onclick="toggleMenu()" style="background:#222;color:#fff;border:0;padding:6px 12px;border-radius:8px">✕</button></div>
-<div style="padding:8px"><input id="buscador" placeholder="Buscar en 93 items..."><div class="cats" id="cats"></div></div>
-<div class="scroll" id="listaMenu"></div>
+<h1>🔥 LA PERSEVERANCIA - SISTEMA DUEÑO</h1>
+<p style="font-size:11px;color:#666">Gustavo cobra • Hernán carga egresos • Mariana libera • Vos ves todo</p>
+
+<div class="grid">
+  <div class="card gustavo" onclick="location.href='parrilla_gustavo.html'">
+    <button class="btn-sup caja" onclick="event.stopPropagation();location.href='parrilla_gustavo.html?sup=1'">SUP • CAJA / ARQUEO</button>
+    <div style="font-size:28px">🔥</div><b>GUSTAVO PARRILLA</b>
+    <small>Cobra mesas<br>Parrilla y mixta<br><b style="color:#f1c40f">SUP ve caja + egresos Hernán</b></small>
+  </div>
+
+  <div class="card hernan" onclick="location.href='cocina_hernan.html'">
+    <button class="btn-sup caja" onclick="event.stopPropagation();location.href='cocina_hernan.html?caja=1'">CAJA + EGRESOS</button>
+    <div style="font-size:28px">🍳</div><b>HERNÁN COCINA - JEFE</b>
+    <small>Carga compras<br>Ve neto con egresos</small>
+  </div>
+
+  <div class="card mariana" onclick="location.href='mariana_mozo.html'">
+    <button class="btn-sup prop" onclick="event.stopPropagation();location.href='mariana_mozo.html?propinas=1'">💸 PROPINAS</button>
+    <div style="font-size:28px">💁‍♀️</div><b>MARIANA MOZO</b>
+    <small>Libera mesas cobradas<br>Consulta propinas</small>
+  </div>
+
+  <div class="card caja" id="cardCaja" onclick="location.href='caja_arqueo.html'">
+    <div style="font-size:28px">💰</div><b>CAJA / ARQUEO + EGRESOS (SOLO VOS)</b>
+    <small>Ingresos Gustavo<br>Egresos Hernán<br>Neto real + Propinas</small>
+  </div>
 </div>
-<div class="col">
-<div class="header">📍 PLANO <span style="font-size:10px">🟢 Ocupado 🟡 Cobrado ⚪ Libre</span> <small id="reloj"></small></div>
-<div id="plano"></div>
-<div class="caja-box">
-<div style="display:flex;justify-content:space-between"><span>Caja neta hoy:</span><b id="cajaNeta" style="color:#00ff88">$0</b></div>
-<button class="btn btn-cobrar" onclick="abrirCaja()">📦 CERRAR CAJA</button>
-</div>
-</div>
-<div class="col">
-<div class="header">🔥 KDS <span id="fifoCount">0</span></div>
-<div class="scroll" id="kds"></div>
-</div>
-</div>
-<button class="fab" onclick="toggleMenu()">+ MENU (93)</button>
+
 <script>
-const firebaseConfig={apiKey:"AIzaSyAvrpQSDoq9S87j3J7V4-uhJnPFCylCU",authDomain:"parrilla-la-perseveranci-f3f54.firebaseapp.com",databaseURL:"https://parrilla-la-perseveranci-f3f54-default-rtdb.firebaseio.com",projectId:"parrilla-la-perseveranci-f3f54"};
-firebase.initializeApp(firebaseConfig); const db=firebase.database();
-function limpiarKey(k){return k.replace(/[^a-zA-Z0-9_-]/g,'_').replace(/__+/g,'_');}
-const MESAS=["MESA 1","MESA 2","MESA 3","MESA 4","MESA 5","MESA 6","MOSTRADOR","DELIVERY","PICKUP"];
-let comandas={}, carritoTemp=null, productos=[], catAct="TODO";
-function escucharMenuReal(){
-db.ref('menu').on('value', snap=>{
-const data=snap.val();
-if(!data){ document.getElementById('menuCount').textContent='0 items'; return; }
-productos = Object.values(data).map(p=>({
-n: (p.nombre || p.name || '').trim(),
-p: Number(p.precio || p.price || 0),
-cat: (p.cat || p.categoria || p.rubro || 'VARIOS').trim(),
-img: p.img || p.imagen || ''
-})).filter(x=>x.n);
-document.getElementById('menuCount').textContent=productos.length+' items';
-renderCats(); renderMenu();
-});
+const p=new URLSearchParams(location.search);
+if(p.get('admin')==='sili' || p.get('sup')==='1' || localStorage.getItem('soy_dueno')==='1'){
+  document.getElementById('cardCaja').style.display='block';
 }
-function renderCats(){
-let uniques = [...new Set(productos.map(p=>p.cat))].sort((a,b)=>a.localeCompare(b));
-let all = ["TODO",...uniques];
-document.getElementById('cats').innerHTML = all.map(c=>{
-let cnt = c==="TODO"? productos.length : productos.filter(p=>p.cat===c).length;
-return `<div class="cat ${catAct===c?'act':''}" onclick="setCat('${c.replace(/'/g,"\\'")}')">${c} (${cnt})</div>`;
-}).join('');
-}
-function setCat(c){ catAct=c; renderCats(); renderMenu(); }
-function renderMenu(){
-const filtro = (document.getElementById('buscador').value||'').toLowerCase().trim();
-let list = productos.filter(p=>{
-let catOk = catAct==="TODO" || p.cat===catAct;
-let txtOk =!filtro || p.n.toLowerCase().includes(filtro) || p.cat.toLowerCase().includes(filtro);
-return catOk && txtOk;
-});
-list.sort((a,b)=>a.n.localeCompare(b.n));
-document.getElementById('listaMenu').innerHTML = list.map(pr=>{
-let img = pr.img || `https://via.placeholder.com/56/56/222/fff?text=${encodeURIComponent(pr.n[0])}`;
-return `<div class="prod"><img src="${img}"><div class="i"><div>${pr.n}</div><div class="p">$${pr.p} <span style="font-size:10px;color:#aaa">${pr.cat}</span></div></div><button class="add" onclick='addToMesa("${pr.n.replace(/"/g,'\\"')}",${pr.p})'>+</button></div>`;
-}).join('') || `<div style="padding:30px;color:#666;text-align:center">No hay productos en "${catAct}"</div>`;
-document.getElementById('menuCount').textContent = `${list.length}/${productos.length} en ${catAct}`;
-}
-document.getElementById('buscador').addEventListener('input', renderMenu);
-function toggleMenu(){ document.getElementById('col-menu').classList.toggle('open'); }
-function renderPlano(){
-let h=""; MESAS.forEach(m=>{
-let key=limpiarKey('mesa_'+m.toLowerCase());
-let com=comandas[key];
-let cls=com? (com.estado=='COBRADO'?'cobrado':'ocupado'):'libre';
-let total=com?`$${com.total||0}`:'Libre';
-let mins=com? Math.floor((Date.now()-com.timestamp)/60000)+'m':'';
-h+=`<div class="mesa-card ${cls}" onclick="clickMesa('${m}')"><div style="font-weight:900">${m}</div><div class="tot">${total}</div><div style="font-size:11px">${com? (com.items?.length||0)+' items':''}</div><div class="timer">${mins}</div></div>`;
-});
-document.getElementById('plano').innerHTML=h;
-}
-function renderKDS(){
-let arr=Object.values(comandas).filter(c=>c.estado!=='CERRADA').sort((a,b)=>a.timestamp-b.timestamp);
-document.getElementById('fifoCount').innerText=arr.length;
-let h=""; arr.forEach((c,i)=>{
-let num=String(i+1).padStart(3,'0');
-let estadoClass=c.estado_parrilla=='EN_COCCION'?'coccion':(c.estado=='COBRADO'?'cobrado-kds':'');
-let tiempo=Math.floor((Date.now()-c.timestamp_estado)/60000);
-let alerta=tiempo>=90?'🔴 1.5h':tiempo>=15?'🟡 15m':tiempo>=5?'🟠 5m':'';
-h+=`<div class="kds-item ${estadoClass}"><div class="kds-head"><span>#${num} ${c.mesa}</span><span>${alerta}</span></div><div style="font-size:12px">${new Date(c.timestamp).toLocaleTimeString()} • $${c.total}</div><div style="margin:6px 0">${(c.items||[]).map(it=>`• ${it.cantidad}x ${it.nombre}`).join('<br>')}</div>${c.estado_parrilla=='RECIBIDO'?`<button class="btn btn-coccion" onclick="cambiarEstado('${limpiarKey('mesa_'+c.mesa.toLowerCase())}','EN_COCCION')">🔥 EN COCCIÓN</button>`:''}${c.estado_parrilla=='EN_COCCION'?`<button class="btn btn-entregar" onclick="entregar('${limpiarKey('mesa_'+c.mesa.toLowerCase())}')">✅ ENTREGADO</button>`:''}${c.estado!=='COBRADO'?`<button class="btn btn-cobrar" onclick="cobrar('${limpiarKey('mesa_'+c.mesa.toLowerCase())}')">💰 COBRAR</button>`:''}</div>`;
-});
-document.getElementById('kds').innerHTML=h||'<div style="padding:20px;color:#666">Sin comandas</div>';
-}
-function clickMesa(m){ carritoTemp=m; if(window.innerWidth<=900) toggleMenu(); }
-function addToMesa(nombre,precio){
-if(!carritoTemp) return alert('Toca primero una mesa en el PLANO');
-let key=limpiarKey('mesa_'+carritoTemp.toLowerCase());
-let com=comandas[key]||{mesa:carritoTemp,items:[],total:0,timestamp:Date.now(),timestamp_estado:Date.now(),estado:'RECIBIDO',estado_parrilla:'RECIBIDO'};
-let punto=prompt('Punto?')||''; let nota=prompt('Nota?')||'';
-let ex=com.items.find(x=>x.nombre==nombre && x.punto==punto && x.nota==nota);
-if(ex) ex.cantidad++; else com.items.push({nombre,cantidad:1,precio,punto,nota});
-com.total=com.items.reduce((s,it)=>s+it.precio*it.cantidad,0); com.timestamp_estado=Date.now();
-db.ref('comandas_activas/'+key).set(com);
-}
-function cambiarEstado(key,est){ db.ref('comandas_activas/'+key+'/estado_parrilla').set(est); db.ref('comandas_activas/'+key+'/timestamp_estado').set(Date.now()); }
-function entregar(key){ db.ref('comandas_activas/'+key+'/estado_parrilla').set('ENTREGADO'); db.ref('comandas_activas/'+key+'/timestamp_estado').set(Date.now()); }
-function cobrar(key){
-let com=comandas[key]; if(!com) return;
-let metodo=prompt('Método: EFECTIVO / DEBITO / CREDITO / MP / TRANSFER','EFECTIVO'); if(!metodo) return;
-let monto=prompt('Monto',com.total); if(!monto) return; let prop=prompt('Propina?','0');
-db.ref('comandas_activas/'+key).update({estado:'COBRADO',estado_parrilla:'COBRADO',metodo_pago:metodo,propina:parseInt(prop)||0,timestamp_estado:Date.now()});
-let hoy=new Date().toISOString().slice(0,10);
-db.ref('caja_diaria/'+hoy+'/'+key).set({...com,metodo_pago:metodo,propina:parseInt(prop)||0,cobrado:parseInt(monto),timestamp_cobro:Date.now()});
-}
-function escucharCaja(){
-let hoy=new Date().toISOString().slice(0,10);
-db.ref('caja_diaria/'+hoy).on('value',snap=>{
-let val=snap.val()||{}; let ingresos=0; Object.values(val).forEach(c=>{ if(c.total) ingresos+=parseInt(c.total); });
-document.getElementById('cajaNeta').innerText='$'+ingresos;
-});
-}
-function abrirCaja(){ alert('Cierre caja'); }
-setInterval(()=>{ document.getElementById('reloj').innerText=new Date().toLocaleTimeString(); },1000);
-db.ref('comandas_activas').on('value',snap=>{ comandas=snap.val()||{}; renderPlano(); renderKDS(); });
-escucharMenuReal(); escucharCaja(); renderPlano();
+if(p.get('admin')==='sili'){localStorage.setItem('soy_dueno','1');}
 </script>
 </body>
 </html>
