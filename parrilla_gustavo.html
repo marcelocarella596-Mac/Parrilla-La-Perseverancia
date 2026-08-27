@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>GUSTAVO v2.7 - 93 - FIX COMANDAS_ACTIVAS + QR + COBRO OBLIGATORIO</title>
+<title>GUSTAVO v2.11 - ESTADOS FIX + TACHADO + ALARMA</title>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
@@ -26,18 +26,63 @@ select,input{width:100%;background:#0e0e0e;border:1px solid #333;color:#fff;padd
 .btn{width:100%;padding:11px;border-radius:9px;border:1px solid #ff6b6b;background:linear-gradient(180deg,#e74c3c,#7a0000);color:#fff;font-weight:900;cursor:pointer;margin-top:8px}
 .btn-sec{width:100%;padding:8px;border-radius:8px;border:1px solid #444;background:#1a1a1a;color:#aaa;font-size:11px;cursor:pointer;margin-top:6px}
 .plano{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;align-content:start;overflow-y:auto;flex:1;min-height:0;padding-right:4px}
-.mesa{background:#141414;border:2px solid #333;border-radius:11px;padding:10px;min-height:118px;cursor:pointer}
+.mesa{background:#141414;border:2px solid #333;border-radius:11px;padding:10px;min-height:135px;cursor:pointer;position:relative}
 .mesa.ocupada{border-color:#c0392b;background:#1c0f0f}.mesa.mixta{border-color:#f1c40f;background:#1c1908}
+.mesa.cobrada{border-color:#2ecc71;background:#0f1a0f;box-shadow:0 0 12px #2ecc71aa}
+.mesa.alarm-recibido{box-shadow:0 0 0 3px #e74c3c,0 0 20px #e74c3c;animation:parp 0.8s infinite}
+.mesa.alarm-prep{box-shadow:0 0 0 3px #f39c12,0 0 20px #f39c12;animation:parp 0.6s infinite}
+.mesa.alarm-manos{box-shadow:0 0 0 3px #2ecc71,0 0 25px #2ecc71;animation:parp 0.4s infinite}
+@keyframes parp{0%,100%{opacity:1}50%{opacity:.7}}
 .mesa h4{font-size:10px;color:#f1c40f;margin-bottom:6px;display:flex;justify-content:space-between}
-.mesa p{font-size:10px;color:#999}.mesa.pr{color:#2ecc71;font-weight:900;font-size:12px;margin-top:6px}
+.mesa p{font-size:10px;color:#999}.mesa .pr{color:#2ecc71;font-weight:900;font-size:12px;margin-top:6px}
 .btn-m{flex:1;padding:6px;border-radius:6px;border:1px solid #333;background:#0e0e0e;color:#fff;font-size:9px;cursor:pointer}.btn-m.cob{background:#27ae60;border-color:#2ecc71;color:#fff;font-weight:700}
 .fifo{flex:1;overflow-y:auto;min-height:0}.fifo-item{background:#0e0e0e;border-left:3px solid #c0392b;padding:8px;border-radius:6px;margin-bottom:6px}
 #panelQR{background:#fff;border:2px solid #f1c40f;border-radius:10px;padding:10px;margin-bottom:10px;display:none}
+/* MODAL ESTADOS */
+.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.9);display:none;justify-content:center;align-items:center;z-index:999}
+.modalBox{background:#1e1e1e;border:1px solid #f1c40f;border-radius:10px;padding:16px;width:95%;max-width:620px;max-height:90vh;overflow:auto}
+.btn-estado{padding:7px 10px;border:none;border-radius:6px;font-weight:bold;cursor:pointer;font-size:10px;margin:2px}
+.btn-estado.recibido{background:#e74c3c;color:#fff}
+.btn-estado.prep{background:#f39c12;color:#000}
+.btn-estado.manos{background:#2ecc71;color:#000}
+.btn-estado.entregado{background:#3498db;color:#fff}
+.tag-cocina{color:#00ff66;background:rgba(0,255,102,.12);border-left:3px solid #00ff66;padding:6px 8px;border-radius:5px;margin-bottom:5px;display:flex;justify-content:space-between;cursor:pointer}
+.tag-parrilla{color:#ff9900;background:rgba(255,153,0,.12);border-left:3px solid #ff9900;padding:6px 8px;border-radius:5px;margin-bottom:5px;display:flex;justify-content:space-between;cursor:pointer}
+.tachado{text-decoration:line-through;opacity:.4;background:#333!important}
 </style></head><body>
-<div class="header"><h1>🔥 GUSTAVO v2.7 - 93 - COMANDAS_ACTIVAS + QR + COBRO OBLIGATORIO</h1>
-<div class="badges"><span class="badge red" id="bFirebase">Firebase: conectando...</span><span class="badge" id="reloj">--:--</span><span class="badge green" id="bAct">Activas: 0</span><span class="badge yellow" id="bMix">Mixtas: 0</span><span class="badge blue" onclick="toggleQR()">📱 QR MENU</span><span class="badge blue" onclick="location.href='index.html'">🏠 HUB</span></div></div>
+<div class="header"><h1>🔥 GUSTAVO v2.11 - ESTADOS + TACHADO + ALARMA</h1>
+<div class="badges"><span class="badge red" id="bFirebase">Firebase: conectando...</span><span class="badge" id="reloj">--:--</span><span class="badge green" id="bAct">Activas: 0</span><span class="badge yellow" id="bMix">Mixtas: 0</span><span class="badge" style="color:#fff;border-color:#fff;background:#222" id="bSonido" onclick="toggleSonido()">🔔 SONIDO ON</span><span class="badge blue" onclick="toggleQR()">📱 QR MENU</span><span class="badge blue" onclick="location.href='index.html'">🏠 HUB</span><span class="badge blue" style="background:#f1c40f;color:#000" onclick="abrirModalImpresion()">🖨️ TICKET</span></div></div>
 <div style="padding:10px"><div id="panelQR"><div style="display:flex;gap:12px;flex-wrap:wrap"><div><div style="color:#000;font-size:11px;font-weight:900;margin-bottom:6px">QR -> menu.pdf</div><input id="inputPdfUrl" style="background:#eee;color:#000;border:1px solid #ccc" value="https://marcelocarella596-mac.github.io/Parrilla-La-Perseverancia/menu.pdf"><button class="btn-sec" style="background:#f1c40f;color:#000;font-weight:900;border:none" onclick="generarQR()">🔄 GENERAR QR</button><div style="background:#fff;padding:8px;display:flex;justify-content:center;margin-top:6px;border-radius:6px"><div id="qrcode"></div></div><button class="btn-sec" style="background:#000;color:#f1c40f" onclick="descargarQR()">⬇️ DESCARGAR qr_menu.png</button></div><div style="flex:1;min-width:250px"><iframe id="pdfViewer" src="https://marcelocarella596-mac.github.io/Parrilla-La-Perseverancia/menu.pdf" style="width:100%;height:280px;border:1px solid #ccc;border-radius:6px"></iframe></div></div></div></div>
-<div class="main"><div class="panel"><h3>1. UBICACIÓN</h3><select id="ubic"><option>Salón - Mesa 1</option><option>Salón - Mesa 2</option><option>Salón - Mesa 3</option><option>Salón - Mesa 4</option><option>Vereda - Mesa 5</option><option>Vereda - Mesa 6</option><option>Vereda - Mesa 7</option><option>Canal - Mostrador</option><option>Canal - Delivery</option><option>Canal - Pickup</option></select><h3>2. MENÚ - 93 REALES - FIREBASE</h3><input id="bus" placeholder="Buscar..." oninput="filtrarBus()"><div class="tabs" id="tabs"></div><div class="menu-grid" id="grid"></div><h3 style="margin-top:10px">3. SELECCIÓN</h3><div class="seleccion" id="sel">No hay items</div><div class="total-box"><div style="display:flex;justify-content:space-between"><span>TOTAL:</span><b id="total" style="color:#f1c40f">$0</b></div></div><button class="btn" onclick="enviar()">🔥 ENVIAR A COCINA (FIREBASE)</button><button class="btn-sec" onclick="limpiar()">Limpiar</button></div><div class="panel"><h3>📍 PLANO - EN VIVO - comandas_activas</h3><div class="plano" id="plano"></div></div><div class="panel"><h3>📋 PENDIENTES FIFO (<span id="cPend">0</span>)</h3><div class="fifo" id="fifo">Sin pendientes</div><h3 style="margin-top:10px">💬 MENSAJES FIREBASE</h3><div id="msgs" style="max-height:160px;overflow-y:auto;background:#0a0a0a;border:1px solid #222;border-radius:8px;padding:6px;margin-bottom:6px"></div><input id="msg" placeholder="Aviso a cocina..." onkeypress="if(event.key==='Enter')sendMsg()"><button class="btn-sec" style="background:#1a3a5a;color:#60a5fa" onclick="sendMsg()">Enviar</button><div style="margin-top:10px;background:#000;border:1px solid #333;border-radius:8px;padding:8px"><button class="btn-m cob" style="width:100%;padding:10px" onclick="cobrarSel()">💵 COBRAR SELECCIONADA (LIBERA)</button><button class="btn-m" style="width:100%;margin-top:6px;padding:10px;background:#7a0000" onclick="marcarMixta()">⭐ MARCAR MIXTA LISTA</button></div></div></div><script>
+<div class="main"><div class="panel"><h3>1. UBICACIÓN</h3><select id="ubic"><option>Salón - Mesa 1</option><option>Salón - Mesa 2</option><option>Salón - Mesa 3</option><option>Salón - Mesa 4</option><option>Vereda - Mesa 5</option><option>Vereda - Mesa 6</option><option>Vereda - Mesa 7</option><option>Canal - Mostrador</option><option>Canal - Delivery</option><option>Canal - Pickup</option></select><h3>2. MENÚ - 93 REALES</h3><input id="bus" placeholder="Buscar..." oninput="filtrarBus()"><div class="tabs" id="tabs"></div><div class="menu-grid" id="grid"></div><h3 style="margin-top:10px">3. SELECCIÓN</h3><div class="seleccion" id="sel">No hay items</div><div class="total-box"><div style="display:flex;justify-content:space-between"><span>TOTAL:</span><b id="total" style="color:#f1c40f">$0</b></div></div><button class="btn" onclick="enviar()">🔥 ENVIAR A COCINA (FIREBASE)</button><button class="btn-sec" onclick="limpiar()">Limpiar</button></div><div class="panel"><h3>📍 PLANO - KEY EXACTA + ALARMA</h3><div class="plano" id="plano"></div></div><div class="panel"><h3>📋 PENDIENTES FIFO (<span id="cPend">0</span>)</h3><div class="fifo" id="fifo">Sin pendientes</div><h3 style="margin-top:10px">💬 MENSAJES</h3><div id="msgs" style="max-height:160px;overflow-y:auto;background:#0a0a0a;border:1px solid #222;border-radius:8px;padding:6px;margin-bottom:6px"></div><input id="msg" placeholder="Aviso a cocina..." onkeypress="if(event.key==='Enter')sendMsg()"><button class="btn-sec" style="background:#1a3a5a;color:#60a5fa" onclick="sendMsg()">Enviar</button><div style="margin-top:10px;background:#000;border:1px solid #333;border-radius:8px;padding:8px"><button class="btn-m cob" style="width:100%;padding:10px" onclick="cobrarSel()">💵 COBRAR SELECCIONADA (LIBERA)</button><button class="btn-m" style="width:100%;margin-top:6px;padding:10px;background:#7a0000" onclick="marcarMixta()">⭐ MARCAR MIXTA LISTA</button></div></div></div>
+
+<!-- MODAL DETALLE CON ESTADOS + TACHADO -->
+<div class="modal" id="modalMesa"><div class="modalBox">
+<h3 id="mTitulo" style="color:#f1c40f">MESA</h3>
+<div id="mInfo" style="font-size:11px;background:#111;padding:8px;border-radius:6px;margin:8px 0"></div>
+<div id="mItems" style="max-height:260px;overflow:auto"></div>
+<div style="border-top:1px solid #333;padding-top:8px;margin-top:8px">
+<b style="color:#ff9900">🔥 PARRILLA:</b> <span id="mEstadoParr"></span><br>
+<button class="btn-estado recibido" onclick="setEstado('parrilla','RECIBIDO')">RECIBIDO</button>
+<button class="btn-estado prep" onclick="setEstado('parrilla','EN PREPARACION')">PREP</button>
+<button class="btn-estado manos" onclick="setEstado('parrilla','EN MANOS')">MANOS</button>
+<button class="btn-estado entregado" onclick="setEstado('parrilla','ENTREGADO')">ENTREGADO</button>
+</div>
+<div style="border-top:1px solid #333;padding-top:8px;margin-top:8px">
+<b style="color:#00ff66">🍳 COCINA:</b> <span id="mEstadoCoc"></span><br>
+<button class="btn-estado recibido" onclick="setEstado('cocina','RECIBIDO')">RECIBIDO</button>
+<button class="btn-estado prep" onclick="setEstado('cocina','EN PREPARACION')">PREP</button>
+<button class="btn-estado manos" onclick="setEstado('cocina','EN MANOS')">MANOS</button>
+<button class="btn-estado entregado" onclick="setEstado('cocina','ENTREGADO')">ENTREGADO</button>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:12px">
+<button class="btn-m cob" style="padding:10px" onclick="cobrar(mesaSel)">💵 COBRAR</button>
+<button class="btn-m" style="padding:10px;background:#e67e22;color:#000;font-weight:900" onclick="imprimirTicketActual()">🧾 TICKET</button>
+<button class="btn-m" style="padding:10px;background:#222" onclick="cerrarModal()">CERRAR</button>
+<button class="btn-m" style="padding:10px;background:#5a0000" onclick="liberar(mesaSel)">Liberar sin cobrar (2026)</button>
+</div>
+</div></div>
+
+<script>
 const firebaseConfig={apiKey:"AIzaSyAvrpQSDoq9S87j3J7V4-uhJnPFCylCU",authDomain:"parrilla-la-perseveranci-f3f54.firebaseapp.com",databaseURL:"https://parrilla-la-perseveranci-f3f54-default-rtdb.firebaseio.com",projectId:"parrilla-la-perseveranci-f3f54"};
 if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
 const db=firebase.database();
@@ -137,42 +182,256 @@ let MENU=[
 {n:'Rosado',p:7500,cat:'vino',sub:'Vinos'},
 {n:'Copa Vino Tinto',p:3000,cat:'vino',sub:'Vinos'},
 {n:'Copa Vino Blanco',p:3000,cat:'vino',sub:'Vinos'},
-];let sel=[],filtro='todos',busca='',mesaSel='Salón - Mesa 1',comandas={},cobradas=0;
+];
+let sel=[],filtro='todos',busca='',mesaSel='Salón - Mesa 1',comandas={},sonidoOn=true,audioCtx=null,ultimaAlarma={};
+function limpiarKey(s){return (s||'').normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-zA-Z0-9]/g,'_').replace(/__+/g,'_').toLowerCase();}
+function getNombre(it){return (it.n||it.nombre||it.name||'').toString();}
+function getPrecio(it){return it.p||it.precio||it.price||0;}
+function getCant(it){return parseInt(it.cantidad||it.qty||1);}
+const PARRILLA_BASE=['asado','vacio','vacío','bife','entraña','morcilla','chinchulin','chorizo','provoleta','molleja','matambre','bondiola','choripan','morcipan','parrillada','pollo'];
+const AGREGADOS_COCINA=['lechuga','tomate','jamon','jamón','queso','huevo','frita','papas'];
+const COCINA_PURA=['milanesa','suprema','pechuga','tortilla'];
+function descomponerItem(nom){const n=(nom||'').toLowerCase(); if(COCINA_PURA.some(k=>n.includes(k))) return [{texto:nom, estacion:'COCINA'}]; const esParr=PARRILLA_BASE.some(k=>n.includes(k)); const tiene=AGREGADOS_COCINA.some(k=>n.includes(k)); if(esParr&&tiene){const carne=nom.split(/c\/fritas/i)[0].trim(); return [{texto:carne, estacion:'PARRILLA'}, {texto:'FRITAS', estacion:'COCINA', esGuarnicion:true}];} if(esParr) return [{texto:nom, estacion:'PARRILLA'}]; return [{texto:nom, estacion:'COCINA'}];}
+function getTipo(items){let p=false,c=false;(items||[]).forEach(it=>{descomponerItem(getNombre(it)).forEach(s=>{if(s.estacion==='PARRILLA') p=true; else c=true;});}); if(p&&c) return 'MIXTA'; if(p) return 'PARRILLA'; return 'COCINA';}
+function initAudio(){if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();}
+function beep(f,d){initAudio();try{const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.frequency.value=f;o.connect(g);g.connect(audioCtx.destination);g.gain.value=.4;o.start();setTimeout(()=>{try{o.stop()}catch{}},d);}catch{}}
+function alarmaTipo(t){if(!sonidoOn) return; if(t==='RECIBIDO'){beep(600,400);} else if(t.includes('PREP')){beep(900,200); setTimeout(()=>beep(900,200),300);} else if(t.includes('MANOS')){beep(1200,150); setTimeout(()=>beep(1400,150),200); setTimeout(()=>beep(1600,500),400);} }
+function toggleSonido(){sonidoOn=!sonidoOn;document.getElementById('bSonido').textContent=sonidoOn?'🔔 SONIDO ON':'🔕 SONIDO OFF'; if(sonidoOn) initAudio();}
 function init(){
  document.getElementById('ubic').addEventListener('change',e=>mesaSel=e.target.value);
  renderTabs();renderMenu();
  setInterval(()=>document.getElementById('reloj').innerText=new Date().toLocaleTimeString(),1000);
  setTimeout(generarQR,600);
  db.ref('comandas_activas').on('value', snap=>{
-   comandas=snap.val()||{};
+   const raw=snap.val()||{};
+   const fix={};
+   Object.entries(raw).forEach(([k,v])=>{
+     if(v&&v.mesa) fix[v.mesa]=v;
+     else { const found=MESAS.find(m=>limpiarKey(m)===k); if(found) fix[found]=v; else if(MESAS.includes(k)) fix[k]=v; }
+   });
+   comandas=fix;
    renderPlano();
-   document.getElementById('bFirebase').innerText='Firebase: CONECTADO comandas_activas';
+   document.getElementById('bFirebase').innerText='Firebase: CONECTADO comandas_activas KEY EXACTA';
    document.getElementById('bFirebase').className='badge green';
  });
  db.ref('mensajes').limitToLast(20).on('value', snap=>{
-   const msgs=snap.val()||{};
-   const cont=document.getElementById('msgs');cont.innerHTML='';
+   const msgs=snap.val()||{}; const cont=document.getElementById('msgs');cont.innerHTML='';
    Object.values(msgs).reverse().forEach(m=>{
      const d=document.createElement('div');d.style.cssText='font-size:10px;padding:4px;border-left:3px solid '+(m.emisor==='Gustavo'?'#f1c40f':'#c0392b')+';margin-bottom:4px;background:#111';
      d.innerHTML=`<b style="color:${m.emisor==='Gustavo'?'#f1c40f':'#c0392b'}">${m.emisor||'?'}</b> <span style="color:#666;font-size:8px">${m.hora||''}</span><br>${m.texto}`;cont.appendChild(d);
    });
  });
-}
-function renderTabs(){const c=document.getElementById('tabs');c.innerHTML='';CATS.forEach(cat=>{const d=document.createElement('div');d.className='tab'+(filtro===cat.id?' active':'');d.innerText=cat.n;d.onclick=()=>{filtro=cat.id;renderTabs();renderMenu();};c.appendChild(d);});}
+ document.addEventListener('click',initAudio,{once:true});
+ setInterval(checkAlarmas,4000);
+}function renderTabs(){const c=document.getElementById('tabs');c.innerHTML='';CATS.forEach(cat=>{const d=document.createElement('div');d.className='tab'+(filtro===cat.id?' active':'');d.innerText=cat.n;d.onclick=()=>{filtro=cat.id;renderTabs();renderMenu();};c.appendChild(d);});}
 function filtrarBus(){busca=document.getElementById('bus').value.toLowerCase();renderMenu();}
 function renderMenu(){const g=document.getElementById('grid');g.innerHTML='';MENU.filter(m=>{const okCat=filtro==='todos'||m.cat===filtro;const okBus=!busca||m.n.toLowerCase().includes(busca);return okCat&&okBus;}).forEach(m=>{const d=document.createElement('div');d.className='item';d.innerHTML=`<b>${m.n}</b><i>${m.sub}</i><span>$${m.p.toLocaleString()}</span>`;d.onclick=()=>add(m);g.appendChild(d);});}
-function add(m){sel.push(m);renderSel();}
-function renderSel(){const cont=document.getElementById('sel');if(sel.length===0){cont.innerHTML='No hay items';document.getElementById('total').innerText='$0';return;}let tot=0,h='';sel.forEach((s,i)=>{tot+=s.p;h+=`<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid #1a1a1a;font-size:11px"><span>${i+1}x ${s.n}</span><span style="color:#2ecc71">$${s.p.toLocaleString()} <b onclick="sel.splice(${i},1);renderSel()" style="color:#c0392b;cursor:pointer;padding:0 4px">x</b></span></div>`;});cont.innerHTML=h;document.getElementById('total').innerText='$'+tot.toLocaleString();}
+function add(m){sel.push({...m, cantidad:1});renderSel();}
+function renderSel(){const cont=document.getElementById('sel');if(sel.length===0){cont.innerHTML='No hay items';document.getElementById('total').innerText='$0';return;}let tot=0,h='';sel.forEach((s,i)=>{tot+=s.p*(s.cantidad||1);h+=`<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid #1a1a1a;font-size:11px"><span>${i+1}x ${s.n}</span><span style="color:#2ecc71">$${s.p.toLocaleString()} <b onclick="sel.splice(${i},1);renderSel()" style="color:#c0392b;cursor:pointer;padding:0 4px">x</b></span></div>`;});cont.innerHTML=h;document.getElementById('total').innerText='$'+tot.toLocaleString();}
 function limpiar(){sel=[];renderSel();}
-function enviar(){if(sel.length===0)return;const total=sel.reduce((a,b)=>a+b.p,0);const nuevaComanda={items:[...sel],total:total,estado:'OCUPADA',hora:new Date().toLocaleTimeString().slice(0,5),id:Date.now(),mesa:mesaSel,emisor:'Gustavo'};db.ref('comandas_activas/'+mesaSel).set(nuevaComanda);db.ref('comandas/'+mesaSel).remove();db.ref('mensajes').push({emisor:'Gustavo',texto:`${mesaSel} -> ${sel.length} items $${total.toLocaleString()}`,hora:new Date().toLocaleTimeString().slice(0,5),ts:Date.now()});sel=[];renderSel();}
-function renderPlano(){const p=document.getElementById('plano');p.innerHTML='';let act=0,mix=0;MESAS.forEach(nom=>{const c=comandas[nom];const ocup=!!c;if(ocup)act++;if(ocup&&c.estado==='MIXTA')mix++;const d=document.createElement('div');d.className='mesa '+(ocup?(c.estado==='MIXTA'?'mixta':'ocupada'):'libre');d.innerHTML=`<h4>${nom.toUpperCase()} <span class="est">${ocup?c.estado:'LIBRE'}</span></h4><p>${ocup?c.items.map(it=>`• ${it.n}`).join('<br>'):'Disponible'}</p><div class="pr">${ocup?'$'+c.total.toLocaleString():'$0'}</div>${ocup?`<div style="display:flex;gap:4px;margin-top:8px"><button class="btn-m cob" onclick="cobrar('${nom}')">💵 Cobrar</button><button class="btn-m" onclick="liberar('${nom}')" style="background:#3a0a0a">Liberar sin cobrar</button></div>`:''}<div style="font-size:8px;color:#555;margin-top:4px">${ocup?c.hora:''}</div>`;d.onclick=()=>{mesaSel=nom;document.getElementById('ubic').value=nom;};p.appendChild(d);});document.getElementById('bAct').innerText='Activas: '+act;document.getElementById('bMix').innerText='Mixtas: '+mix;document.getElementById('cPend').innerText=mix;const fifo=document.getElementById('fifo');const pend=Object.entries(comandas);if(pend.length===0)fifo.innerHTML='Sin pendientes';else fifo.innerHTML=pend.map(([k,v])=>`<div class="fifo-item"><b style="font-size:11px">#${v.id.toString().slice(-3)} ${k}</b><div style="font-size:10px;color:#aaa">${v.items.map(i=>i.n).join('<br>')}</div><div style="color:#2ecc71;font-weight:900">$${v.total.toLocaleString()}</div></div>`).join('');}
-function cobrar(nom){if(!comandas[nom])return;if(confirm(`Cobrar ${nom}? $${comandas[nom].total.toLocaleString()} - SE LIBERA LA MESA`)){db.ref('comandas_activas/'+nom).remove();db.ref('comandas/'+nom).remove();db.ref('ventas').push({...comandas[nom], cobradaEn: Date.now(), cobradaPor: 'Gustavo'});db.ref('mensajes').push({emisor:'Gustavo',texto:`${nom} COBRADA $${comandas[nom].total.toLocaleString()} - LIBERADA`,hora:new Date().toLocaleTimeString().slice(0,5),ts:Date.now()});}}
-function cobrarSel(){cobrar(mesaSel);}
-function liberar(nom){if(!comandas[nom])return;const clave=prompt(`⚠️ ${nom} tiene $${comandas[nom].total.toLocaleString()} sin cobrar.\n\nPara liberar SIN COBRAR escribí la clave de encargado (2026).\nSi querés cobrar, cancelá y tocá 💵 COBRAR.`);if(clave!=='2026')return alert('Liberación cancelada. Tenés que usar 💵 COBRAR.');if(confirm(`¿Seguro liberar ${nom} SIN COBRAR? Esta acción queda registrada.`)){db.ref('comandas_activas/'+nom).remove();db.ref('comandas/'+nom).remove();db.ref('mensajes').push({emisor:'Gustavo',texto:`⚠️ ${nom} LIBERADA SIN COBRAR por encargado - $${comandas[nom].total.toLocaleString()}`,hora:new Date().toLocaleTimeString().slice(0,5),ts:Date.now()});}}
-function marcarMixta(){if(!comandas[mesaSel])return alert('Sin comanda en '+mesaSel);db.ref('comandas_activas/'+mesaSel+'/estado').set('MIXTA');db.ref('mensajes').push({emisor:'Gustavo',texto:`${mesaSel} MIXTA LISTA`,hora:new Date().toLocaleTimeString().slice(0,5),ts:Date.now()});}
+function enviar(){
+ if(sel.length===0)return;
+ const total=sel.reduce((a,b)=>a+(b.p*(b.cantidad||1)),0);
+ db.ref('comandas_activas/'+mesaSel).once('value').then(snap=>{
+  const ex=snap.val();
+  let itemsFinal=[];
+  const nuevo=sel.map(s=>({n:s.n,nombre:s.n,cantidad:s.cantidad||1,p:s.p,precio:s.p,cat:s.cat}));
+  if(ex && ex.items){
+    const mapa={}; ex.items.forEach(i=>{mapa[getNombre(i)]={n:getNombre(i),nombre:getNombre(i),cantidad:getCant(i),p:getPrecio(i),precio:getPrecio(i),cat:i.cat||'',_desglose:i._desglose||null,tachado:i.tachado||false}});
+    nuevo.forEach(n=>{const nom=getNombre(n); if(mapa[nom]) mapa[nom].cantidad+=getCant(n); else mapa[nom]=n;});
+    itemsFinal=Object.values(mapa);
+  } else itemsFinal=nuevo;
+  const ahora=Date.now();
+  const data={
+    mesa:mesaSel,
+    items:itemsFinal,
+    total:itemsFinal.reduce((a,c)=>a+(getPrecio(c)*getCant(c)),0),
+    total_cobrado:ex?ex.total_cobrado||ex.total||total:total,
+    estado:ex?ex.estado:'RECIBIDO',
+    estado_parrilla:ex?ex.estado_parrilla||ex.estado:'RECIBIDO',
+    estado_cocina:ex?ex.estado_cocina||ex.estado:'RECIBIDO',
+    emisor:'Gustavo',
+    hora:new Date().toLocaleTimeString().slice(0,5),
+    timestamp:ex?ex.timestamp:ahora,
+    timestamp_estado:ahora,
+    id:ex?ex.id:ahora
+  };
+  db.ref('comandas_activas/'+mesaSel).set(data);
+  db.ref('mensajes').push({emisor:'Gustavo',texto:`${mesaSel} -> ${itemsFinal.map(i=>getNombre(i)).join(', ')} $${data.total.toLocaleString()}`,hora:new Date().toLocaleTimeString().slice(0,5),ts:Date.now()});
+  sel=[];renderSel();
+ });
+}
+
+function renderPlano(){
+ const p=document.getElementById('plano');p.innerHTML='';let act=0,mix=0;
+ MESAS.forEach(nom=>{
+  const c=comandas[nom];
+  const ocup=!!c;
+  if(ocup){act++; if(getTipo(c.items)==='MIXTA') mix++;}
+  const d=document.createElement('div');
+  const ep=(c? (c.estado_parrilla||c.estado||'RECIBIDO') : '').toUpperCase();
+  const ec=(c? (c.estado_cocina||c.estado||'RECIBIDO') : '').toUpperCase();
+  const esCob=c && (c.estado||'').toUpperCase()==='COBRADA';
+  let cls='mesa '+(ocup?(esCob?'cobrada':(getTipo(c.items||[])==='MIXTA'?'mixta':'ocupada')):'libre');
+  // alarma
+  if(c &&!esCob){
+    const mins=(Date.now()-(c.timestamp_estado||c.timestamp||Date.now()))/1000/60;
+    if((ep==='RECIBIDO'||ec==='RECIBIDO')&&mins>=5) cls+=' alarm-recibido';
+    else if((ep.includes('PREP')||ec.includes('PREP'))&&mins>=15) cls+=' alarm-prep';
+    else if((ep.includes('MANOS')||ec.includes('MANOS'))&&mins>=1.5) cls+=' alarm-manos';
+  }
+  d.className=cls;
+  if(ocup){
+    const itemsResalt=(c.items||[]).map(it=>{
+      const des=it._desglose||descomponerItem(getNombre(it));
+      return des.map(sub=>{
+        const color=sub.estacion==='PARRILLA'?'#ff9900':'#00ff66';
+        const tach=(sub.tachado||it.tachado)?'text-decoration:line-through;opacity:.5':'';
+        return `<span style="color:${color};${tach}">• ${getCant(it)}x ${sub.texto}</span>`;
+      }).join('<br>');
+    }).join('<br>');
+    d.innerHTML=`<h4>${nom.toUpperCase()} <span style="font-size:8px;background:#000;padding:2px 5px;border-radius:4px">${getTipo(c.items)} P:${ep.slice(0,4)} C:${ec.slice(0,4)}</span></h4><div style="font-size:9px">${itemsResalt}</div><div class="pr">$${(c.total_cobrado||c.total||0).toLocaleString()}</div><div style="font-size:8px;color:#888;margin-top:4px">${c.hora||''} | ${Math.floor((Date.now()-(c.timestamp||Date.now()))/1000/60)}min</div>`;
+  } else {
+    d.innerHTML=`<h4>${nom.toUpperCase()} <span style="color:#555">LIBRE</span></h4><p>Disponible</p><div class="pr">$0</div>`;
+  }
+  d.onclick=()=>{mesaSel=nom;document.getElementById('ubic').value=nom; abrirMesa(nom);};
+  p.appendChild(d);
+ });
+ document.getElementById('bAct').innerText='Activas: '+act;
+ document.getElementById('bMix').innerText='Mixtas: '+mix;
+ document.getElementById('cPend').innerText=act;
+ const fifo=document.getElementById('fifo');
+ const pend=Object.entries(comandas);
+ if(pend.length===0) fifo.innerHTML='Sin pendientes';
+ else fifo.innerHTML=pend.map(([k,v])=>`<div class="fifo-item"><b style="font-size:11px">#${(v.id||0).toString().slice(-4)} ${k} - ${getTipo(v.items)} - P:${(v.estado_parrilla||v.estado)} C:${(v.estado_cocina||v.estado)}</b><div style="font-size:10px;color:#aaa">${(v.items||[]).map(i=>getNombre(i)).join('<br>')}</div><div style="color:#2ecc71;font-weight:900">$${(v.total_cobrado||v.total||0).toLocaleString()}</div></div>`).join('');
+}
+
+function abrirMesa(mesa){
+ mesaSel=mesa;
+ const cmd=comandas[mesa];
+ document.getElementById('mTitulo').textContent=mesa;
+ if(!cmd){
+   document.getElementById('mInfo').innerHTML='Mesa libre';
+   document.getElementById('mItems').innerHTML='';
+   document.getElementById('mEstadoParr').textContent='-';
+   document.getElementById('mEstadoCoc').textContent='-';
+   document.getElementById('modalMesa').style.display='flex'; return;
+ }
+ const ep=(cmd.estado_parrilla||cmd.estado||'RECIBIDO').toUpperCase();
+ const ec=(cmd.estado_cocina||cmd.estado||'RECIBIDO').toUpperCase();
+ document.getElementById('mEstadoParr').innerHTML=`<b style="color:#ff9900">${ep}</b>`;
+ document.getElementById('mEstadoCoc').innerHTML=`<b style="color:#00ff66">${ec}</b>`;
+ document.getElementById('mInfo').innerHTML=`${getTipo(cmd.items)} | Total: $${(cmd.total_cobrado||cmd.total||0).toLocaleString()} | ${new Date(cmd.timestamp||Date.now()).toLocaleTimeString()}<br><small>🟠 PARRILLA | 🟢 COCINA - Click para tachar</small>`;
+
+ let html='';
+ (cmd.items||[]).forEach((it, idx)=>{
+   const des=it._desglose||descomponerItem(getNombre(it));
+   des.forEach((d, subIdx)=>{
+     const isParr=d.estacion==='PARRILLA';
+     const cls=isParr?'tag-parrilla':'tag-cocina';
+     const tach=(d.tachado||it.tachado)?' tachado':'';
+     html+=`<div class="${cls}${tach}" onclick="toggleTacho(${idx},${subIdx})"><span>${isParr?'🔥':'🍳'} ${d.estacion} - ${getCant(it)}x ${d.texto}</span><span style="font-size:9px">${(d.tachado||it.tachado)?'✅':'👉 TACHAR'}</span></div>`;
+   });
+ });
+ document.getElementById('mItems').innerHTML=html||'Sin items';
+ document.getElementById('modalMesa').style.display='flex';
+}
+
+function toggleTacho(idx, subIdx){
+ const cmd=comandas[mesaSel]; if(!cmd) return;
+ const items=JSON.parse(JSON.stringify(cmd.items||[]));
+ let item=items[idx];
+ if(!item._desglose) item._desglose=descomponerItem(getNombre(item));
+ if(!item._desglose[subIdx]) return;
+ item._desglose[subIdx].tachado=!item._desglose[subIdx].tachado;
+ if(item._desglose.every(d=>d.tachado)) item.tachado=true; else item.tachado=false;
+ db.ref('comandas_activas/'+mesaSel+'/items').set(items);
+}
+
+function setEstado(tipo, nuevo){
+ const cmd=comandas[mesaSel]; if(!cmd) return;
+ const ahora=Date.now();
+ const upd={timestamp_estado:ahora};
+ if(tipo==='parrilla'){upd.estado_parrilla=nuevo;}
+ else {upd.estado_cocina=nuevo;}
+ // estado general
+ const epFinal=tipo==='parrilla'?nuevo:(cmd.estado_parrilla||'RECIBIDO');
+ const ecFinal=tipo==='cocina'?nuevo:(cmd.estado_cocina||'RECIBIDO');
+ if(epFinal==='RECIBIDO'&&ecFinal==='RECIBIDO') upd.estado='RECIBIDO';
+ else if(epFinal==='ENTREGADO'&&ecFinal==='ENTREGADO') upd.estado='ENTREGADO';
+ else if(epFinal.includes('MANOS')&&ecFinal.includes('MANOS')) upd.estado='EN MANOS';
+ else if(epFinal.includes('MANOS')||ecFinal.includes('MANOS')) upd.estado='EN MANOS PARCIAL';
+ else if(epFinal.includes('PREP')||ecFinal.includes('PREP')) upd.estado='EN PREPARACION';
+ else upd.estado=nuevo;
+ db.ref('comandas_activas/'+mesaSel).update(upd);
+ db.ref('mensajes').push({emisor:'Gustavo',texto:`${mesaSel} ${tipo.toUpperCase()} -> ${nuevo}`,hora:new Date().toLocaleTimeString().slice(0,5),ts:Date.now()});
+}
+
+function cobrar(nom){
+ if(!comandas[nom]) return alert('Sin comanda');
+ const cmd=comandas[nom];
+ const total=prompt(`Total a cobrar ${nom}:`, cmd.total_cobrado||cmd.total);
+ if(total===null) return;
+ const prop=prompt('Propina Mariana?', cmd.propina||'0');
+ db.ref('comandas_activas/'+nom).update({estado:'COBRADA', total_cobrado:parseInt(total||cmd.total), propina:parseInt(prop||0), timestamp_estado:Date.now()});
+ if(parseInt(prop||0)>0) db.ref('propinas_dia').push({mesa:nom,monto:parseInt(prop),timestamp:Date.now()});
+ db.ref('mensajes').push({emisor:'Gustavo',texto:`${nom} COBRADA $${total} - Propina $${prop||0}`,hora:new Date().toLocaleTimeString().slice(0,5),ts:Date.now()});
+ cerrarModal();
+}
+
+function liberar(nom){
+ if(!comandas[nom]) return;
+ const clave=prompt(`⚠️ ${nom} $${(comandas[nom].total_cobrado||comandas[nom].total||0).toLocaleString()} SIN COBRAR\nClave 2026:`);
+ if(clave!=='2026') return alert('Cancelado');
+ if(confirm(`¿Liberar ${nom} SIN COBRAR?`)){
+   db.ref('comandas_activas/'+nom).remove();
+   db.ref('mensajes').push({emisor:'Gustavo',texto:`⚠️ ${nom} LIBERADA SIN COBRAR`,hora:new Date().toLocaleTimeString().slice(0,5),ts:Date.now()});
+   cerrarModal();
+ }
+}
+function cobrarSel(){if(comandas[mesaSel]) cobrar(mesaSel); else alert('Seleccioná mesa');}
+function marcarMixta(){if(!comandas[mesaSel])return alert('Sin comanda'); db.ref('comandas_activas/'+mesaSel+'/estado').set('MIXTA LISTA');}
 function sendMsg(){const i=document.getElementById('msg');if(!i.value.trim())return;db.ref('mensajes').push({emisor:'Gustavo',texto:i.value.trim(),hora:new Date().toLocaleTimeString().slice(0,5),ts:Date.now()});i.value='';}
 function toggleQR(){const p=document.getElementById('panelQR');p.style.display=p.style.display==='none'?'block':'none';generarQR();}
 function generarQR(){const url=document.getElementById('inputPdfUrl').value.trim();if(!url)return;document.getElementById('qrcode').innerHTML='';new QRCode(document.getElementById('qrcode'),{text:url,width:180,height:180,colorDark:"#000",colorLight:"#fff",correctLevel:QRCode.CorrectLevel.H});document.getElementById('pdfViewer').src=url;}
-function descargarQR(){const c=document.querySelector('#qrcode canvas');if(!c)return alert('Generá QR primero');const a=document.createElement('a');a.download='qr_menu.png';a.href=c.toDataURL('image/png');a.click();}
+function descargarQR(){const c=document.querySelector('#qrcode canvas');if(!c)return alert('Generá QR');const a=document.createElement('a');a.download='qr_menu.png';a.href=c.toDataURL('image/png');a.click();}
+function cerrarModal(){document.getElementById('modalMesa').style.display='none';}
+function abrirModalImpresion(){if(!comandas[mesaSel])return alert('Sin comanda'); imprimirTicketActual();}
+function imprimirTicketActual(){
+ if(!comandas[mesaSel]) return;
+ const cmd=comandas[mesaSel];
+ const w=window.open('','_blank','width=320,height=700');
+ w.document.write(`<html><head><style>@page{size:80mm auto;margin:0}body{font-family:monospace;width:76mm;padding:4mm;font-size:12px}.c{text-align:center}.l{border-top:1px dashed #000;margin:6px 0}</style></head><body>
+ <div class="c"><b>LA PERSEVERANCIA</b><br>Parrilla<br>${mesaSel}</div><div class="l"></div>
+ Fecha: ${new Date().toLocaleString('es-AR')}<br>Estado P:${cmd.estado_parrilla||cmd.estado} C:${cmd.estado_cocina||cmd.estado}<br><div class="l"></div>
+ ${ (cmd.items||[]).map(it=>{
+   const des=it._desglose||descomponerItem(getNombre(it));
+   return des.map(d=>`${d.estacion==='PARRILLA'?'🔥':'🍳'} ${getCant(it)}x ${d.texto} ${(d.tachado||it.tachado)?'[TACHADO]':''}`).join('<br>');
+ }).join('<br>')}
+ <div class="l"></div><b>TOTAL: $${(cmd.total_cobrado||cmd.total||0).toLocaleString()}</b><br>Propina: $${cmd.propina||0}<br><div class="l"></div><div class="c">Gracias por su visita<br>---</div><script>window.print();setTimeout(()=>window.close(),800)<\/script></body></html>`);
+}
+function checkAlarmas(){
+ Object.values(comandas).forEach(cmd=>{
+  if(!cmd.mesa) return;
+  if((cmd.estado||'').toUpperCase()==='COBRADA') return;
+  const ep=(cmd.estado_parrilla||cmd.estado||'RECIBIDO').toUpperCase();
+  const ec=(cmd.estado_cocina||cmd.estado||'RECIBIDO').toUpperCase();
+  [ep,ec].forEach(est=>{
+    const mins=(Date.now()-(cmd.timestamp_estado||cmd.timestamp||Date.now()))/1000/60;
+    let debe=null;
+    if(est==='RECIBIDO'&&mins>=5) debe='RECIBIDO';
+    else if(est.includes('PREP')&&mins>=15) debe=est;
+    else if(est.includes('MANOS')&&mins>=1.5) debe=est;
+    if(debe){
+      const k=(cmd.mesa)+'_'+debe;
+      if(!ultimaAlarma[k]||Date.now()-ultimaAlarma[k]>30000){
+        alarmaTipo(debe);
+        ultimaAlarma[k]=Date.now();
+      }
+    }
+  });
+ });
+}
+document.getElementById('modalMesa').addEventListener('click',e=>{if(e.target.id==='modalMesa') cerrarModal();});
 init();
 </script></body></html>
