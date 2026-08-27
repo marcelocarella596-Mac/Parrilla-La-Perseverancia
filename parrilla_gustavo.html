@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>LA PERSEVERANCIA | GUSTAVO v2.5 - 93 REALES - FINAL</title>
+<title>LA PERSEVERANCIA | GUSTAVO v2.6 - 93 REALES - FIREBASE + QR</title>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:Segoe UI,system-ui,sans-serif}
@@ -9,6 +11,7 @@ body{background:#0a0a0a;color:#fff;overflow:hidden}
 .badges{display:flex;gap:6px;flex-wrap:wrap}
 .badge{background:#000a;border:1px solid #ffffff22;padding:5px 10px;border-radius:20px;font-size:11px;font-weight:700}
 .badge.green{color:#2ecc71;border-color:#2ecc71}.badge.yellow{color:#f1c40f;border-color:#f1c40f}.badge.blue{color:#60a5fa;border-color:#60a5fa;cursor:pointer;background:#0e141f}
+.badge.red{color:#ff6b6b;border-color:#ff6b6b;background:#2a0a0a}
 .main{display:grid;grid-template-columns:300px 1fr 320px;gap:10px;padding:10px;height:calc(100vh - 54px)}
 .panel{background:#151515;border:1px solid #262626;border-radius:12px;padding:10px;display:flex;flex-direction:column;overflow:hidden}
 .panel h3{font-size:10px;color:#f1c40f;letter-spacing:1px;margin-bottom:8px;text-transform:uppercase;flex-shrink:0}
@@ -32,11 +35,14 @@ select,input{width:100%;background:#0e0e0e;border:1px solid #333;color:#fff;padd
 .fifo{flex:1;overflow-y:auto;min-height:0}.fifo-item{background:#0e0e0e;border-left:3px solid #c0392b;padding:8px;border-radius:6px;margin-bottom:6px}
 #panelQR{background:#fff;border:2px solid #f1c40f;border-radius:10px;padding:10px;margin-bottom:10px;display:none}
 </style></head><body>
-<div class="header"><h1>🔥 GUSTAVO v2.5 - 93 REALES - FINAL + QR</h1>
-<div class="badges"><span class="badge" id="reloj">--:--</span><span class="badge green" id="bAct">Activas: 0</span><span class="badge yellow" id="bMix">Mixtas: 0</span><span class="badge blue" onclick="toggleQR()">📱 QR MENU</span><span class="badge blue" onclick="location.href='index.html'">🏠 HUB</span></div></div>
+<div class="header"><h1>🔥 GUSTAVO v2.6 - 93 REALES - FIREBASE - CONECTADO A MARIANA/HERNAN + QR</h1>
+<div class="badges"><span class="badge red" id="bFirebase">Firebase: conectando...</span><span class="badge" id="reloj">--:--</span><span class="badge green" id="bAct">Activas: 0</span><span class="badge yellow" id="bMix">Mixtas: 0</span><span class="badge blue" onclick="toggleQR()">📱 QR MENU</span><span class="badge blue" onclick="location.href='index.html'">🏠 HUB</span></div></div>
 <div style="padding:10px"><div id="panelQR"><div style="display:flex;gap:12px;flex-wrap:wrap"><div><div style="color:#000;font-size:11px;font-weight:900;margin-bottom:6px">QR -> menu.pdf</div><input id="inputPdfUrl" style="background:#eee;color:#000;border:1px solid #ccc" value="https://marcelocarella596-mac.github.io/Parrilla-La-Perseverancia/menu.pdf"><button class="btn-sec" style="background:#f1c40f;color:#000;font-weight:900;border:none" onclick="generarQR()">🔄 GENERAR QR</button><div style="background:#fff;padding:8px;display:flex;justify-content:center;margin-top:6px;border-radius:6px"><div id="qrcode"></div></div><button class="btn-sec" style="background:#000;color:#f1c40f" onclick="descargarQR()">⬇️ DESCARGAR qr_menu.png</button></div><div style="flex:1;min-width:250px"><iframe id="pdfViewer" src="https://marcelocarella596-mac.github.io/Parrilla-La-Perseverancia/menu.pdf" style="width:100%;height:280px;border:1px solid #ccc;border-radius:6px"></iframe></div></div></div></div>
-<div class="main"><div class="panel"><h3>1. UBICACIÓN</h3><select id="ubic"><option>Salón - Mesa 1</option><option>Salón - Mesa 2</option><option>Salón - Mesa 3</option><option>Salón - Mesa 4</option><option>Vereda - Mesa 5</option><option>Vereda - Mesa 6</option><option>Vereda - Mesa 7</option><option>Canal - Mostrador</option><option>Canal - Delivery</option><option>Canal - Pickup</option></select><h3>2. MENÚ - 93 REALES - SCROLL FIJO</h3><input id="bus" placeholder="Buscar..." oninput="filtrarBus()"><div class="tabs" id="tabs"></div><div class="menu-grid" id="grid"></div><h3 style="margin-top:10px">3. SELECCIÓN</h3><div class="seleccion" id="sel">No hay items</div><div class="total-box"><div style="display:flex;justify-content:space-between"><span>TOTAL:</span><b id="total" style="color:#f1c40f">$0</b></div></div><button class="btn" onclick="enviar()">🔥 ENVIAR A COCINA</button><button class="btn-sec" onclick="limpiar()">Limpiar</button></div><div class="panel"><h3>📍 PLANO - EN VIVO</h3><div class="plano" id="plano"></div></div><div class="panel"><h3>📋 PENDIENTES FIFO (<span id="cPend">0</span>)</h3><div class="fifo" id="fifo">Sin pendientes</div><h3 style="margin-top:10px">💬 MENSAJES</h3><div id="msgs" style="max-height:160px;overflow-y:auto;background:#0a0a0a;border:1px solid #222;border-radius:8px;padding:6px;margin-bottom:6px"></div><input id="msg" placeholder="Aviso..." onkeypress="if(event.key==='Enter')sendMsg()"><button class="btn-sec" style="background:#1a3a5a;color:#60a5fa" onclick="sendMsg()">Enviar</button><div style="margin-top:10px;background:#000;border:1px solid #333;border-radius:8px;padding:8px"><button class="btn-m cob" style="width:100%;padding:10px" onclick="cobrarSel()">💵 COBRAR SELECCIONADA</button><button class="btn-m" style="width:100%;margin-top:6px;padding:10px;background:#7a0000" onclick="marcarMixta()">⭐ MARCAR MIXTA LISTA</button></div></div></div>
+<div class="main"><div class="panel"><h3>1. UBICACIÓN</h3><select id="ubic"><option>Salón - Mesa 1</option><option>Salón - Mesa 2</option><option>Salón - Mesa 3</option><option>Salón - Mesa 4</option><option>Vereda - Mesa 5</option><option>Vereda - Mesa 6</option><option>Vereda - Mesa 7</option><option>Canal - Mostrador</option><option>Canal - Delivery</option><option>Canal - Pickup</option></select><h3>2. MENÚ - 93 REALES - FIREBASE</h3><input id="bus" placeholder="Buscar..." oninput="filtrarBus()"><div class="tabs" id="tabs"></div><div class="menu-grid" id="grid"></div><h3 style="margin-top:10px">3. SELECCIÓN</h3><div class="seleccion" id="sel">No hay items</div><div class="total-box"><div style="display:flex;justify-content:space-between"><span>TOTAL:</span><b id="total" style="color:#f1c40f">$0</b></div></div><button class="btn" onclick="enviar()">🔥 ENVIAR A COCINA (FIREBASE)</button><button class="btn-sec" onclick="limpiar()">Limpiar</button></div><div class="panel"><h3>📍 PLANO - EN VIVO - FIREBASE</h3><div class="plano" id="plano"></div></div><div class="panel"><h3>📋 PENDIENTES FIFO (<span id="cPend">0</span>)</h3><div class="fifo" id="fifo">Sin pendientes</div><h3 style="margin-top:10px">💬 MENSAJES FIREBASE</h3><div id="msgs" style="max-height:160px;overflow-y:auto;background:#0a0a0a;border:1px solid #222;border-radius:8px;padding:6px;margin-bottom:6px"></div><input id="msg" placeholder="Aviso a cocina..." onkeypress="if(event.key==='Enter')sendMsg()"><button class="btn-sec" style="background:#1a3a5a;color:#60a5fa" onclick="sendMsg()">Enviar</button><div style="margin-top:10px;background:#000;border:1px solid #333;border-radius:8px;padding:8px"><button class="btn-m cob" style="width:100%;padding:10px" onclick="cobrarSel()">💵 COBRAR SELECCIONADA</button><button class="btn-m" style="width:100%;margin-top:6px;padding:10px;background:#7a0000" onclick="marcarMixta()">⭐ MARCAR MIXTA LISTA</button></div></div></div>
 <script>
+const firebaseConfig={apiKey:"AIzaSyAvrpQSDoq9S87j3J7V4-uhJnPFCylCU",authDomain:"parrilla-la-perseveranci-f3f54.firebaseapp.com",databaseURL:"https://parrilla-la-perseveranci-f3f54-default-rtdb.firebaseio.com",projectId:"parrilla-la-perseveranci-f3f54"};
+if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
+const db=firebase.database();
 const MESAS=['Salón - Mesa 1','Salón - Mesa 2','Salón - Mesa 3','Salón - Mesa 4','Vereda - Mesa 5','Vereda - Mesa 6','Vereda - Mesa 7','Canal - Mostrador','Canal - Delivery','Canal - Pickup'];
 const CATS=[{id:'todos',n:'Todos (93)'},{id:'adicional',n:'Adicionales'},{id:'bebida',n:'Bebidas'},{id:'cerveza',n:'Cervezas'},{id:'ensalada',n:'Ensaladas'},{id:'guarnicion',n:'Guarniciones'},{id:'minuta',n:'Minutas (10)'},{id:'parrilla',n:'Parrilla (19)'},{id:'postre',n:'Postres'},{id:'sandwich',n:'Sandwiches'},{id:'vino',n:'Vinos'}];
 let MENU=[
@@ -132,26 +138,43 @@ let MENU=[
 {n:'Chardonnay',p:8500,cat:'vino',sub:'Vinos'},
 {n:'Rosado',p:7500,cat:'vino',sub:'Vinos'},
 {n:'Copa Vino Tinto',p:3000,cat:'vino',sub:'Vinos'},
-{n:'Copa Vino Blanco',p:3000,cat:'vino',sub:'Vinos'},];
+{n:'Copa Vino Blanco',p:3000,cat:'vino',sub:'Vinos'},
+];
 let sel=[],filtro='todos',busca='',mesaSel='Salón - Mesa 1',comandas={},cobradas=0;
-function init(){document.getElementById('ubic').addEventListener('change',e=>mesaSel=e.target.value);renderTabs();renderMenu();renderPlano();setInterval(()=>document.getElementById('reloj').innerText=new Date().toLocaleTimeString(),1000);setTimeout(generarQR,600);}
+function init(){
+ document.getElementById('ubic').addEventListener('change',e=>mesaSel=e.target.value);
+ renderTabs();renderMenu();
+ setInterval(()=>document.getElementById('reloj').innerText=new Date().toLocaleTimeString(),1000);
+ setTimeout(generarQR,600);
+ db.ref('comandas').on('value', snap=>{
+   comandas=snap.val()||{};
+   renderPlano();
+   document.getElementById('bFirebase').innerText='Firebase: CONECTADO';document.getElementById('bFirebase').className='badge green';
+ });
+ db.ref('mensajes').limitToLast(20).on('value', snap=>{
+   const msgs=snap.val()||{};
+   const cont=document.getElementById('msgs');cont.innerHTML='';
+   Object.values(msgs).reverse().forEach(m=>{
+     const d=document.createElement('div');d.style.cssText='font-size:10px;padding:4px;border-left:3px solid '+(m.emisor==='Gustavo'?'#f1c40f':'#c0392b')+';margin-bottom:4px;background:#111';
+     d.innerHTML=`<b style="color:${m.emisor==='Gustavo'?'#f1c40f':'#c0392b'}">${m.emisor||'?'}</b> <span style="color:#666;font-size:8px">${m.hora||''}</span><br>${m.texto}`;cont.appendChild(d);
+   });
+ });
+}
 function renderTabs(){const c=document.getElementById('tabs');c.innerHTML='';CATS.forEach(cat=>{const d=document.createElement('div');d.className='tab'+(filtro===cat.id?' active':'');d.innerText=cat.n;d.onclick=()=>{filtro=cat.id;renderTabs();renderMenu();};c.appendChild(d);});}
 function filtrarBus(){busca=document.getElementById('bus').value.toLowerCase();renderMenu();}
 function renderMenu(){const g=document.getElementById('grid');g.innerHTML='';MENU.filter(m=>{const okCat=filtro==='todos'||m.cat===filtro;const okBus=!busca||m.n.toLowerCase().includes(busca);return okCat&&okBus;}).forEach(m=>{const d=document.createElement('div');d.className='item';d.innerHTML=`<b>${m.n}</b><i>${m.sub}</i><span>$${m.p.toLocaleString()}</span>`;d.onclick=()=>add(m);g.appendChild(d);});}
 function add(m){sel.push(m);renderSel();}
 function renderSel(){const cont=document.getElementById('sel');if(sel.length===0){cont.innerHTML='No hay items';document.getElementById('total').innerText='$0';return;}let tot=0,h='';sel.forEach((s,i)=>{tot+=s.p;h+=`<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid #1a1a1a;font-size:11px"><span>${i+1}x ${s.n}</span><span style="color:#2ecc71">$${s.p.toLocaleString()} <b onclick="sel.splice(${i},1);renderSel()" style="color:#c0392b;cursor:pointer;padding:0 4px">x</b></span></div>`;});cont.innerHTML=h;document.getElementById('total').innerText='$'+tot.toLocaleString();}
 function limpiar(){sel=[];renderSel();}
-function enviar(){if(sel.length===0)return;comandas[mesaSel]={items:[...sel],total:sel.reduce((a,b)=>a+b.p,0),estado:'OCUPADA',hora:new Date().toLocaleTimeString().slice(0,5),id:Date.now()};addMsg(`${mesaSel} -> ${sel.length} items $${comandas[mesaSel].total.toLocaleString()}`);sel=[];renderSel();renderPlano();}
+function enviar(){if(sel.length===0)return;const total=sel.reduce((a,b)=>a+b.p,0);const nuevaComanda={items:[...sel],total:total,estado:'OCUPADA',hora:new Date().toLocaleTimeString().slice(0,5),id:Date.now(),mesa:mesaSel,emisor:'Gustavo'};db.ref('comandas/'+mesaSel).set(nuevaComanda);db.ref('mensajes').push({emisor:'Gustavo',texto:`${mesaSel} -> ${sel.length} items $${total.toLocaleString()}`,hora:new Date().toLocaleTimeString().slice(0,5),ts:Date.now()});sel=[];renderSel();}
 function renderPlano(){const p=document.getElementById('plano');p.innerHTML='';let act=0,mix=0;MESAS.forEach(nom=>{const c=comandas[nom];const ocup=!!c;if(ocup)act++;if(ocup&&c.estado==='MIXTA')mix++;const d=document.createElement('div');d.className='mesa '+(ocup?(c.estado==='MIXTA'?'mixta':'ocupada'):'libre');d.innerHTML=`<h4>${nom.toUpperCase()} <span class="est">${ocup?c.estado:'LIBRE'}</span></h4><p>${ocup?c.items.map(it=>`• ${it.n}`).join('<br>'):'Disponible'}</p><div class="pr">${ocup?'$'+c.total.toLocaleString():'$0'}</div>${ocup?`<div style="display:flex;gap:4px;margin-top:8px"><button class="btn-m cob" onclick="cobrar('${nom}')">💵 Cobrar</button><button class="btn-m" onclick="liberar('${nom}')">Liberar</button></div>`:''}<div style="font-size:8px;color:#555;margin-top:4px">${ocup?c.hora:''}</div>`;d.onclick=()=>{mesaSel=nom;document.getElementById('ubic').value=nom;};p.appendChild(d);});document.getElementById('bAct').innerText='Activas: '+act;document.getElementById('bMix').innerText='Mixtas: '+mix;document.getElementById('cPend').innerText=mix;const fifo=document.getElementById('fifo');const pend=Object.entries(comandas);if(pend.length===0)fifo.innerHTML='Sin pendientes';else fifo.innerHTML=pend.map(([k,v])=>`<div class="fifo-item"><b style="font-size:11px">#${v.id.toString().slice(-3)} ${k}</b><div style="font-size:10px;color:#aaa">${v.items.map(i=>i.n).join('<br>')}</div><div style="color:#2ecc71;font-weight:900">$${v.total.toLocaleString()}</div></div>`).join('');}
-function cobrar(nom){if(!comandas[nom])return;if(confirm(`Cobrar ${nom}?`)){cobradas++;addMsg(`${nom} COBRADA`);delete comandas[nom];renderPlano();}}
+function cobrar(nom){if(!comandas[nom])return;if(confirm(`Cobrar ${nom}? $${comandas[nom].total.toLocaleString()}`)){db.ref('comandas/'+nom).remove();db.ref('mensajes').push({emisor:'Gustavo',texto:`${nom} COBRADA $${comandas[nom].total.toLocaleString()}`,hora:new Date().toLocaleTimeString().slice(0,5),ts:Date.now()});}}
 function cobrarSel(){cobrar(mesaSel);}
-function liberar(nom){if(comandas[nom]){delete comandas[nom];renderPlano();}}
-function marcarMixta(){if(!comandas[mesaSel])return alert('Sin comanda');comandas[mesaSel].estado='MIXTA';renderPlano();addMsg(`${mesaSel} MIXTA LISTA`);}
-function addMsg(t){const d=document.createElement('div');d.style.cssText='font-size:10px;padding:4px;border-left:3px solid #c0392b;margin-bottom:4px;background:#111';d.innerHTML=`<b style="color:#c0392b">Gustavo</b><br>${t}`;document.getElementById('msgs').prepend(d);}
-function sendMsg(){const i=document.getElementById('msg');if(i.value.trim()){addMsg(i.value);i.value='';}}
+function liberar(nom){if(comandas[nom]){db.ref('comandas/'+nom).remove();}}
+function marcarMixta(){if(!comandas[mesaSel])return alert('Sin comanda en '+mesaSel);db.ref('comandas/'+mesaSel+'/estado').set('MIXTA');db.ref('mensajes').push({emisor:'Gustavo',texto:`${mesaSel} MIXTA LISTA`,hora:new Date().toLocaleTimeString().slice(0,5),ts:Date.now()});}
+function sendMsg(){const i=document.getElementById('msg');if(!i.value.trim())return;db.ref('mensajes').push({emisor:'Gustavo',texto:i.value.trim(),hora:new Date().toLocaleTimeString().slice(0,5),ts:Date.now()});i.value='';}
 function toggleQR(){const p=document.getElementById('panelQR');p.style.display=p.style.display==='none'?'block':'none';generarQR();}
 function generarQR(){const url=document.getElementById('inputPdfUrl').value.trim();if(!url)return;document.getElementById('qrcode').innerHTML='';new QRCode(document.getElementById('qrcode'),{text:url,width:180,height:180,colorDark:"#000",colorLight:"#fff",correctLevel:QRCode.CorrectLevel.H});document.getElementById('pdfViewer').src=url;}
 function descargarQR(){const c=document.querySelector('#qrcode canvas');if(!c)return alert('Generá QR primero');const a=document.createElement('a');a.download='qr_menu.png';a.href=c.toDataURL('image/png');a.click();}
 init();
 </script></body></html>
-  
