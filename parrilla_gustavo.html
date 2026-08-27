@@ -36,3 +36,122 @@ select,input{width:100%;background:#0e0e0e;border:1px solid #333;color:#fff;padd
 <div class="badges"><span class="badge" id="reloj">--:--</span><span class="badge green" id="bAct">Activas: 0</span><span class="badge yellow" id="bMix">Mixtas: 0</span><span class="badge blue" onclick="toggleQR()">📱 QR MENU</span><span class="badge blue" onclick="location.href='index.html'">🏠 HUB</span></div></div>
 <div style="padding:10px"><div id="panelQR"><div style="display:flex;gap:12px;flex-wrap:wrap"><div><div style="color:#000;font-size:11px;font-weight:900;margin-bottom:6px">QR -> menu.pdf</div><input id="inputPdfUrl" style="background:#eee;color:#000;border:1px solid #ccc" value="https://marcelocarella596-mac.github.io/Parrilla-La-Perseverancia/menu.pdf"><button class="btn-sec" style="background:#f1c40f;color:#000;font-weight:900;border:none" onclick="generarQR()">🔄 GENERAR QR</button><div style="background:#fff;padding:8px;display:flex;justify-content:center;margin-top:6px;border-radius:6px"><div id="qrcode"></div></div><button class="btn-sec" style="background:#000;color:#f1c40f" onclick="descargarQR()">⬇️ DESCARGAR qr_menu.png</button></div><div style="flex:1;min-width:250px"><iframe id="pdfViewer" src="https://marcelocarella596-mac.github.io/Parrilla-La-Perseverancia/menu.pdf" style="width:100%;height:280px;border:1px solid #ccc;border-radius:6px"></iframe></div></div></div></div>
 <div class="main"><div class="panel"><h3>1. UBICACIÓN</h3><select id="ubic"><option>Salón - Mesa 1</option><option>Salón - Mesa 2</option><option>Salón - Mesa 3</option><option>Salón - Mesa 4</option><option>Vereda - Mesa 5</option><option>Vereda - Mesa 6</option><option>Vereda - Mesa 7</option><option>Canal - Mostrador</option><option>Canal - Delivery</option><option>Canal - Pickup</option></select><h3>2. MENÚ - 93 REALES - SCROLL FIJO</h3><input id="bus" placeholder="Buscar..." oninput="filtrarBus()"><div class="tabs" id="tabs"></div><div class="menu-grid" id="grid"></div><h3 style="margin-top:10px">3. SELECCIÓN</h3><div class="seleccion" id="sel">No hay items</div><div class="total-box"><div style="display:flex;justify-content:space-between"><span>TOTAL:</span><b id="total" style="color:#f1c40f">$0</b></div></div><button class="btn" onclick="enviar()">🔥 ENVIAR A COCINA</button><button class="btn-sec" onclick="limpiar()">Limpiar</button></div><div class="panel"><h3>📍 PLANO - EN VIVO</h3><div class="plano" id="plano"></div></div><div class="panel"><h3>📋 PENDIENTES FIFO (<span id="cPend">0</span>)</h3><div class="fifo" id="fifo">Sin pendientes</div><h3 style="margin-top:10px">💬 MENSAJES</h3><div id="msgs" style="max-height:160px;overflow-y:auto;background:#0a0a0a;border:1px solid #222;border-radius:8px;padding:6px;margin-bottom:6px"></div><input id="msg" placeholder="Aviso..." onkeypress="if(event.key==='Enter')sendMsg()"><button class="btn-sec" style="background:#1a3a5a;color:#60a5fa" onclick="sendMsg()">Enviar</button><div style="margin-top:10px;background:#000;border:1px solid #333;border-radius:8px;padding:8px"><button class="btn-m cob" style="width:100%;padding:10px" onclick="cobrarSel()">💵 COBRAR SELECCIONADA</button><button class="btn-m" style="width:100%;margin-top:6px;padding:10px;background:#7a0000" onclick="marcarMixta()">⭐ MARCAR MIXTA LISTA</button></div></div></div>
+<script>
+const MESAS=['Salón - Mesa 1','Salón - Mesa 2','Salón - Mesa 3','Salón - Mesa 4','Vereda - Mesa 5','Vereda - Mesa 6','Vereda - Mesa 7','Canal - Mostrador','Canal - Delivery','Canal - Pickup'];
+const CATS=[{id:'todos',n:'Todos (93)'},{id:'adicional',n:'Adicionales'},{id:'bebida',n:'Bebidas'},{id:'cerveza',n:'Cervezas'},{id:'ensalada',n:'Ensaladas'},{id:'guarnicion',n:'Guarniciones'},{id:'minuta',n:'Minutas (10)'},{id:'parrilla',n:'Parrilla (19)'},{id:'postre',n:'Postres'},{id:'sandwich',n:'Sandwiches'},{id:'vino',n:'Vinos'}];
+let MENU=[
+{n:'Adicional Guarnición',p:4000,cat:'adicional',sub:'Adicionales'},
+{n:'Coca Cola 500ml',p:2500,cat:'bebida',sub:'Bebidas'},
+{n:'Coca Cola 1L',p:3500,cat:'bebida',sub:'Bebidas'},
+{n:'Coca Zero 500ml',p:2500,cat:'bebida',sub:'Bebidas'},
+{n:'Sprite 500ml',p:2500,cat:'bebida',sub:'Bebidas'},
+{n:'Fanta 500ml',p:2500,cat:'bebida',sub:'Bebidas'},
+{n:'Agua s/gas 500ml',p:2000,cat:'bebida',sub:'Bebidas'},
+{n:'Agua c/gas 500ml',p:2000,cat:'bebida',sub:'Bebidas'},
+{n:'Jugo Naranja',p:3000,cat:'bebida',sub:'Bebidas'},
+{n:'Limonada',p:3000,cat:'bebida',sub:'Bebidas'},
+{n:'Soda',p:2000,cat:'bebida',sub:'Bebidas'},
+{n:'Tónica',p:2500,cat:'bebida',sub:'Bebidas'},
+{n:'Pomelo',p:2500,cat:'bebida',sub:'Bebidas'},
+{n:'Pepsi 500ml',p:2500,cat:'bebida',sub:'Bebidas'},
+{n:'Pepsi Zero 500ml',p:2500,cat:'bebida',sub:'Bebidas'},
+{n:'Aquarius Manzana',p:2500,cat:'bebida',sub:'Bebidas'},
+{n:'Aquarius Pera',p:2500,cat:'bebida',sub:'Bebidas'},
+{n:'Levite 500ml',p:2500,cat:'bebida',sub:'Bebidas'},
+{n:'Quilmes 1L',p:5000,cat:'cerveza',sub:'Cervezas'},
+{n:'Brahma 1L',p:5000,cat:'cerveza',sub:'Cervezas'},
+{n:'Stella Artois',p:4500,cat:'cerveza',sub:'Cervezas'},
+{n:'Heineken',p:4500,cat:'cerveza',sub:'Cervezas'},
+{n:'Ensalada Mixta',p:6000,cat:'ensalada',sub:'Ensaladas'},
+{n:'Ensalada Completa',p:8000,cat:'ensalada',sub:'Ensaladas'},
+{n:'Caesar',p:8500,cat:'ensalada',sub:'Ensaladas'},
+{n:'Caprese',p:8000,cat:'ensalada',sub:'Ensaladas'},
+{n:'Rúcula y Parmesano',p:8000,cat:'ensalada',sub:'Ensaladas'},
+{n:'Waldorf',p:8000,cat:'ensalada',sub:'Ensaladas'},
+{n:'Papas Fritas',p:5000,cat:'guarnicion',sub:'Guarniciones'},
+{n:'Puré',p:4500,cat:'guarnicion',sub:'Guarniciones'},
+{n:'Ensalada Guarnición',p:4500,cat:'guarnicion',sub:'Guarniciones'},
+{n:'Provoleta',p:13000,cat:'minuta',sub:'Minutas'},
+{n:'Milanesa c/fritas',p:14500,cat:'minuta',sub:'Minutas'},
+{n:'Milanesa c/fritas y 2 huevos',p:22000,cat:'minuta',sub:'Minutas'},
+{n:'Milanesa napolitana c/fritas',p:17000,cat:'minuta',sub:'Minutas'},
+{n:'Suprema c/fritas',p:14000,cat:'minuta',sub:'Minutas'},
+{n:'Supremas c/fritas y 2 huevos',p:19500,cat:'minuta',sub:'Minutas'},
+{n:'Suprema napolitana c/fritas',p:17000,cat:'minuta',sub:'Minutas'},
+{n:'Tortilla de papas',p:9000,cat:'minuta',sub:'Minutas'},
+{n:'Tortilla c/jamón y queso',p:12000,cat:'minuta',sub:'Minutas'},
+{n:'Revuelto Gramajo',p:13000,cat:'minuta',sub:'Minutas'},
+{n:'Asado',p:12000,cat:'parrilla',sub:'Parrilla'},
+{n:'Vacío',p:12500,cat:'parrilla',sub:'Parrilla'},
+{n:'Bife de Chorizo',p:13000,cat:'parrilla',sub:'Parrilla'},
+{n:'Entraña',p:16000,cat:'parrilla',sub:'Parrilla'},
+{n:'Bondiola',p:11000,cat:'parrilla',sub:'Parrilla'},
+{n:'Chorizo',p:4000,cat:'parrilla',sub:'Parrilla'},
+{n:'Morcilla',p:4000,cat:'parrilla',sub:'Parrilla'},
+{n:'Chinchulines',p:7000,cat:'parrilla',sub:'Parrilla'},
+{n:'Mollejas',p:11000,cat:'parrilla',sub:'Parrilla'},
+{n:'Matambre',p:11000,cat:'parrilla',sub:'Parrilla'},
+{n:'Pollo 1/2',p:9000,cat:'parrilla',sub:'Parrilla'},
+{n:'Pollo Entero',p:16000,cat:'parrilla',sub:'Parrilla'},
+{n:'Costillitas de Cerdo',p:11000,cat:'parrilla',sub:'Parrilla'},
+{n:'Asado Banderita',p:12500,cat:'parrilla',sub:'Parrilla'},
+{n:'Ojo de Bife',p:13500,cat:'parrilla',sub:'Parrilla'},
+{n:'Tira de Asado',p:12000,cat:'parrilla',sub:'Parrilla'},
+{n:'Parrillada p/2',p:28000,cat:'parrilla',sub:'Parrilla'},
+{n:'Parrillada p/4',p:52000,cat:'parrilla',sub:'Parrilla'},
+{n:'Riñones',p:6000,cat:'parrilla',sub:'Parrilla'},
+{n:'Flan casero',p:4000,cat:'postre',sub:'Postres'},
+{n:'Budín de Pan',p:4000,cat:'postre',sub:'Postres'},
+{n:'Helado',p:4500,cat:'postre',sub:'Postres'},
+{n:'Choripán',p:5000,cat:'sandwich',sub:'Sándwich'},
+{n:'Morcipán',p:5000,cat:'sandwich',sub:'Sándwich'},
+{n:'Choripán c/fritas',p:7500,cat:'sandwich',sub:'Sándwich'},
+{n:'Bondiola sándwich',p:8500,cat:'sandwich',sub:'Sándwich'},
+{n:'Bondiola c/fritas',p:11000,cat:'sandwich',sub:'Sándwich'},
+{n:'Vacío sándwich',p:9000,cat:'sandwich',sub:'Sándwich'},
+{n:'Vacío c/fritas',p:11500,cat:'sandwich',sub:'Sándwich'},
+{n:'Bife sándwich',p:9000,cat:'sandwich',sub:'Sándwich'},
+{n:'Bife c/fritas',p:11500,cat:'sandwich',sub:'Sándwich'},
+{n:'Entraña sándwich',p:12000,cat:'sandwich',sub:'Sándwich'},
+{n:'Entraña c/fritas',p:14500,cat:'sandwich',sub:'Sándwich'},
+{n:'Milanesa sándwich',p:7000,cat:'sandwich',sub:'Sándwich'},
+{n:'Milanesa c/fritas sándwich',p:9500,cat:'sandwich',sub:'Sándwich'},
+{n:'Suprema sándwich',p:7000,cat:'sandwich',sub:'Sándwich'},
+{n:'Suprema c/fritas sándwich',p:9500,cat:'sandwich',sub:'Sándwich'},
+{n:'Pollo sándwich',p:6500,cat:'sandwich',sub:'Sándwich'},
+{n:'Pollo c/fritas sándwich',p:9000,cat:'sandwich',sub:'Sándwich'},
+{n:'Hamburguesa',p:6000,cat:'sandwich',sub:'Sándwich'},
+{n:'Hamburguesa c/fritas',p:8500,cat:'sandwich',sub:'Sándwich'},
+{n:'Hamburguesa completa',p:7500,cat:'sandwich',sub:'Sándwich'},
+{n:'Hamburguesa completa c/fritas',p:10000,cat:'sandwich',sub:'Sándwich'},
+{n:'Malbec Alma Mora',p:8000,cat:'vino',sub:'Vinos'},
+{n:'Malbec Luigi Bosca',p:12000,cat:'vino',sub:'Vinos'},
+{n:'Cabernet Rutini',p:13000,cat:'vino',sub:'Vinos'},
+{n:'Malbec Catena',p:14000,cat:'vino',sub:'Vinos'},
+{n:'Torrontés',p:8000,cat:'vino',sub:'Vinos'},
+{n:'Chardonnay',p:8500,cat:'vino',sub:'Vinos'},
+{n:'Rosado',p:7500,cat:'vino',sub:'Vinos'},
+{n:'Copa Vino Tinto',p:3000,cat:'vino',sub:'Vinos'},
+{n:'Copa Vino Blanco',p:3000,cat:'vino',sub:'Vinos'},];
+let sel=[],filtro='todos',busca='',mesaSel='Salón - Mesa 1',comandas={},cobradas=0;
+function init(){document.getElementById('ubic').addEventListener('change',e=>mesaSel=e.target.value);renderTabs();renderMenu();renderPlano();setInterval(()=>document.getElementById('reloj').innerText=new Date().toLocaleTimeString(),1000);setTimeout(generarQR,600);}
+function renderTabs(){const c=document.getElementById('tabs');c.innerHTML='';CATS.forEach(cat=>{const d=document.createElement('div');d.className='tab'+(filtro===cat.id?' active':'');d.innerText=cat.n;d.onclick=()=>{filtro=cat.id;renderTabs();renderMenu();};c.appendChild(d);});}
+function filtrarBus(){busca=document.getElementById('bus').value.toLowerCase();renderMenu();}
+function renderMenu(){const g=document.getElementById('grid');g.innerHTML='';MENU.filter(m=>{const okCat=filtro==='todos'||m.cat===filtro;const okBus=!busca||m.n.toLowerCase().includes(busca);return okCat&&okBus;}).forEach(m=>{const d=document.createElement('div');d.className='item';d.innerHTML=`<b>${m.n}</b><i>${m.sub}</i><span>$${m.p.toLocaleString()}</span>`;d.onclick=()=>add(m);g.appendChild(d);});}
+function add(m){sel.push(m);renderSel();}
+function renderSel(){const cont=document.getElementById('sel');if(sel.length===0){cont.innerHTML='No hay items';document.getElementById('total').innerText='$0';return;}let tot=0,h='';sel.forEach((s,i)=>{tot+=s.p;h+=`<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid #1a1a1a;font-size:11px"><span>${i+1}x ${s.n}</span><span style="color:#2ecc71">$${s.p.toLocaleString()} <b onclick="sel.splice(${i},1);renderSel()" style="color:#c0392b;cursor:pointer;padding:0 4px">x</b></span></div>`;});cont.innerHTML=h;document.getElementById('total').innerText='$'+tot.toLocaleString();}
+function limpiar(){sel=[];renderSel();}
+function enviar(){if(sel.length===0)return;comandas[mesaSel]={items:[...sel],total:sel.reduce((a,b)=>a+b.p,0),estado:'OCUPADA',hora:new Date().toLocaleTimeString().slice(0,5),id:Date.now()};addMsg(`${mesaSel} -> ${sel.length} items $${comandas[mesaSel].total.toLocaleString()}`);sel=[];renderSel();renderPlano();}
+function renderPlano(){const p=document.getElementById('plano');p.innerHTML='';let act=0,mix=0;MESAS.forEach(nom=>{const c=comandas[nom];const ocup=!!c;if(ocup)act++;if(ocup&&c.estado==='MIXTA')mix++;const d=document.createElement('div');d.className='mesa '+(ocup?(c.estado==='MIXTA'?'mixta':'ocupada'):'libre');d.innerHTML=`<h4>${nom.toUpperCase()} <span class="est">${ocup?c.estado:'LIBRE'}</span></h4><p>${ocup?c.items.map(it=>`• ${it.n}`).join('<br>'):'Disponible'}</p><div class="pr">${ocup?'$'+c.total.toLocaleString():'$0'}</div>${ocup?`<div style="display:flex;gap:4px;margin-top:8px"><button class="btn-m cob" onclick="cobrar('${nom}')">💵 Cobrar</button><button class="btn-m" onclick="liberar('${nom}')">Liberar</button></div>`:''}<div style="font-size:8px;color:#555;margin-top:4px">${ocup?c.hora:''}</div>`;d.onclick=()=>{mesaSel=nom;document.getElementById('ubic').value=nom;};p.appendChild(d);});document.getElementById('bAct').innerText='Activas: '+act;document.getElementById('bMix').innerText='Mixtas: '+mix;document.getElementById('cPend').innerText=mix;const fifo=document.getElementById('fifo');const pend=Object.entries(comandas);if(pend.length===0)fifo.innerHTML='Sin pendientes';else fifo.innerHTML=pend.map(([k,v])=>`<div class="fifo-item"><b style="font-size:11px">#${v.id.toString().slice(-3)} ${k}</b><div style="font-size:10px;color:#aaa">${v.items.map(i=>i.n).join('<br>')}</div><div style="color:#2ecc71;font-weight:900">$${v.total.toLocaleString()}</div></div>`).join('');}
+function cobrar(nom){if(!comandas[nom])return;if(confirm(`Cobrar ${nom}?`)){cobradas++;addMsg(`${nom} COBRADA`);delete comandas[nom];renderPlano();}}
+function cobrarSel(){cobrar(mesaSel);}
+function liberar(nom){if(comandas[nom]){delete comandas[nom];renderPlano();}}
+function marcarMixta(){if(!comandas[mesaSel])return alert('Sin comanda');comandas[mesaSel].estado='MIXTA';renderPlano();addMsg(`${mesaSel} MIXTA LISTA`);}
+function addMsg(t){const d=document.createElement('div');d.style.cssText='font-size:10px;padding:4px;border-left:3px solid #c0392b;margin-bottom:4px;background:#111';d.innerHTML=`<b style="color:#c0392b">Gustavo</b><br>${t}`;document.getElementById('msgs').prepend(d);}
+function sendMsg(){const i=document.getElementById('msg');if(i.value.trim()){addMsg(i.value);i.value='';}}
+function toggleQR(){const p=document.getElementById('panelQR');p.style.display=p.style.display==='none'?'block':'none';generarQR();}
+function generarQR(){const url=document.getElementById('inputPdfUrl').value.trim();if(!url)return;document.getElementById('qrcode').innerHTML='';new QRCode(document.getElementById('qrcode'),{text:url,width:180,height:180,colorDark:"#000",colorLight:"#fff",correctLevel:QRCode.CorrectLevel.H});document.getElementById('pdfViewer').src=url;}
+function descargarQR(){const c=document.querySelector('#qrcode canvas');if(!c)return alert('Generá QR primero');const a=document.createElement('a');a.download='qr_menu.png';a.href=c.toDataURL('image/png');a.click();}
+init();
+</script></body></html>
+  
