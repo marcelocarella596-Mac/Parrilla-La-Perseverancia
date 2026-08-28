@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>MARIANA v2.9 FIX TOTAL - UNIFICADA con GUSTAVO</title>
+<title>MARIANA v3.0 MANOS FIX + IMPRESION - UNIFICADA con GUSTAVO</title>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <style>
@@ -27,10 +27,18 @@ select,input{width:100%;padding:8px;background:#111;border:1px solid #444;color:
 .card-mesa-grid.ocupada{border-color:#27ae60;background:#17202a}
 .card-mesa-grid.cobrada{border-color:#f1c40f;background:#000;box-shadow:0 0 20px rgba(241,196,15,.4);animation:parpadeo 1s infinite}
 .card-mesa-grid.lista-completa{border-color:#f1c40f;background:#2a2411;animation:parpadeo 1s infinite}
+/* FIX MANOS */
+.card-mesa-grid.esperando-mozo{border-color:#f1c40f!important;background:#2a2411!important;box-shadow:0 0 20px rgba(241,196,15,.7);animation:parpadeoRapido 0.6s infinite}
+.card-mesa-grid.manos-ok{border-color:#555!important;background:#111!important;opacity:0.7}
 @keyframes parpadeo{0%,100%{border-color:#f1c40f}50%{border-color:#fff}}
+@keyframes parpadeoRapido{0%,100%{opacity:1}50%{opacity:0.5}}
 .mesa-hdr-grid{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #333;padding-bottom:4px;margin-bottom:6px}
 .mesa-title-grid{font-size:12px;font-weight:bold;color:#ffc107}
 .mesa-status-badge{font-size:9px;padding:2px 6px;border-radius:3px;font-weight:bold;background:#333;color:#aaa}
+.tachado{text-decoration:line-through;opacity:0.35;background:#0a0a0a!important;padding:2px 4px;border-radius:3px}
+.entregado-sector{background:#2a2411!important;border-left:3px solid #f1c40f;padding:3px 4px}
+.btn-manos{background:#d4af37;color:#000;border:none;padding:10px;border-radius:5px;font-weight:bold;cursor:pointer;width:100%;margin:6px 0}
+.btn-print{background:#222;border:1px solid #3498db;color:#3498db;padding:10px;border-radius:5px;font-weight:bold;cursor:pointer;width:100%;margin:6px 0}
 .chat-box{background:#111;border:1px solid #333;border-radius:6px;height:180px;overflow-y:auto;padding:8px;font-size:11px;margin-bottom:8px;display:flex;flex-direction:column;gap:6px}
 .chat-msg{background:#222;padding:5px 8px;border-radius:4px;border-left:3px solid #2980b9}
 .modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);display:none;justify-content:center;align-items:center;z-index:1000}
@@ -40,15 +48,15 @@ select,input{width:100%;padding:8px;background:#111;border:1px solid #444;color:
 </head>
 <body>
 <header>
-<h1>🔥 LA PERSEVERANCIA | MARIANA v2.9 FIX</h1>
+<h1>🔥 LA PERSEVERANCIA | MARIANA v3.0 MANOS FIX</h1>
 <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
 <div class="info-widget" id="relojWidget">🕒 --:--:--</div>
 <div class="info-widget" style="color:#2ecc71">🪑 Activas: <span id="contadorMesasAtendidas">0</span></div>
-<div class="info-widget" style="color:#f1c40f">🔀 Mixtas listas: <span id="contadorMixtas">0</span></div>
+<div class="info-widget" style="color:#f1c40f">🔀 Esperando mozo: <span id="contadorMixtas">0</span></div>
 <div class="info-widget" style="color:#f1c40f">💰 Cobradas: <span id="contadorCobradas">0</span></div>
 <button class="btn-top" style="background:#000;border:1px solid #3498db;color:#3498db" onclick="abrirPropinas()">💸 PROPINAS</button>
 <button class="btn-top" id="btnSonido" onclick="toggleSonido()">🔔 SONIDO: ON</button>
-<span class="badge-live">• EN VIVO v2.9 - KEY EXACTA</span>
+<span class="badge-live">• EN VIVO v3.0 - MANOS FIX</span>
 </div>
 </header>
 <div class="layout-principal">
@@ -64,13 +72,13 @@ select,input{width:100%;padding:8px;background:#111;border:1px solid #444;color:
 <div style="display:flex;justify-content:space-between;color:#ffc107;font-weight:bold"><span>TOTAL:</span><span id="totalMonto">$0</span></div>
 <button style="width:100%;background:#e74c3c;border:none;color:#fff;padding:10px;font-weight:bold;border-radius:6px;cursor:pointer" onclick="enviarOActualizarComanda()">🚀 ENVIAR a comandas_activas</button>
 </aside>
-<main class="panel-produccion"><div class="seccion-titulo">📍 PLANO - KEY EXACTA</div><div class="mapa-contenedor" id="mapaMesasGrid"></div></main>
+<main class="panel-produccion"><div class="seccion-titulo">📍 PLANO - KEY EXACTA + FIX MANOS</div><div class="mapa-contenedor" id="mapaMesasGrid"></div></main>
 <aside>
 <div class="box-kds-mini"><div class="seccion-titulo">📋 PENDIENTES (<span id="contadorPendientes">0</span>)</div><div id="listaPendientesKDS" style="max-height:180px;overflow-y:auto;font-size:11px"></div></div>
 <div class="box-mensajes" style="margin-top:12px"><div class="seccion-titulo">💬 MENSAJES</div><div class="chat-box" id="chatMensajes"></div><input type="text" id="inputMensaje" placeholder="Escribir aviso..." onkeypress="if(event.key==='Enter')enviarMensajeChat()"><button style="margin-top:6px;width:100%;padding:8px;background:#2980b9;border:none;color:#fff;border-radius:4px;cursor:pointer" onclick="enviarMensajeChat()">Enviar</button></div>
 </aside>
 </div>
-<div class="modal-overlay" id="modalOpcionesMesa"><div class="modal-contenido"><h3 id="tituloOpcionesMesa" style="color:#ffc107"></h3><div id="detalleEstadosSeparados" style="background:#111;padding:8px;border-radius:4px;font-size:11px;margin:10px 0"></div><button id="btnAgregar" style="width:100%;padding:10px;background:#27ae60;color:#fff;border:none;border-radius:5px;font-weight:bold;margin-bottom:6px" onclick="seleccionarMesaParaAgregar()">➕ AGREGAR ITEMS</button><button style="width:100%;padding:10px;background:#2980b9;color:#fff;border:none;border-radius:5px;font-weight:bold;margin-bottom:6px" onclick="verDetalleMesaModal()">👁️ VER DETALLE</button><button id="btnCobrar" style="width:100%;padding:10px;background:#f1c40f;color:#000;border:none;border-radius:5px;font-weight:bold" onclick="cobrarMesa()">💰 LIBERAR MESA COBRADA</button><button style="width:100%;margin-top:8px;background:#333;color:#fff;border:none;padding:8px;border-radius:4px" onclick="cerrarModal('modalOpcionesMesa')">CERRAR</button></div></div>
+<div class="modal-overlay" id="modalOpcionesMesa"><div class="modal-contenido"><h3 id="tituloOpcionesMesa" style="color:#ffc107"></h3><div id="detalleEstadosSeparados" style="background:#111;padding:8px;border-radius:4px;font-size:11px;margin:10px 0"></div><button id="btnAgregar" style="width:100%;padding:10px;background:#27ae60;color:#fff;border:none;border-radius:5px;font-weight:bold;margin-bottom:6px" onclick="seleccionarMesaParaAgregar()">➕ AGREGAR ITEMS</button><div id="btnsExtras"></div><button id="btnCobrar" style="width:100%;padding:10px;background:#f1c40f;color:#000;border:none;border-radius:5px;font-weight:bold;margin-top:6px" onclick="cobrarMesa()">💰 LIBERAR MESA COBRADA</button><button style="width:100%;margin-top:8px;background:#333;color:#fff;border:none;padding:8px;border-radius:4px" onclick="cerrarModal('modalOpcionesMesa')">CERRAR</button></div></div>
 <div class="modal-overlay" id="modalPropinas"><div class="modal-contenido" style="border:1px solid #3498db">
 <h3 style="color:#3498db">💸 PROPINAS - MARIANA</h3>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0">
@@ -181,11 +189,11 @@ const MENU_FIJO_93 = [
 ];
 let MENU=MENU_FIJO_93, categoriaActiva='Todos',carrito=[],idMesaGestion=null,sonidoHabilitado=true,mesasDOM={},agotados={},comandasCache={};
 const listadoMesasBase=["Salón - Mesa 1","Salón - Mesa 2","Salón - Mesa 3","Salón - Mesa 4","Vereda - Mesa 5","Vereda - Mesa 6","Vereda - Mesa 7","Canal - Mostrador","Canal - Delivery","Canal - Pickup"];
-// FIX: YA NO USAMOS limpiarKey PARA COMANDAS
 function limpiarKey(str){return (str||'').normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-zA-Z0-9]/g,'_').replace(/__+/g,'_').toLowerCase();}
 function getNombre(it){return (it.n||it.nombre||it.name||'').toString();}
 function getPrecio(it){return it.p||it.precio||it.price||0;}
 function getCant(it){return parseInt(it.cantidad||it.qty||1);}
+function getEstadoItem(it){return (it.estadoItem||'PENDIENTE').toUpperCase();}
 const PARRILLA_BASE=['asado','vacio','bife','entraña','morcilla','chorizo','provoleta','bondiola','choripan','morcipan'];
 const AGREGADOS_COCINA=['lechuga','tomate','jamon','queso','huevo','frita','papas'];
 const COCINA_PURA=['milanesa','suprema','pechuga','tortilla'];
@@ -217,37 +225,41 @@ function construirBotonesCategorias(){
 function renderGrilla(cat){const cont=document.getElementById('grillaProductos');cont.innerHTML='';const filtrados=cat==='Todos'?MENU:MENU.filter(m=>m.cat===cat);filtrados.forEach(prod=>{const agot=!!agotados[prod.nombre];const card=document.createElement('div');card.className=`card-prod ${agot?'agotado':''}`;card.onclick=()=>{if(agot){alert('AGOTADO');return;}const ex=carrito.find(i=>i.id===prod.id);if(ex)ex.cantidad++;else carrito.push({...prod,cantidad:1});renderCarrito();};card.innerHTML=`<div style="font-size:11px;font-weight:bold">${prod.nombre}</div><div style="color:#2ecc71;font-size:11px">$${prod.precio}</div>`;cont.appendChild(card);});}
 function renderCarrito(){const cont=document.getElementById('resumenComanda');const tot=document.getElementById('totalMonto');cont.innerHTML='';if(!carrito.length){cont.innerHTML='<p style="color:#666;font-size:11px">No hay ítems</p>';tot.textContent='$0';return;}let total=0;carrito.forEach(it=>{total+=it.precio*it.cantidad;const r=document.createElement('div');r.style.cssText='display:flex;justify-content:space-between;font-size:11px;padding:3px 0;border-bottom:1px solid #222';r.innerHTML=`<span>${it.cantidad}x ${it.nombre}</span><span>$${it.precio*it.cantidad}</span>`;cont.appendChild(r);});tot.textContent=`$${total}`;}
 function evaluarCanalSeleccionado(){document.getElementById('boxDelivery').style.display=document.getElementById('selectUbicacion').value.includes('Delivery')?'block':'none';}
-
-// FIX TOTAL: USA KEY EXACTA "Salón - Mesa 1" Y COMPATIBLE CON GUSTAVO n/p
 function enviarOActualizarComanda(){
  if(!carrito.length){alert("Seleccioná productos");return;}
- const destino=document.getElementById('selectUbicacion').value; // KEY EXACTA
+ const destino=document.getElementById('selectUbicacion').value;
  db.ref('comandas_activas/'+destino).once('value').then(snap=>{
   const ex=snap.val();
-  let itemsFinal=[], totalFinal=0;
-  const nuevoItems = carrito.map(c=>({n:c.nombre, nombre:c.nombre, cantidad:c.cantidad, p:c.precio, precio:c.precio, cat:c.cat}));
+  let itemsFinal=[];
+  const nuevoItems = carrito.map(c=>({n:c.nombre, nombre:c.nombre, cantidad:c.cantidad, p:c.precio, precio:c.precio, cat:c.cat, estadoItem:'PENDIENTE'}));
   if(ex && ex.items){
     const mapa={};
-    ex.items.forEach(i=>{mapa[getNombre(i)]={n:getNombre(i),nombre:getNombre(i),cantidad:getCant(i),p:getPrecio(i),precio:getPrecio(i)}});
+    ex.items.forEach(i=>{mapa[getNombre(i)]={...i, n:getNombre(i), nombre:getNombre(i), cantidad:getCant(i), p:getPrecio(i), precio:getPrecio(i), estadoItem:i.estadoItem||'PENDIENTE'}});
     nuevoItems.forEach(n=>{
       const nom=getNombre(n);
-      if(mapa[nom]) mapa[nom].cantidad+=getCant(n);
-      else mapa[nom]=n;
+      if(mapa[nom] && mapa[nom].estadoItem!=='MANOS_EN_MESA'){
+        mapa[nom].cantidad+=getCant(n);
+      } else if(mapa[nom] && mapa[nom].estadoItem==='MANOS_EN_MESA'){
+        // si ya estaba en manos y piden de nuevo, es nuevo pedido -> PENDIENTE
+        mapa[nom+'_'+Date.now()]=n;
+      } else {
+        mapa[nom]=n;
+      }
     });
     itemsFinal=Object.values(mapa);
   } else {
     itemsFinal=nuevoItems;
   }
-  totalFinal=itemsFinal.reduce((a,c)=>a+(getPrecio(c)*getCant(c)),0);
+  const totalFinal=itemsFinal.reduce((a,c)=>a+(getPrecio(c)*getCant(c)),0);
   const ahora=Date.now();
   const data={
     mesa:destino,
     items:itemsFinal,
     total:totalFinal,
     total_cobrado:ex? (ex.total_cobrado||ex.total||totalFinal) : totalFinal,
-    estado:ex?ex.estado:'RECIBIDO',
-    estado_parrilla:ex?ex.estado_parrilla||ex.estado:'RECIBIDO',
-    estado_cocina:ex?ex.estado_cocina||ex.estado:'RECIBIDO',
+    estado:ex? (ex.estado==='OCUPADA_SILENCIOSA'?'RECIBIDO':ex.estado) :'RECIBIDO',
+    estado_parrilla:ex? (ex.estado_parrilla==='MANOS_EN_MESA'?'RECIBIDO':ex.estado_parrilla) : 'RECIBIDO',
+    estado_cocina:ex? (ex.estado_cocina==='MANOS_EN_MESA'?'RECIBIDO':ex.estado_cocina) : 'RECIBIDO',
     emisor:'Mariana',
     hora:new Date().toLocaleTimeString().slice(0,5),
     timestamp:ex?ex.timestamp:ahora,
@@ -257,52 +269,153 @@ function enviarOActualizarComanda(){
   };
   db.ref('comandas_activas/'+destino).set(data);
   carrito=[];renderCarrito();
-  db.ref('mensajes_chat').push({remitente:'Mariana',texto:`${destino} -> ${itemsFinal.map(i=>getNombre(i)).join(', ')}`,hora:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),timestamp:Date.now()});
+  db.ref('mensajes_chat').push({remitente:'Mariana',texto:`${destino} -> ${itemsFinal.filter(i=>getEstadoItem(i)==='PENDIENTE').map(i=>getNombre(i)).join(', ')}`,hora:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),timestamp:Date.now()});
  });
 }
-
 function escucharOrdenesFirebase(){
  db.ref('comandas_activas').on('value',snap=>{
   const data=snap.val()||{}; comandasCache=data;
   listadoMesasBase.forEach(id=>{const m=mesasDOM[id];if(m){m.card.className='card-mesa-grid';m.badge.textContent='LIBRE';m.preview.textContent='Sin comanda';m.total.textContent='$0';m.timer.textContent='--:--';}});
-  let pend=0,ocup=0,mixtas=0,cobr=0;
+  let pend=0,ocup=0,esperandoMozo=0,cobr=0;
   const lista=document.getElementById('listaPendientesKDS');lista.innerHTML='';
   Object.entries(data).forEach(([fbKey,cmd])=>{
    if(!cmd||!cmd.mesa) return;
-   // SOPORTA AMBAS KEYS POR SI QUEDO ALGO VIEJO
    const mesaReal = cmd.mesa || fbKey;
-   const tipo=getTipo(cmd.items||[]);
-   const ep=(cmd.estado_parrilla||cmd.estado||'RECIBIDO').toUpperCase();
-   const ec=(cmd.estado_cocina||cmd.estado||'RECIBIDO').toUpperCase();
-   const esCobrada=(cmd.estado||'').toUpperCase()==='COBRADA';
    const m=mesasDOM[mesaReal] || mesasDOM[fbKey];
    if(!m) return;
+   const items = cmd.items||[];
+   const tienePendiente = items.some(i=>getEstadoItem(i)==='PENDIENTE' || getEstadoItem(i)==='EN_COCINA');
+   const tieneEsperando = items.some(i=>getEstadoItem(i)==='ENTREGADO_SECTOR');
+   const todoEnManos = items.length>0 && items.every(i=>getEstadoItem(i)==='MANOS_EN_MESA');
+   const esCobrada=(cmd.estado||'').toUpperCase()==='COBRADA';
    ocup++;
    const ts=cmd.timestamp_estado||cmd.timestamp||Date.now();
-   const mins=(Date.now()-ts)/1000/60;
    const seg=Math.floor((Date.now()-(cmd.timestamp||Date.now()))/1000);
    const mm=String(Math.floor(seg/60)).padStart(2,'0'); const ss=String(seg%60).padStart(2,'0');
-   if(!esCobrada){pend++; const d=document.createElement('div'); d.style.cssText="background:#222;padding:6px;border-radius:4px;margin-bottom:4px"; d.innerHTML=`<strong>${mesaReal}</strong> ${tipo} P:${ep} C:${ec}`; lista.appendChild(d);}
-   if(esCobrada){cobr++; m.card.classList.add('cobrada'); m.badge.textContent=`💰 COBRADA $${cmd.total_cobrado||cmd.total}`; m.badge.style.background='#f1c40f'; m.badge.style.color='#000'; m.preview.innerHTML=`💰 $${cmd.total_cobrado||cmd.total}<br>${(cmd.items||[]).map(i=>getNombre(i)).join(', ')}`;}
-   else {m.card.classList.add('ocupada'); m.badge.textContent=`${tipo} P:${ep} C:${ec}`; m.preview.innerHTML=(cmd.items||[]).map(i=>`• ${getCant(i)}x ${getNombre(i)}`).join('<br>'); if(tipo==='MIXTA'&&(ep.includes('MANOS')&&ec.includes('MANOS'))){m.card.classList.add('lista-completa'); mixtas++;}}
-   m.total.textContent=`$${cmd.total_cobrado||cmd.total||0}`; m.timer.textContent=`${mm}:${ss} | ${mins.toFixed(1)}min`;
+   if(!esCobrada && (tienePendiente||tieneEsperando)) pend++;
+   if(tieneEsperando) esperandoMozo++;
+   if(esCobrada){cobr++; m.card.classList.add('cobrada'); m.badge.textContent=`💰 COBRADA $${cmd.total_cobrado||cmd.total}`; m.badge.style.background='#f1c40f'; m.badge.style.color='#000'; m.preview.innerHTML=`💰 $${cmd.total_cobrado||cmd.total}<br>${items.map(i=>getNombre(i)).join(', ')}`;}
+   else if(todoEnManos){
+     m.card.classList.add('manos-ok');
+     m.badge.textContent=`OCUPADA - MANOS OK`;
+     m.badge.style.background='#555'; m.badge.style.color='#fff';
+     m.preview.innerHTML=items.map(i=>`<span class="tachado">• ${getCant(i)}x ${getNombre(i)}</span>`).join('<br>') + '<br><small style="color:#888">Esperando nuevo pedido o cierre</small>';
+   } else if(tieneEsperando){
+     m.card.classList.add('ocupada'); m.card.classList.add('esperando-mozo');
+     m.badge.textContent=`✋ ENTREGADO - ESPERA MOZO`;
+     m.badge.style.background='#f1c40f'; m.badge.style.color='#000';
+     m.preview.innerHTML=items.map(i=>{
+       if(getEstadoItem(i)==='MANOS_EN_MESA') return `<span class="tachado">• ${getCant(i)}x ${getNombre(i)}</span>`;
+       if(getEstadoItem(i)==='ENTREGADO_SECTOR') return `<span class="entregado-sector">• ${getCant(i)}x ${getNombre(i)} ✋</span>`;
+       return `• ${getCant(i)}x ${getNombre(i)}`;
+     }).join('<br>');
+   } else {
+     m.card.classList.add('ocupada');
+     m.badge.textContent=`${getTipo(items)} P:${cmd.estado_parrilla||cmd.estado} C:${cmd.estado_cocina||cmd.estado}`;
+     m.preview.innerHTML=items.map(i=>{
+       if(getEstadoItem(i)==='MANOS_EN_MESA') return `<span class="tachado">• ${getCant(i)}x ${getNombre(i)}</span>`;
+       return `• ${getCant(i)}x ${getNombre(i)}`;
+     }).join('<br>');
+   }
+   m.total.textContent=`$${cmd.total_cobrado||cmd.total||0}`; m.timer.textContent=`${mm}:${ss}`;
+   if(!esCobrada &&!todoEnManos){
+     const d=document.createElement('div'); d.style.cssText="background:#222;padding:6px;border-radius:4px;margin-bottom:4px";
+     d.innerHTML=`<strong>${mesaReal}</strong> ${getTipo(items)} ${tieneEsperando?'✋ ESPERA MOZO':''} - ${items.filter(i=>getEstadoItem(i)!=='MANOS_EN_MESA').map(i=>getNombre(i)).join(', ')}`;
+     lista.appendChild(d);
+   }
   });
-  document.getElementById('contadorPendientes').textContent=pend; document.getElementById('contadorMesasAtendidas').textContent=ocup; document.getElementById('contadorMixtas').textContent=mixtas; document.getElementById('contadorCobradas').textContent=cobr;
+  document.getElementById('contadorPendientes').textContent=pend; document.getElementById('contadorMesasAtendidas').textContent=ocup; document.getElementById('contadorMixtas').textContent=esperandoMozo; document.getElementById('contadorCobradas').textContent=cobr;
  });
 }
 function escucharMensajesFirebase(){db.ref('mensajes_chat').limitToLast(20).on('value',snap=>{const box=document.getElementById('chatMensajes');box.innerHTML='';const data=snap.val();if(!data)return;Object.values(data).sort((a,b)=>(a.timestamp||0)-(b.timestamp||0)).forEach(m=>{const d=document.createElement('div');d.className='chat-msg';d.innerHTML=`<strong>${m.remitente}</strong> (${m.hora||''})<br>${m.texto}`;box.appendChild(d);});box.scrollTop=box.scrollHeight;});}
-function checkAlarmas(){Object.values(comandasCache).forEach(cmd=>{if(!cmd.mesa)return;const ts=cmd.timestamp_estado||cmd.timestamp||Date.now();const mins=(Date.now()-ts)/1000/60;const ep=(cmd.estado_parrilla||'RECIBIDO').toUpperCase();let debe=null;if(ep==='RECIBIDO'&&mins>=5) debe='RECIBIDO';else if(ep.includes('PREP')&&mins>=15) debe=ep;else if(ep.includes('MANOS')&&mins>=1.5) debe=ep;if(debe){const k=(cmd.mesa)+'_'+debe;if(!ultimaAlarma[k]||Date.now()-ultimaAlarma[k]>30000){alarmaTipo(debe);ultimaAlarma[k]=Date.now();}}});}
-function clickUbicacion(id){idMesaGestion=id;const cmd=comandasCache[id] || Object.values(comandasCache).find(c=>c.mesa===id);document.getElementById('tituloOpcionesMesa').textContent=`Gestionar: ${id}`;if(cmd){document.getElementById('detalleEstadosSeparados').innerHTML=`${getTipo(cmd.items)}<br>P: ${cmd.estado_parrilla||cmd.estado} C: ${cmd.estado_cocina||cmd.estado}<br><br>${(cmd.items||[]).map(i=>`• ${getCant(i)}x ${getNombre(i)} $${getPrecio(i)}`).join('<br>')}<br><br>Total $${cmd.total_cobrado||cmd.total}`;document.getElementById('btnAgregar').style.display=(cmd.estado==='COBRADA')?'none':'block';}else{document.getElementById('detalleEstadosSeparados').innerHTML='Mesa libre';document.getElementById('btnAgregar').style.display='none';}document.getElementById('modalOpcionesMesa').style.display='flex';}
+function checkAlarmas(){Object.values(comandasCache).forEach(cmd=>{if(!cmd.mesa)return;const items=cmd.items||[];const tieneEsperando=items.some(i=>getEstadoItem(i)==='ENTREGADO_SECTOR');const tienePend=items.some(i=>getEstadoItem(i)==='PENDIENTE');if(tieneEsperando || tienePend){const ts=cmd.timestamp_estado||cmd.timestamp||Date.now();const mins=(Date.now()-ts)/1000/60;let debe=null;if(tieneEsperando && mins>=1) debe='ESPERA_MOZO'; else if(tienePend && mins>=5) debe='RECIBIDO'; if(debe){const k=(cmd.mesa)+'_'+debe;if(!ultimaAlarma[k]||Date.now()-ultimaAlarma[k]>30000){alarmaTipo(debe);ultimaAlarma[k]=Date.now();}}}});}
+function clickUbicacion(id){
+  idMesaGestion=id;
+  const cmd=comandasCache[id] || Object.values(comandasCache).find(c=>c.mesa===id);
+  document.getElementById('tituloOpcionesMesa').textContent=`Gestionar: ${id}`;
+  document.getElementById('btnsExtras').innerHTML='';
+  if(cmd){
+    const items = cmd.items||[];
+    let itemsHtml = items.map(i=>{
+      let est = getEstadoItem(i);
+      let cls = est==='MANOS_EN_MESA'? 'tachado' : (est==='ENTREGADO_SECTOR'? 'entregado-sector' : '');
+      return `<div class="${cls}">• ${getCant(i)}x ${getNombre(i)} $${getPrecio(i)} <small style="color:#f1c40f">[${est}]</small></div>`;
+    }).join('');
+    let tieneEsperandoMozo = items.some(i=>getEstadoItem(i)==='ENTREGADO_SECTOR');
+    let pendientesParaImprimir = items.filter(i=>getEstadoItem(i)!=='MANOS_EN_MESA');
+    document.getElementById('detalleEstadosSeparados').innerHTML=`${getTipo(items)}<br>P: ${cmd.estado_parrilla||cmd.estado} C: ${cmd.estado_cocina||cmd.estado}<br><br>${itemsHtml}<br><br>Total $${cmd.total_cobrado||cmd.total}`;
+    let extraBtns='';
+    if(tieneEsperandoMozo){
+      extraBtns+=`<button class="btn-manos" onclick="marcarManosEnMesa('${id}')">✋ MANOS EN MESA - APAGAR ALARMA</button>`;
+    }
+    if(pendientesParaImprimir.length>0){
+      extraBtns+=`<button class="btn-print" onclick="imprimirSoloPendientes('${id}')">🖨️ IMPRIMIR SOLO PENDIENTES (${pendientesParaImprimir.length})</button>`;
+    } else {
+      extraBtns+=`<button class="btn-print" disabled style="opacity:0.4">🖨️ NADA PARA IMPRIMIR - TODO EN MANOS</button>`;
+    }
+    document.getElementById('btnsExtras').innerHTML=extraBtns;
+    document.getElementById('btnAgregar').style.display=(cmd.estado==='COBRADA')?'none':'block';
+  }else{
+    document.getElementById('detalleEstadosSeparados').innerHTML='Mesa libre';
+    document.getElementById('btnAgregar').style.display='none';
+  }
+  document.getElementById('modalOpcionesMesa').style.display='flex';
+}
 function seleccionarMesaParaAgregar(){document.getElementById('selectUbicacion').value=idMesaGestion;cerrarModal('modalOpcionesMesa');}
-function verDetalleMesaModal(){const cmd=comandasCache[idMesaGestion]||Object.values(comandasCache).find(c=>c.mesa===idMesaGestion);alert(cmd?`${cmd.mesa} $${cmd.total_cobrado||cmd.total}\n${(cmd.items||[]).map(i=>getNombre(i)).join('\n')}`:'Libre');}
+function verDetalleMesaModal(){const cmd=comandasCache[idMesaGestion]||Object.values(comandasCache).find(c=>c.mesa===idMesaGestion);alert(cmd?`${cmd.mesa} $${cmd.total_cobrado||cmd.total}\n${(cmd.items||[]).map(i=>`${getNombre(i)} [${getEstadoItem(i)}]`).join('\n')}`:'Libre');}
 function cobrarMesa(){
  if(!idMesaGestion) return;
  const cmd=comandasCache[idMesaGestion] || Object.values(comandasCache).find(c=>c.mesa===idMesaGestion);
  if(!cmd || (cmd.estado||'').toUpperCase()!=='COBRADA'){alert('Solo se puede liberar cuando está COBRADA por Gustavo'); return;}
  if(!confirm(`Liberar ${idMesaGestion}? Se borra de comandas_activas`)) return;
- // FIX KEY EXACTA - BORRA CON NOMBRE REAL
  db.ref('comandas_activas/'+idMesaGestion).remove();
  cerrarModal('modalOpcionesMesa');
+}
+function marcarManosEnMesa(mesaId){
+  const cmd = comandasCache[mesaId];
+  if(!cmd ||!cmd.items) return;
+  let nuevosItems = cmd.items.map(it=>{
+    if(getEstadoItem(it)==='ENTREGADO_SECTOR'){
+      return {...it, estadoItem:'MANOS_EN_MESA', fechaManos:Date.now()};
+    }
+    return it;
+  });
+  db.ref('comandas_activas/'+mesaId+'/items').set(nuevosItems).then(()=>{
+    let quedaAlgo = nuevosItems.some(i=> getEstadoItem(i)!=='MANOS_EN_MESA');
+    if(!quedaAlgo){
+      db.ref('comandas_activas/'+mesaId).update({
+        estado:'OCUPADA_SILENCIOSA',
+        estado_parrilla:'MANOS_EN_MESA',
+        estado_cocina:'MANOS_EN_MESA',
+        timestamp_estado:Date.now()
+      });
+    }
+  });
+  cerrarModal('modalOpcionesMesa');
+}
+function imprimirSoloPendientes(mesaId){
+  const cmd = comandasCache[mesaId];
+  if(!cmd) return;
+  let pendientes = (cmd.items||[]).filter(i=> getEstadoItem(i)!=='MANOS_EN_MESA');
+  if(!pendientes.length){ alert('Nada para imprimir, todo ya está en MANOS'); return; }
+  let html = `
+    <html><head><title>Comanda ${mesaId}</title>
+    <style>body{font-family:monospace;font-size:14px;width:80mm} h3{text-align:center;margin:0}.tachado{text-decoration:line-through}</style>
+    </head><body>
+      <h3>LA PERSEVERANCIA</h3>
+      <p style="text-align:center">${mesaId} - ${new Date().toLocaleString('es-AR')}</p>
+      <hr>
+      <strong>SOLO PENDIENTES / POR ENTREGAR:</strong><br><br>
+      ${pendientes.map(i=>`${getCant(i)}x ${getNombre(i)} - $${getPrecio(i)} [${getEstadoItem(i)}]`).join('<br>')}
+      <hr>
+      <p>TOTAL MESA: $${cmd.total_cobrado||cmd.total}</p>
+      <p style="font-size:10px">Impresion inteligente - No incluye items en MANOS (${(cmd.items||[]).filter(i=>getEstadoItem(i)==='MANOS_EN_MESA').length} tachados)</p>
+      <script>window.onload=()=>{window.print(); setTimeout(()=>window.close(),500)}<\/script>
+    </body></html>
+  `;
+  let w = window.open('','','width=400,height=600');
+  w.document.write(html);
+  w.document.close();
 }
 function enviarMensajeChat(){const inp=document.getElementById('inputMensaje');if(!inp.value.trim())return;db.ref('mensajes_chat').push({remitente:'Mariana',texto:inp.value,hora:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),timestamp:Date.now()});inp.value='';}
 function cerrarModal(id){document.getElementById(id).style.display='none';}
