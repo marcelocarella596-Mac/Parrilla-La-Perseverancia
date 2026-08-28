@@ -1,0 +1,91 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>La Perseverancia - Pedí Online</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,sans-serif}
+body{background:#fafafa;color:#111;padding-bottom:110px}
+.top{padding:14px 16px;background:#fff;position:sticky;top:0;z-index:20;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center}
+.top h1{font-size:18px;font-weight:900} .top span{font-size:12px;background:#111;color:#fff;padding:4px 8px;border-radius:12px}
+.filtros{display:flex;gap:8px;overflow-x:auto;padding:12px 16px;background:#fff;position:sticky;top:53px;z-index:19}
+.f-chip{padding:7px 14px;border-radius:20px;background:#f1f1f1;font-size:12px;font-weight:700;white-space:nowrap;border:1px solid #eee;cursor:pointer}
+.f-chip.activo{background:#111;color:#fff}
+.cat-title{padding:20px 16px 8px;font-size:18px;font-weight:900;background:#fafafa;text-transform:uppercase}
+.item{display:flex;gap:12px;padding:14px 16px;background:#fff;border-bottom:1px solid #f1f1f1}
+.item-left{flex:1} .item-left h3{font-size:13px;font-weight:800;text-transform:uppercase} .item-left p{font-size:11px;color:#666;margin:5px 0;line-height:1.3}
+.precio{font-weight:900;font-size:14px;margin-top:6px} .off{background:#FFEB3B;font-size:10px;font-weight:900;padding:2px 6px;border-radius:4px;margin-left:6px}
+.item-right{position:relative;width:110px;height:92px;flex-shrink:0}
+.item-right img{width:100%;height:100%;object-fit:cover;border-radius:12px;background:#eee}
+.btn-add{position:absolute;right:-6px;bottom:-6px;width:34px;height:34px;border-radius:50%;background:#fff;border:1px solid #ddd;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 2px 8px rgba(0,0,0,.18);cursor:pointer}
+.tipo{margin:12px 16px;display:flex;gap:8px}
+.btn-tipo{flex:1;padding:11px;border-radius:22px;border:1px solid #ddd;background:#fff;font-weight:800;font-size:13px}
+.btn-tipo.activo{background:#111;color:#fff}
+.barra{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #eee;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;z-index:30}
+</style></head><body>
+<div class="top"><h1>🔥 LA PERSEVERANCIA</h1><span id="badgeTipo">DELIVERY</span></div>
+<div class="tipo"><button class="btn-tipo activo" id="bD" onclick="setTipo('DELIVERY')">🛵 DELIVERY</button><button class="btn-tipo" id="bR" onclick="setTipo('RETIRO')">🏪 RETIRO</button></div>
+<div class="filtros" id="filtros"></div>
+<div id="contenedor"></div>
+<div class="barra"><div><div id="cant" style="font-size:11px;color:#666">0 productos</div><div id="total" style="font-weight:900">$0</div></div><button onclick="enviar()" style="flex:1;margin-left:12px;background:#25D366;border:none;padding:13px;border-radius:12px;font-weight:900;font-size:14px">💬 Enviar por WhatsApp</button></div>
+<script>
+const NUMERO="549114434137";
+let tipo="DELIVERY", carrito=[], filtro="Todos";
+const CARTA=[
+{cat:"PARRILLA",nombre:"ASADO C/ FRITAS 1/2",desc:"Asado con fritas - porción media",precio:25000,precioFull:28000,img:"https://images.unsplash.com/photo-1546964052-d9334ceb32ee?w=400"},
+{cat:"PARRILLA",nombre:"VACÍO C/ FRITAS 1/2",desc:"Vacío con fritas - porción media",precio:29000,precioFull:32000,img:"https://images.unsplash.com/photo-1608039824140-e0bbfdc64b04?w=400"},
+{cat:"PARRILLA",nombre:"ENTRAÑA C/ FRITAS",desc:"Entraña sola con fritas",precio:32000,precioFull:34000,img:"https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400"},
+{cat:"PARRILLA",nombre:"MINI BIFE DE CHORIZO C/ FRITA",desc:"Mini bife de chorizo con fritas",precio:20000,img:"https://images.unsplash.com/photo-1546964124-0c9a9f3c5b9a?w=400"},
+{cat:"PARRILLA",nombre:"BIFE DE COSTILLA C/ FRITAS",desc:"Bife de costilla con fritas",precio:17000,img:"https://images.unsplash.com/photo-1558030006-450066393d65?w=400"},
+{cat:"PARRILLA",nombre:"BONDIOLA C/ FRITAS",desc:"Bondiola a la parrilla con fritas",precio:18000,img:"https://images.unsplash.com/photo-1529193591184-b1d58069c7bb?w=400"},
+{cat:"PARRILLA",nombre:"PARRILLADA PARA 2",desc:"Completa para 2 personas con guarnición",precio:59000,off:"LA MÁS PEDIDA",img:"https://images.unsplash.com/photo-1558030006-450066393d65?w=400"},
+{cat:"PARRILLA",nombre:"CHORIZO",desc:"Chorizo artesanal a la parrilla",precio:6500,img:"https://images.unsplash.com/photo-1615937657715-bc7b4b7962c1?w=400"},
+{cat:"PARRILLA",nombre:"MORCILLA",desc:"Morcilla dulce o salada",precio:6000,img:"https://images.unsplash.com/photo-1529193591184-b1d58069c7bb?w=400"},
+{cat:"PARRILLA",nombre:"1/4 POLLO C/ FRITAS",desc:"Cuarto de pollo con fritas",precio:12000,img:"https://images.unsplash.com/photo-1594221708779-94832f4320a1?w=400"},
+{cat:"PARRILLA",nombre:"POLLO ENTERO SOLO LLEVAR",desc:"Pollo entero para llevar",precio:33000,img:"https://images.unsplash.com/photo-1594221708779-94832f4320a1?w=400"},
+{cat:"PARRILLA",nombre:"POLLO ENTERO C/ FRITAS",desc:"Pollo entero con fritas - solo llevar",precio:38000,img:"https://images.unsplash.com/photo-1594221708779-94832f4320a1?w=400"},
+{cat:"MINUTAS",nombre:"MILANESA C/ FRITAS",desc:"Milanesa con fritas",precio:14500,img:"https://images.unsplash.com/photo-1568909344668-6f14a07b56a0?w=400"},
+{cat:"MINUTAS",nombre:"MILANESA C/ FRITAS Y 2 HUEVOS",desc:"Milanesa a caballo con fritas",precio:22000,img:"https://images.unsplash.com/photo-1568909344668-6f14a07b56a0?w=400"},
+{cat:"MINUTAS",nombre:"MILANESA NAPO C/ FRITAS",desc:"Milanesa napolitana con fritas",precio:18000,img:"https://images.unsplash.com/photo-1568909344668-6f14a07b56a0?w=400"},
+{cat:"MINUTAS",nombre:"SUPREMA C/ FRITAS",desc:"Suprema con fritas",precio:14000,img:"https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=400"},
+{cat:"MINUTAS",nombre:"PECHUGA GRILLE C/ FRITAS",desc:"Pechuga grille con fritas",precio:15000,img:"https://images.unsplash.com/photo-1603360946369-dc9bb6258143?w=400"},
+{cat:"GUARNICIONES",nombre:"FRITAS GIGANTES",desc:"Porción gigante",precio:12000,img:"https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400"},
+{cat:"GUARNICIONES",nombre:"FRITAS GRANDES",desc:"Porción grande",precio:9000,img:"https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400"},
+{cat:"GUARNICIONES",nombre:"FRITA CHICA",desc:"Porción chica",precio:8000,img:"https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400"},
+{cat:"GUARNICIONES",nombre:"PROVOLETA",desc:"Provoleta a la parrilla",precio:13000,img:"https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=400"},
+{cat:"SANGUCHES",nombre:"VACÍO SOLO",desc:"Sándwich de vacío solo",precio:15000,img:"https://images.unsplash.com/photo-1521390188846-e2a3a97453a0?w=400"},
+{cat:"SANGUCHES",nombre:"VACÍO LECH Y TOMATE",desc:"Vacío con lechuga y tomate",precio:16000,img:"https://images.unsplash.com/photo-1521390188846-e2a3a97453a0?w=400"},
+{cat:"SANGUCHES",nombre:"VACÍO COMPLETO",desc:"Vacío lechuga tomate jamón queso",precio:18000,img:"https://images.unsplash.com/photo-1521390188846-e2a3a97453a0?w=400"},
+{cat:"SANGUCHES",nombre:"CHORIPAN",desc:"Choripán clásico",precio:6500,img:"https://images.unsplash.com/photo-1615937657715-bc7b4b7962c1?w=400"},
+{cat:"SANGUCHES",nombre:"BONDIOLA SOLA",desc:"Bondiola sola",precio:13000,img:"https://images.unsplash.com/photo-1521390188846-e2a3a97453a0?w=400"},
+{cat:"BEBIDAS",nombre:"COCA COLA 1.75LTS",desc:"Coca Cola 1.75 lts",precio:8000,img:"https://images.unsplash.com/photo-1624552184280-9e9631bbeee9?w=400"},
+{cat:"BEBIDAS",nombre:"COCA 500CC",desc:"Coca Cola 500cc",precio:5500,img:"https://images.unsplash.com/photo-1624552184280-9e9631bbeee9?w=400"},
+{cat:"BEBIDAS",nombre:"CERVEZA MILLER 473CC",desc:"Miller 473cc",precio:4500,img:"https://images.unsplash.com/photo-1608270586620-248524c67de9?w=400"},
+{cat:"BEBIDAS",nombre:"HEINEKEN 1L",desc:"Heineken 1 litro",precio:9000,img:"https://images.unsplash.com/photo-1608270586620-248524c67de9?w=400"},
+{cat:"POSTRES",nombre:"FLAN",desc:"Flan casero",precio:8000,img:"https://images.unsplash.com/photo-1551024506-0bccd828d307?w=400"},
+{cat:"POSTRES",nombre:"BUDÍN DE PAN",desc:"Budín de pan casero",precio:8000,img:"https://images.unsplash.com/photo-1551024506-0bccd828d307?w=400"},
+{cat:"POSTRES",nombre:"QUESO Y DULCE",desc:"Queso y dulce",precio:15000,img:"https://images.unsplash.com/photo-1551024506-0bccd828d307?w=400"},
+];
+const FILTROS=["Todos","PARRILLA","MINUTAS","SANGUCHES","GUARNICIONES","BEBIDAS","POSTRES"];
+function init(){const f=document.getElementById('filtros');FILTROS.forEach(o=>{const b=document.createElement('div');b.className='f-chip'+(o===filtro?' activo':'');b.textContent=o;b.onclick=()=>{filtro=o;document.querySelectorAll('.f-chip').forEach(x=>x.classList.remove('activo'));b.classList.add('activo');render();};f.appendChild(b);});render();}
+function render(){
+ const cont=document.getElementById('contenedor');cont.innerHTML='';
+ let lista = filtro==="Todos"?CARTA:CARTA.filter(x=>x.cat===filtro);
+ const cats=[...new Set(lista.map(x=>x.cat))];
+ cats.forEach(cat=>{
+   const t=document.createElement('div');t.className='cat-title';t.textContent=cat;cont.appendChild(t);
+   lista.filter(x=>x.cat===cat).forEach(p=>{
+     const d=document.createElement('div');d.className='item';
+     d.innerHTML=`<div class="item-left"><h3>${p.nombre}</h3><p>${p.desc}</p><div><span class="precio">$ ${p.precio.toLocaleString('es-AR')}</span>${p.off?`<span class="off">${p.off}</span>`:''}</div></div><div class="item-right"><img src="${p.img}"><div class="btn-add">+</div></div>`;
+     d.onclick=()=>{let e=carrito.find(x=>x.nombre===p.nombre);if(e)e.cant++;else carrito.push({...p,cant:1});upd();};
+     cont.appendChild(d);
+   });
+ });
+}
+function upd(){let tot=0,c=0;carrito.forEach(i=>{tot+=i.precio*i.cant;c+=i.cant});document.getElementById('total').textContent='$ '+tot.toLocaleString('es-AR');document.getElementById('cant').textContent=c+' productos';}
+function setTipo(t){tipo=t;document.getElementById('bD').classList.toggle('activo',t==='DELIVERY');document.getElementById('bR').classList.toggle('activo',t==='RETIRO');document.getElementById('badgeTipo').textContent=t;}
+function enviar(){
+ if(!carrito.length){alert('Agregá algo primero');return;}
+ let total=carrito.reduce((a,b)=>a+b.precio*b.cant,0);
+ let txt=`🔥 *PEDIDO ${tipo} - LA PERSEVERANCIA - Av.Argentina 5801*%0A%0A${carrito.map(x=>`• ${x.cant}x ${x.nombre} - $${(x.precio*x.cant).toLocaleString('es-AR')}`).join('%0A')}%0A%0A💰 *TOTAL: $${total.toLocaleString('es-AR')}*%0A%0A${tipo==='DELIVERY'?'📍 Enviar dirección por favor':'🏪 Retiro en local'}`;
+ window.open(`https://wa.me/${NUMERO}?text=${txt}`,'_blank');
+}
+init();
+</script></body></html>
