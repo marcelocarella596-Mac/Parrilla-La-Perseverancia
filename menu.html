@@ -5,59 +5,71 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>La Perseverancia - Carta</title>
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 </head>
-<body class="bg-gray-100">
-<header class="bg-red-800 text-white p-4 sticky top-0 z-10">
-  <h1 class="font-bold">PARRILLA LA PERSEVERANCIA</h1>
-  <p id="mesa" class="text-xs opacity-80"></p>
+<body class="bg-stone-100">
+<header class="bg-red-800 text-white p-4 sticky top-0 z-20 shadow">
+  <h1 class="font-black text-lg tracking-wide">LA PERSEVERANCIA</h1>
+  <p id="mesa-label" class="text-xs opacity-80"></p>
 </header>
-<div id="menu" class="p-4 pb-32">Cargando...</div>
-
-<div id="carrito" class="fixed bottom-0 left-0 right-0 bg-white p-4 border-t shadow-xl flex justify-between items-center">
-  <div><span id="total">$0</span> - <span id="count">0</span> productos</div>
-  <button onclick="pedir()" class="bg-green-600 text-white px-6 py-3 rounded-full font-bold">Pedir por WhatsApp</button>
+<div id="menu" class="p-3 pb-32">Cargando carta...</div>
+<div class="fixed bottom-0 left-0 right-0 bg-white p-4 border-t shadow-2xl flex justify-between items-center">
+  <div><b id="total">$0</b> - <span id="count">0</span> productos</div>
+  <button onclick="pedir()" class="bg-green-600 text-white px-7 py-3 rounded-full font-bold">Pedir WhatsApp</button>
 </div>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { firebaseConfig } from "./config.js";
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyAvrpQSDoq9S87j3J7V4-uhJnPFCylCU",
+  authDomain: "parrilla-la-perseveranci-f3f54.firebaseapp.com",
+  databaseURL: "https://parrilla-la-perseveranci-f3f54-default-rtdb.firebaseio.com",
+  projectId: "parrilla-la-perseveranci-f3f54",
+  storageBucket: "parrilla-la-perseveranci-f3f54.firebasestorage.app",
+  messagingSenderId: "899082319184",
+  appId: "1:899082319184:web:9876161963705785efe855"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 const params = new URLSearchParams(location.search);
-const mesa = params.get('mesa') || 'MOSTRADOR';
-document.getElementById('mesa').textContent = mesa.replaceAll('_',' ');
+const mesaKey = params.get('mesa') || 'salon_mesa_1';
+document.getElementById('mesa-label').textContent = mesaKey.replaceAll('_',' ').toUpperCase();
 
-let productos = [];
-let carrito = [];
+let productos=[];
+let carrito=[];
 
-async function load(){
-  const snap = await getDocs(collection(db, "productos"));
-  productos = snap.docs.map(d=>({id:d.id, ...d.data()}));
-  let html = '';
-  productos.forEach(p=>{
-    html += `<div class="bg-white rounded-lg p-3 mb-3 flex justify-between">
-      <div><b>${p.nombre}</b><br><small>${p.descripcion||''}</small><br><b class="text-red-700">$${p.precio}</b></div>
-      <button onclick="add('${p.id}')" class="bg-red-700 text-white w-10 h-10 rounded-full">+</button>
-    </div>`;
+db.ref('menu').on('value', snap=>{
+  if(!snap.exists()){ document.getElementById('menu').innerHTML='No hay menu cargado'; return; }
+  const data=snap.val();
+  productos=Object.keys(data).map(k=>({id:k, ...data[k]}));
+  let html='';
+  const cats=[...new Set(productos.map(p=>p.categoria||'General'))];
+  cats.forEach(cat=>{
+    html+=`<h2 class="font-black mt-6 mb-2 text-red-800 text-sm">${cat.toUpperCase()}</h2>`;
+    productos.filter(p=>(p.categoria||'General')==cat).forEach(p=>{
+      html+=`<div class="bg-white rounded-xl p-3 mb-3 flex justify-between items-center shadow-sm">
+        <div class="pr-3"><b class="text-[15px]">${p.nombre||p.name}</b><br><small class="text-gray-500">${p.descripcion||''}</small><br><b class="text-red-700">$${p.precio||p.price||0}</b></div>
+        <button onclick="add('${p.id}')" class="bg-red-700 text-white min-w-[44px] h-11 rounded-full font-bold">+</button>
+      </div>`;
+    });
   });
-  document.getElementById('menu').innerHTML = html;
-}
-window.add = (id)=>{
-  const p = productos.find(x=>x.id==id);
+  document.getElementById('menu').innerHTML=html;
+});
+
+window.add=(id)=>{
+  const p=productos.find(x=>x.id==id);
   carrito.push(p);
-  document.getElementById('count').textContent = carrito.length;
-  const t = carrito.reduce((s,x)=>s+Number(x.precio),0);
-  document.getElementById('total').textContent = '$'+t;
-}
-window.pedir = ()=>{
+  document.getElementById('count').textContent=carrito.length;
+  const t=carrito.reduce((s,x)=>s+Number(x.precio||x.price||0),0);
+  document.getElementById('total').textContent='$'+t;
+};
+window.pedir=()=>{
   if(carrito.length==0) return alert('Carrito vacío');
-  let txt = `*PEDIDO ${mesa}*%0A`;
+  let txt=`*PEDIDO ${mesaKey.toUpperCase()}*%0A`;
   carrito.forEach(p=>txt+=`- ${p.nombre} $${p.precio}%0A`);
-  window.open(`https://wa.me/5491150000000?text=${txt}`,'_blank');
-}
-load();
+  const t=carrito.reduce((s,x)=>s+Number(x.precio||x.price||0),0);
+  txt+=`%0A*Total: $${t}*`;
+  window.open('https://wa.me/5491150000000?text='+txt,'_blank');
+};
 </script>
 </body>
 </html>
