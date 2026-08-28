@@ -1,26 +1,20 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>La Perseverancia - Carta PDF</title>
-<style>
-body{margin:0;background:#000}
-.top{background:#8B0000;color:#fff;padding:12px 15px;display:flex;justify-content:space-between;align-items:center;font-family:Arial}
-.btn{background:#25D366;color:#fff;padding:9px 18px;border-radius:25px;text-decoration:none;font-weight:bold;font-size:14px}
-iframe{width:100%;height:calc(100vh - 54px);border:none;background:white}
-</style>
-</head>
-<body>
-<div class="top">
-<div><b>LA PERSEVERANCIA</b><div id="mesa" style="font-size:11px;opacity:.8"></div></div>
-<a id="wa" class="btn" href="#">Pedir</a>
-</div>
-<iframe src="menu-ejecutivo.pdf#zoom=page-width"></iframe>
+<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta http-equiv="refresh" content="0; url=menu-ejecutivo.pdf">
+<title>Abriendo menú...</title>
 <script>
-let m = new URLSearchParams(location.search).get('mesa') || 'CARTA';
-document.getElementById('mesa').textContent = m.replaceAll('_',' ').toUpperCase();
-document.getElementById('wa').href = "https://wa.me/5491150000000?text=Hola soy "+encodeURIComponent(m)+" quiero pedir";
+  // Auto-abre el PDF en esta instancia
+  const pdf = "menu-ejecutivo.pdf";
+  const mesa = new URLSearchParams(window.location.search).get('mesa') || 'Salon_Mesa_3';
+  
+  // Guarda que vieron el menú (opcional, para que Mariana sepa)
+  // No pide, solo visualiza
+  
+  // Redirección inmediata al PDF - abre directo en el visor nativo
+  window.location.href = pdf;
 </script>
-</body>
-</html>
+<style>body{background:#111;color:#fff;display:flex;justify-content:center;align-items:center;height:100vh;font-family:sans-serif;flex-direction:column} .loader{border:3px solid #333;border-top:3px solid #f1c40f;border-radius:50%;width:30px;height:30px;animation:spin 1s linear infinite;margin-bottom:12px}@keyframes spin{to{transform:rotate(360deg)}} a{color:#f1c40f}</style>
+</head><body>
+<div class="loader"></div>
+<p>Abriendo carta...</p>
+<p style="font-size:12px;margin-top:8px"><a href="menu-ejecutivo.pdf">Toca acá si no abre solo</a></p>
+</body></html>
