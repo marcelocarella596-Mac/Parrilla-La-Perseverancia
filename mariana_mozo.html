@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>MARIANA v3.0 MANOS FIX + IMPRESION - UNIFICADA con GUSTAVO</title>
+<title>MARIANA v3.1 FIX MODAL - MANOS OK</title>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <style>
@@ -26,8 +26,6 @@ select,input{width:100%;padding:8px;background:#111;border:1px solid #444;color:
 .card-mesa-grid{background:#1a1a1a;border:2px solid #8b0000;border-radius:6px;padding:10px;display:flex;flex-direction:column;justify-content:space-between;min-height:140px;cursor:pointer}
 .card-mesa-grid.ocupada{border-color:#27ae60;background:#17202a}
 .card-mesa-grid.cobrada{border-color:#f1c40f;background:#000;box-shadow:0 0 20px rgba(241,196,15,.4);animation:parpadeo 1s infinite}
-.card-mesa-grid.lista-completa{border-color:#f1c40f;background:#2a2411;animation:parpadeo 1s infinite}
-/* FIX MANOS */
 .card-mesa-grid.esperando-mozo{border-color:#f1c40f!important;background:#2a2411!important;box-shadow:0 0 20px rgba(241,196,15,.7);animation:parpadeoRapido 0.6s infinite}
 .card-mesa-grid.manos-ok{border-color:#555!important;background:#111!important;opacity:0.7}
 @keyframes parpadeo{0%,100%{border-color:#f1c40f}50%{border-color:#fff}}
@@ -35,8 +33,8 @@ select,input{width:100%;padding:8px;background:#111;border:1px solid #444;color:
 .mesa-hdr-grid{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #333;padding-bottom:4px;margin-bottom:6px}
 .mesa-title-grid{font-size:12px;font-weight:bold;color:#ffc107}
 .mesa-status-badge{font-size:9px;padding:2px 6px;border-radius:3px;font-weight:bold;background:#333;color:#aaa}
-.tachado{text-decoration:line-through;opacity:0.35;background:#0a0a0a!important;padding:2px 4px;border-radius:3px}
-.entregado-sector{background:#2a2411!important;border-left:3px solid #f1c40f;padding:3px 4px}
+.tachado{text-decoration:line-through;opacity:0.35;background:#0a0a0a!important}
+.entregado-sector{background:#2a2411!important;border-left:3px solid #f1c40f}
 .btn-manos{background:#d4af37;color:#000;border:none;padding:10px;border-radius:5px;font-weight:bold;cursor:pointer;width:100%;margin:6px 0}
 .btn-print{background:#222;border:1px solid #3498db;color:#3498db;padding:10px;border-radius:5px;font-weight:bold;cursor:pointer;width:100%;margin:6px 0}
 .chat-box{background:#111;border:1px solid #333;border-radius:6px;height:180px;overflow-y:auto;padding:8px;font-size:11px;margin-bottom:8px;display:flex;flex-direction:column;gap:6px}
@@ -48,7 +46,7 @@ select,input{width:100%;padding:8px;background:#111;border:1px solid #444;color:
 </head>
 <body>
 <header>
-<h1>🔥 LA PERSEVERANCIA | MARIANA v3.0 MANOS FIX</h1>
+<h1>🔥 LA PERSEVERANCIA | MARIANA v3.1</h1>
 <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
 <div class="info-widget" id="relojWidget">🕒 --:--:--</div>
 <div class="info-widget" style="color:#2ecc71">🪑 Activas: <span id="contadorMesasAtendidas">0</span></div>
@@ -56,7 +54,7 @@ select,input{width:100%;padding:8px;background:#111;border:1px solid #444;color:
 <div class="info-widget" style="color:#f1c40f">💰 Cobradas: <span id="contadorCobradas">0</span></div>
 <button class="btn-top" style="background:#000;border:1px solid #3498db;color:#3498db" onclick="abrirPropinas()">💸 PROPINAS</button>
 <button class="btn-top" id="btnSonido" onclick="toggleSonido()">🔔 SONIDO: ON</button>
-<span class="badge-live">• EN VIVO v3.0 - MANOS FIX</span>
+<span class="badge-live">• v3.1 FIX MODAL</span>
 </div>
 </header>
 <div class="layout-principal">
@@ -79,115 +77,13 @@ select,input{width:100%;padding:8px;background:#111;border:1px solid #444;color:
 </aside>
 </div>
 <div class="modal-overlay" id="modalOpcionesMesa"><div class="modal-contenido"><h3 id="tituloOpcionesMesa" style="color:#ffc107"></h3><div id="detalleEstadosSeparados" style="background:#111;padding:8px;border-radius:4px;font-size:11px;margin:10px 0"></div><button id="btnAgregar" style="width:100%;padding:10px;background:#27ae60;color:#fff;border:none;border-radius:5px;font-weight:bold;margin-bottom:6px" onclick="seleccionarMesaParaAgregar()">➕ AGREGAR ITEMS</button><div id="btnsExtras"></div><button id="btnCobrar" style="width:100%;padding:10px;background:#f1c40f;color:#000;border:none;border-radius:5px;font-weight:bold;margin-top:6px" onclick="cobrarMesa()">💰 LIBERAR MESA COBRADA</button><button style="width:100%;margin-top:8px;background:#333;color:#fff;border:none;padding:8px;border-radius:4px" onclick="cerrarModal('modalOpcionesMesa')">CERRAR</button></div></div>
-<div class="modal-overlay" id="modalPropinas"><div class="modal-contenido" style="border:1px solid #3498db">
-<h3 style="color:#3498db">💸 PROPINAS - MARIANA</h3>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0">
-<div style="background:#111;padding:12px;border-radius:8px">Propinas hoy: <b id="tPropHoy" style="color:#3498db;font-size:20px">$0</b></div>
-<div style="background:#111;padding:12px;border-radius:8px">Mesas: <b id="tMesasCob" style="font-size:20px">0</b></div>
-</div>
-<div id="listaPropinasDet" style="background:#0f0f0f;padding:10px;border-radius:6px;max-height:300px;overflow:auto;font-size:12px"></div>
-<button style="width:100%;margin-top:10px;background:#333;color:#fff;border:none;padding:10px;border-radius:6px" onclick="cerrarModal('modalPropinas')">CERRAR</button>
-</div></div>
+<div class="modal-overlay" id="modalPropinas"><div class="modal-contenido" style="border:1px solid #3498db"><h3 style="color:#3498db">💸 PROPINAS</h3><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0"><div style="background:#111;padding:12px;border-radius:8px">Propinas hoy: <b id="tPropHoy" style="color:#3498db;font-size:20px">$0</b></div><div style="background:#111;padding:12px;border-radius:8px">Mesas: <b id="tMesasCob" style="font-size:20px">0</b></div></div><div id="listaPropinasDet" style="background:#0f0f0f;padding:10px;border-radius:6px;max-height:300px;overflow:auto;font-size:12px"></div><button style="width:100%;margin-top:10px;background:#333;color:#fff;border:none;padding:10px;border-radius:6px" onclick="cerrarModal('modalPropinas')">CERRAR</button></div></div>
 <script>
 const firebaseConfig={apiKey:"AIzaSyAvrpQSDoq9S87j3J7V4-uhJnPFCylCU",authDomain:"parrilla-la-perseveranci-f3f54.firebaseapp.com",databaseURL:"https://parrilla-la-perseveranci-f3f54-default-rtdb.firebaseio.com",projectId:"parrilla-la-perseveranci-f3f54"};
 if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
 const db=firebase.database();
-const MENU_FIJO_93 = [
-  {id:"item_0", nombre:"Adicional Guarnición", cat:"Adicionales", precio:4000},
-  {id:"item_1", nombre:"Coca Cola 500ml", cat:"Bebidas", precio:2500},
-  {id:"item_2", nombre:"Coca Cola 1L", cat:"Bebidas", precio:3500},
-  {id:"item_3", nombre:"Coca Zero 500ml", cat:"Bebidas", precio:2500},
-  {id:"item_4", nombre:"Sprite 500ml", cat:"Bebidas", precio:2500},
-  {id:"item_5", nombre:"Fanta 500ml", cat:"Bebidas", precio:2500},
-  {id:"item_6", nombre:"Agua s/gas 500ml", cat:"Bebidas", precio:2000},
-  {id:"item_7", nombre:"Agua c/gas 500ml", cat:"Bebidas", precio:2000},
-  {id:"item_8", nombre:"Jugo Naranja", cat:"Bebidas", precio:3000},
-  {id:"item_9", nombre:"Limonada", cat:"Bebidas", precio:3000},
-  {id:"item_10", nombre:"Soda", cat:"Bebidas", precio:2000},
-  {id:"item_11", nombre:"Tónica", cat:"Bebidas", precio:2500},
-  {id:"item_12", nombre:"Pomelo", cat:"Bebidas", precio:2500},
-  {id:"item_13", nombre:"Pepsi 500ml", cat:"Bebidas", precio:2500},
-  {id:"item_14", nombre:"Pepsi Zero 500ml", cat:"Bebidas", precio:2500},
-  {id:"item_15", nombre:"Aquarius Manzana", cat:"Bebidas", precio:2500},
-  {id:"item_16", nombre:"Aquarius Pera", cat:"Bebidas", precio:2500},
-  {id:"item_17", nombre:"Levite 500ml", cat:"Bebidas", precio:2500},
-  {id:"item_18", nombre:"Quilmes 1L", cat:"Cervezas", precio:5000},
-  {id:"item_19", nombre:"Brahma 1L", cat:"Cervezas", precio:5000},
-  {id:"item_20", nombre:"Stella Artois", cat:"Cervezas", precio:4500},
-  {id:"item_21", nombre:"Heineken", cat:"Cervezas", precio:4500},
-  {id:"item_22", nombre:"Ensalada Mixta", cat:"Ensaladas", precio:6000},
-  {id:"item_23", nombre:"Ensalada Completa", cat:"Ensaladas", precio:8000},
-  {id:"item_24", nombre:"Caesar", cat:"Ensaladas", precio:8500},
-  {id:"item_25", nombre:"Caprese", cat:"Ensaladas", precio:8000},
-  {id:"item_26", nombre:"Rúcula y Parmesano", cat:"Ensaladas", precio:8000},
-  {id:"item_27", nombre:"Waldorf", cat:"Ensaladas", precio:8000},
-  {id:"item_28", nombre:"Papas Fritas", cat:"Guarniciones", precio:5000},
-  {id:"item_29", nombre:"Puré", cat:"Guarniciones", precio:4500},
-  {id:"item_30", nombre:"Ensalada Guarnición", cat:"Guarniciones", precio:4500},
-  {id:"item_31", nombre:"Provoleta", cat:"Minutas", precio:13000},
-  {id:"item_32", nombre:"Milanesa c/fritas", cat:"Minutas", precio:14500},
-  {id:"item_33", nombre:"Milanesa c/fritas y 2 huevos", cat:"Minutas", precio:22000},
-  {id:"item_34", nombre:"Milanesa napolitana c/fritas", cat:"Minutas", precio:17000},
-  {id:"item_35", nombre:"Suprema c/fritas", cat:"Minutas", precio:14000},
-  {id:"item_36", nombre:"Supremas c/fritas y 2 huevos", cat:"Minutas", precio:19500},
-  {id:"item_37", nombre:"Suprema napolitana c/fritas", cat:"Minutas", precio:17000},
-  {id:"item_38", nombre:"Tortilla de papas", cat:"Minutas", precio:9000},
-  {id:"item_39", nombre:"Tortilla c/jamón y queso", cat:"Minutas", precio:12000},
-  {id:"item_40", nombre:"Revuelto Gramajo", cat:"Minutas", precio:13000},
-  {id:"item_41", nombre:"Asado", cat:"Parrilla", precio:12000},
-  {id:"item_42", nombre:"Vacío", cat:"Parrilla", precio:12500},
-  {id:"item_43", nombre:"Bife de Chorizo", cat:"Parrilla", precio:13000},
-  {id:"item_44", nombre:"Entraña", cat:"Parrilla", precio:16000},
-  {id:"item_45", nombre:"Bondiola", cat:"Parrilla", precio:11000},
-  {id:"item_46", nombre:"Chorizo", cat:"Parrilla", precio:4000},
-  {id:"item_47", nombre:"Morcilla", cat:"Parrilla", precio:4000},
-  {id:"item_48", nombre:"Chinchulines", cat:"Parrilla", precio:7000},
-  {id:"item_49", nombre:"Mollejas", cat:"Parrilla", precio:11000},
-  {id:"item_50", nombre:"Matambre", cat:"Parrilla", precio:11000},
-  {id:"item_51", nombre:"Pollo 1/2", cat:"Parrilla", precio:9000},
-  {id:"item_52", nombre:"Pollo Entero", cat:"Parrilla", precio:16000},
-  {id:"item_53", nombre:"Costillitas de Cerdo", cat:"Parrilla", precio:11000},
-  {id:"item_54", nombre:"Asado Banderita", cat:"Parrilla", precio:12500},
-  {id:"item_55", nombre:"Ojo de Bife", cat:"Parrilla", precio:13500},
-  {id:"item_56", nombre:"Tira de Asado", cat:"Parrilla", precio:12000},
-  {id:"item_57", nombre:"Parrillada p/2", cat:"Parrilla", precio:28000},
-  {id:"item_58", nombre:"Parrillada p/4", cat:"Parrilla", precio:52000},
-  {id:"item_59", nombre:"Riñones", cat:"Parrilla", precio:6000},
-  {id:"item_60", nombre:"Flan casero", cat:"Postres", precio:4000},
-  {id:"item_61", nombre:"Budín de Pan", cat:"Postres", precio:4000},
-  {id:"item_62", nombre:"Helado", cat:"Postres", precio:4500},
-  {id:"item_63", nombre:"Choripán", cat:"Sándwiches", precio:5000},
-  {id:"item_64", nombre:"Morcipán", cat:"Sándwiches", precio:5000},
-  {id:"item_65", nombre:"Choripán c/fritas", cat:"Sándwiches", precio:7500},
-  {id:"item_66", nombre:"Bondiola sándwich", cat:"Sándwiches", precio:8500},
-  {id:"item_67", nombre:"Bondiola c/fritas", cat:"Sándwiches", precio:11000},
-  {id:"item_68", nombre:"Vacío sándwich", cat:"Sándwiches", precio:9000},
-  {id:"item_69", nombre:"Vacío c/fritas", cat:"Sándwiches", precio:11500},
-  {id:"item_70", nombre:"Bife sándwich", cat:"Sándwiches", precio:9000},
-  {id:"item_71", nombre:"Bife c/fritas", cat:"Sándwiches", precio:11500},
-  {id:"item_72", nombre:"Entraña sándwich", cat:"Sándwiches", precio:12000},
-  {id:"item_73", nombre:"Entraña c/fritas", cat:"Sándwiches", precio:14500},
-  {id:"item_74", nombre:"Milanesa sándwich", cat:"Sándwiches", precio:7000},
-  {id:"item_75", nombre:"Milanesa c/fritas sándwich", cat:"Sándwiches", precio:9500},
-  {id:"item_76", nombre:"Suprema sándwich", cat:"Sándwiches", precio:7000},
-  {id:"item_77", nombre:"Suprema c/fritas sándwich", cat:"Sándwiches", precio:9500},
-  {id:"item_78", nombre:"Pollo sándwich", cat:"Sándwiches", precio:6500},
-  {id:"item_79", nombre:"Pollo c/fritas sándwich", cat:"Sándwiches", precio:9000},
-  {id:"item_80", nombre:"Hamburguesa", cat:"Sándwiches", precio:6000},
-  {id:"item_81", nombre:"Hamburguesa c/fritas", cat:"Sándwiches", precio:8500},
-  {id:"item_82", nombre:"Hamburguesa completa", cat:"Sándwiches", precio:7500},
-  {id:"item_83", nombre:"Hamburguesa completa c/fritas", cat:"Sándwiches", precio:10000},
-  {id:"item_84", nombre:"Malbec Alma Mora", cat:"Vinos", precio:8000},
-  {id:"item_85", nombre:"Malbec Luigi Bosca", cat:"Vinos", precio:12000},
-  {id:"item_86", nombre:"Cabernet Rutini", cat:"Vinos", precio:13000},
-  {id:"item_87", nombre:"Malbec Catena", cat:"Vinos", precio:14000},
-  {id:"item_88", nombre:"Torrontés", cat:"Vinos", precio:8000},
-  {id:"item_89", nombre:"Chardonnay", cat:"Vinos", precio:8500},
-  {id:"item_90", nombre:"Rosado", cat:"Vinos", precio:7500},
-  {id:"item_91", nombre:"Copa Vino Tinto", cat:"Vinos", precio:3000},
-  {id:"item_92", nombre:"Copa Vino Blanco", cat:"Vinos", precio:3000},
-];
-let MENU=MENU_FIJO_93, categoriaActiva='Todos',carrito=[],idMesaGestion=null,sonidoHabilitado=true,mesasDOM={},agotados={},comandasCache={};
+const MENU_FIJO_93=[{id:"item_0",nombre:"Adicional Guarnición",cat:"Adicionales",precio:4000},{id:"item_1",nombre:"Coca Cola 500ml",cat:"Bebidas",precio:2500},{id:"item_2",nombre:"Coca Cola 1L",cat:"Bebidas",precio:3500},{id:"item_3",nombre:"Coca Zero 500ml",cat:"Bebidas",precio:2500},{id:"item_4",nombre:"Sprite 500ml",cat:"Bebidas",precio:2500},{id:"item_5",nombre:"Fanta 500ml",cat:"Bebidas",precio:2500},{id:"item_6",nombre:"Agua s/gas 500ml",cat:"Bebidas",precio:2000},{id:"item_7",nombre:"Agua c/gas 500ml",cat:"Bebidas",precio:2000},{id:"item_8",nombre:"Jugo Naranja",cat:"Bebidas",precio:3000},{id:"item_9",nombre:"Limonada",cat:"Bebidas",precio:3000},{id:"item_10",nombre:"Soda",cat:"Bebidas",precio:2000},{id:"item_11",nombre:"Tónica",cat:"Bebidas",precio:2500},{id:"item_12",nombre:"Pomelo",cat:"Bebidas",precio:2500},{id:"item_13",nombre:"Pepsi 500ml",cat:"Bebidas",precio:2500},{id:"item_14",nombre:"Pepsi Zero 500ml",cat:"Bebidas",precio:2500},{id:"item_15",nombre:"Aquarius Manzana",cat:"Bebidas",precio:2500},{id:"item_16",nombre:"Aquarius Pera",cat:"Bebidas",precio:2500},{id:"item_17",nombre:"Levite 500ml",cat:"Bebidas",precio:2500},{id:"item_18",nombre:"Quilmes 1L",cat:"Cervezas",precio:5000},{id:"item_19",nombre:"Brahma 1L",cat:"Cervezas",precio:5000},{id:"item_20",nombre:"Stella Artois",cat:"Cervezas",precio:4500},{id:"item_21",nombre:"Heineken",cat:"Cervezas",precio:4500},{id:"item_22",nombre:"Ensalada Mixta",cat:"Ensaladas",precio:6000},{id:"item_23",nombre:"Ensalada Completa",cat:"Ensaladas",precio:8000},{id:"item_24",nombre:"Caesar",cat:"Ensaladas",precio:8500},{id:"item_25",nombre:"Caprese",cat:"Ensaladas",precio:8000},{id:"item_26",nombre:"Rúcula y Parmesano",cat:"Ensaladas",precio:8000},{id:"item_27",nombre:"Waldorf",cat:"Ensaladas",precio:8000},{id:"item_28",nombre:"Papas Fritas",cat:"Guarniciones",precio:5000},{id:"item_29",nombre:"Puré",cat:"Guarniciones",precio:4500},{id:"item_30",nombre:"Ensalada Guarnición",cat:"Guarniciones",precio:4500},{id:"item_31",nombre:"Provoleta",cat:"Minutas",precio:13000},{id:"item_32",nombre:"Milanesa c/fritas",cat:"Minutas",precio:14500},{id:"item_33",nombre:"Milanesa c/fritas y 2 huevos",cat:"Minutas",precio:22000},{id:"item_34",nombre:"Milanesa napolitana c/fritas",cat:"Minutas",precio:17000},{id:"item_35",nombre:"Suprema c/fritas",cat:"Minutas",precio:14000},{id:"item_36",nombre:"Supremas c/fritas y 2 huevos",cat:"Minutas",precio:19500},{id:"item_37",nombre:"Suprema napolitana c/fritas",cat:"Minutas",precio:17000},{id:"item_38",nombre:"Tortilla de papas",cat:"Minutas",precio:9000},{id:"item_39",nombre:"Tortilla c/jamón y queso",cat:"Minutas",precio:12000},{id:"item_40",nombre:"Revuelto Gramajo",cat:"Minutas",precio:13000},{id:"item_41",nombre:"Asado",cat:"Parrilla",precio:12000},{id:"item_42",nombre:"Vacío",cat:"Parrilla",precio:12500},{id:"item_43",nombre:"Bife de Chorizo",cat:"Parrilla",precio:13000},{id:"item_44",nombre:"Entraña",cat:"Parrilla",precio:16000},{id:"item_45",nombre:"Bondiola",cat:"Parrilla",precio:11000},{id:"item_46",nombre:"Chorizo",cat:"Parrilla",precio:4000},{id:"item_47",nombre:"Morcilla",cat:"Parrilla",precio:4000},{id:"item_48",nombre:"Chinchulines",cat:"Parrilla",precio:7000},{id:"item_49",nombre:"Mollejas",cat:"Parrilla",precio:11000},{id:"item_50",nombre:"Matambre",cat:"Parrilla",precio:11000},{id:"item_51",nombre:"Pollo 1/2",cat:"Parrilla",precio:9000},{id:"item_52",nombre:"Pollo Entero",cat:"Parrilla",precio:16000},{id:"item_53",nombre:"Costillitas de Cerdo",cat:"Parrilla",precio:11000},{id:"item_54",nombre:"Asado Banderita",cat:"Parrilla",precio:12500},{id:"item_55",nombre:"Ojo de Bife",cat:"Parrilla",precio:13500},{id:"item_56",nombre:"Tira de Asado",cat:"Parrilla",precio:12000},{id:"item_57",nombre:"Parrillada p/2",cat:"Parrilla",precio:28000},{id:"item_58",nombre:"Parrillada p/4",cat:"Parrilla",precio:52000},{id:"item_59",nombre:"Riñones",cat:"Parrilla",precio:6000},{id:"item_60",nombre:"Flan casero",cat:"Postres",precio:4000},{id:"item_61",nombre:"Budín de Pan",cat:"Postres",precio:4000},{id:"item_62",nombre:"Helado",cat:"Postres",precio:4500},{id:"item_63",nombre:"Choripán",cat:"Sándwiches",precio:5000},{id:"item_64",nombre:"Morcipán",cat:"Sándwiches",precio:5000},{id:"item_65",nombre:"Choripán c/fritas",cat:"Sándwiches",precio:7500},{id:"item_66",nombre:"Bondiola sándwich",cat:"Sándwiches",precio:8500},{id:"item_67",nombre:"Bondiola c/fritas",cat:"Sándwiches",precio:11000},{id:"item_68",nombre:"Vacío sándwich",cat:"Sándwiches",precio:9000},{id:"item_69",nombre:"Vacío c/fritas",cat:"Sándwiches",precio:11500},{id:"item_70",nombre:"Bife sándwich",cat:"Sándwiches",precio:9000},{id:"item_71",nombre:"Bife c/fritas",cat:"Sándwiches",precio:11500},{id:"item_72",nombre:"Entraña sándwich",cat:"Sándwiches",precio:12000},{id:"item_73",nombre:"Entraña c/fritas",cat:"Sándwiches",precio:14500},{id:"item_74",nombre:"Milanesa sándwich",cat:"Sándwiches",precio:7000},{id:"item_75",nombre:"Milanesa c/fritas sándwich",cat:"Sándwiches",precio:9500},{id:"item_76",nombre:"Suprema sándwich",cat:"Sándwiches",precio:7000},{id:"item_77",nombre:"Suprema c/fritas sándwich",cat:"Sándwiches",precio:9500},{id:"item_78",nombre:"Pollo sándwich",cat:"Sándwiches",precio:6500},{id:"item_79",nombre:"Pollo c/fritas sándwich",cat:"Sándwiches",precio:9000},{id:"item_80",nombre:"Hamburguesa",cat:"Sándwiches",precio:6000},{id:"item_81",nombre:"Hamburguesa c/fritas",cat:"Sándwiches",precio:8500},{id:"item_82",nombre:"Hamburguesa completa",cat:"Sándwiches",precio:7500},{id:"item_83",nombre:"Hamburguesa completa c/fritas",cat:"Sándwiches",precio:10000},{id:"item_84",nombre:"Malbec Alma Mora",cat:"Vinos",precio:8000},{id:"item_85",nombre:"Malbec Luigi Bosca",cat:"Vinos",precio:12000},{id:"item_86",nombre:"Cabernet Rutini",cat:"Vinos",precio:13000},{id:"item_87",nombre:"Malbec Catena",cat:"Vinos",precio:14000},{id:"item_88",nombre:"Torrontés",cat:"Vinos",precio:8000},{id:"item_89",nombre:"Chardonnay",cat:"Vinos",precio:8500},{id:"item_90",nombre:"Rosado",cat:"Vinos",precio:7500},{id:"item_91",nombre:"Copa Vino Tinto",cat:"Vinos",precio:3000},{id:"item_92",nombre:"Copa Vino Blanco",cat:"Vinos",precio:3000}];
+let MENU=MENU_FIJO_93,categoriaActiva='Todos',carrito=[],idMesaGestion=null,sonidoHabilitado=true,mesasDOM={},agotados={},comandasCache={};
 const listadoMesasBase=["Salón - Mesa 1","Salón - Mesa 2","Salón - Mesa 3","Salón - Mesa 4","Vereda - Mesa 5","Vereda - Mesa 6","Vereda - Mesa 7","Canal - Mostrador","Canal - Delivery","Canal - Pickup"];
 function limpiarKey(str){return (str||'').normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-zA-Z0-9]/g,'_').replace(/__+/g,'_').toLowerCase();}
 function getNombre(it){return (it.n||it.nombre||it.name||'').toString();}
@@ -198,162 +94,42 @@ const PARRILLA_BASE=['asado','vacio','bife','entraña','morcilla','chorizo','pro
 const AGREGADOS_COCINA=['lechuga','tomate','jamon','queso','huevo','frita','papas'];
 const COCINA_PURA=['milanesa','suprema','pechuga','tortilla'];
 function descomponerItem(n){n=(n||'').toLowerCase(); if(COCINA_PURA.some(k=>n.includes(k))) return [{estacion:'COCINA'}]; if(PARRILLA_BASE.some(k=>n.includes(k))) return AGREGADOS_COCINA.some(k=>n.includes(k))?[{estacion:'PARRILLA'},{estacion:'COCINA'}]:[{estacion:'PARRILLA'}]; return [{estacion:'COCINA'}];}
-function getTipo(items){let p=false,c=false;(items||[]).forEach(it=>{descomponerItem(getNombre(it)).forEach(s=>{if(s.estacion==='PARRILLA') p=true; else c=true;});}); if(p&&c) return 'MIXTA'; if(p) return 'PARRILLA'; return 'COCINA';}let audioCtx=null, ultimaAlarma={};
+function getTipo(items){let p=false,c=false;(items||[]).forEach(it=>{descomponerItem(getNombre(it)).forEach(s=>{if(s.estacion==='PARRILLA') p=true; else c=true;});}); if(p&&c) return 'MIXTA'; if(p) return 'PARRILLA'; return 'COCINA';}
+let audioCtx=null,ultimaAlarma={};
 function initAudio(){if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();}
 function beep(f,d){initAudio();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.frequency.value=f;o.connect(g);g.connect(audioCtx.destination);g.gain.value=.5;o.start();setTimeout(()=>{try{o.stop()}catch{}},d);}
 function alarmaTipo(t){if(!sonidoHabilitado) return; beep(t==='RECIBIDO'?600:t.includes('PREP')?900:1200,400);}
-window.onload=()=>{inicializarMapaMesas();construirBotonesCategorias();renderGrilla(categoriaActiva);escucharOrdenesFirebase();escucharMensajesFirebase();escucharAgotados();iniciarReloj(); setInterval(checkAlarmas,5000); document.addEventListener('click',initAudio,{once:true});};
+window.onload=()=>{inicializarMapaMesas();construirBotonesCategorias();renderGrilla(categoriaActiva);escucharOrdenesFirebase();escucharMensajesFirebase();escucharAgotados();iniciarReloj(); setInterval(checkAlarmas,5000); document.addEventListener('click',initAudio,{once:true}); document.addEventListener('keydown',e=>{if(e.key==='Escape')cerrarModal('modalOpcionesMesa');}); document.getElementById('modalOpcionesMesa').addEventListener('click',e=>{if(e.target.id==='modalOpcionesMesa') cerrarModal('modalOpcionesMesa');});};
 function iniciarReloj(){setInterval(()=>{document.getElementById('relojWidget').textContent=`🕒 ${new Date().toLocaleTimeString()}`;},1000);}
 function toggleSonido(){sonidoHabilitado=!sonidoHabilitado;document.getElementById('btnSonido').textContent=sonidoHabilitado?'🔔 SONIDO: ON':'🔕 SONIDO: OFF';}
 function inicializarMapaMesas(){const cont=document.getElementById('mapaMesasGrid');cont.innerHTML='';mesasDOM={};listadoMesasBase.forEach(id=>{const key=limpiarKey(id);const card=document.createElement('div');card.className='card-mesa-grid';card.id=`mesa_card_${key}`;card.onclick=()=>clickUbicacion(id);card.innerHTML=`<div class="mesa-hdr-grid"><span class="mesa-title-grid">${id.toUpperCase()}</span><span class="mesa-status-badge" id="badge_${key}">LIBRE</span></div><div id="preview_${key}" style="font-size:10px;color:#ccc">Sin comanda</div><div style="font-size:11px;color:#2ecc71;font-weight:bold;margin-top:4px" id="total_${key}">$0</div><div class="timer-badge" id="timer_${key}">--:--</div>`;cont.appendChild(card);mesasDOM[id]={card,badge:document.getElementById(`badge_${key}`),preview:document.getElementById(`preview_${key}`),total:document.getElementById(`total_${key}`),timer:document.getElementById(`timer_${key}`)};});}
 function escucharAgotados(){db.ref('platos_agotados').on('value',s=>{agotados=s.val()||{};renderGrilla(categoriaActiva);});}
-function construirBotonesCategorias(){
-  const c=document.getElementById('contenedorCategorias');
-  const orden=["Todos","Parrilla","Minutas","Sándwiches","Guarniciones","Ensaladas","Bebidas","Cervezas","Vinos","Postres","Adicionales"];
-  const catsPresentes = new Set(MENU.map(i=>i.cat));
-  const cats = orden.filter(cat=> cat==="Todos" || catsPresentes.has(cat));
-  c.innerHTML='';
-  cats.forEach(cat=>{
-    const count = cat==="Todos"? MENU.length : MENU.filter(m=>m.cat===cat).length;
-    const b=document.createElement('button');
-    b.className=`btn-cat ${cat===categoriaActiva?'activo':''}`;
-    b.textContent=`${cat} (${count})`;
-    b.onclick=()=>{categoriaActiva=cat;document.querySelectorAll('.btn-cat').forEach(x=>x.classList.remove('activo'));b.classList.add('activo');renderGrilla(cat);};
-    c.appendChild(b);
-  });
-}
+function construirBotonesCategorias(){const c=document.getElementById('contenedorCategorias');const orden=["Todos","Parrilla","Minutas","Sándwiches","Guarniciones","Ensaladas","Bebidas","Cervezas","Vinos","Postres","Adicionales"];const catsPresentes=new Set(MENU.map(i=>i.cat));const cats=orden.filter(cat=>cat==="Todos"||catsPresentes.has(cat));c.innerHTML='';cats.forEach(cat=>{const count=cat==="Todos"?MENU.length:MENU.filter(m=>m.cat===cat).length;const b=document.createElement('button');b.className=`btn-cat ${cat===categoriaActiva?'activo':''}`;b.textContent=`${cat} (${count})`;b.onclick=()=>{categoriaActiva=cat;document.querySelectorAll('.btn-cat').forEach(x=>x.classList.remove('activo'));b.classList.add('activo');renderGrilla(cat);};c.appendChild(b);});}
 function renderGrilla(cat){const cont=document.getElementById('grillaProductos');cont.innerHTML='';const filtrados=cat==='Todos'?MENU:MENU.filter(m=>m.cat===cat);filtrados.forEach(prod=>{const agot=!!agotados[prod.nombre];const card=document.createElement('div');card.className=`card-prod ${agot?'agotado':''}`;card.onclick=()=>{if(agot){alert('AGOTADO');return;}const ex=carrito.find(i=>i.id===prod.id);if(ex)ex.cantidad++;else carrito.push({...prod,cantidad:1});renderCarrito();};card.innerHTML=`<div style="font-size:11px;font-weight:bold">${prod.nombre}</div><div style="color:#2ecc71;font-size:11px">$${prod.precio}</div>`;cont.appendChild(card);});}
 function renderCarrito(){const cont=document.getElementById('resumenComanda');const tot=document.getElementById('totalMonto');cont.innerHTML='';if(!carrito.length){cont.innerHTML='<p style="color:#666;font-size:11px">No hay ítems</p>';tot.textContent='$0';return;}let total=0;carrito.forEach(it=>{total+=it.precio*it.cantidad;const r=document.createElement('div');r.style.cssText='display:flex;justify-content:space-between;font-size:11px;padding:3px 0;border-bottom:1px solid #222';r.innerHTML=`<span>${it.cantidad}x ${it.nombre}</span><span>$${it.precio*it.cantidad}</span>`;cont.appendChild(r);});tot.textContent=`$${total}`;}
 function evaluarCanalSeleccionado(){document.getElementById('boxDelivery').style.display=document.getElementById('selectUbicacion').value.includes('Delivery')?'block':'none';}
-function enviarOActualizarComanda(){
- if(!carrito.length){alert("Seleccioná productos");return;}
- const destino=document.getElementById('selectUbicacion').value;
- db.ref('comandas_activas/'+destino).once('value').then(snap=>{
-  const ex=snap.val();
-  let itemsFinal=[];
-  const nuevoItems = carrito.map(c=>({n:c.nombre, nombre:c.nombre, cantidad:c.cantidad, p:c.precio, precio:c.precio, cat:c.cat, estadoItem:'PENDIENTE'}));
-  if(ex && ex.items){
-    const mapa={};
-    ex.items.forEach(i=>{mapa[getNombre(i)]={...i, n:getNombre(i), nombre:getNombre(i), cantidad:getCant(i), p:getPrecio(i), precio:getPrecio(i), estadoItem:i.estadoItem||'PENDIENTE'}});
-    nuevoItems.forEach(n=>{
-      const nom=getNombre(n);
-      if(mapa[nom] && mapa[nom].estadoItem!=='MANOS_EN_MESA'){
-        mapa[nom].cantidad+=getCant(n);
-      } else if(mapa[nom] && mapa[nom].estadoItem==='MANOS_EN_MESA'){
-        // si ya estaba en manos y piden de nuevo, es nuevo pedido -> PENDIENTE
-        mapa[nom+'_'+Date.now()]=n;
-      } else {
-        mapa[nom]=n;
-      }
-    });
-    itemsFinal=Object.values(mapa);
-  } else {
-    itemsFinal=nuevoItems;
-  }
-  const totalFinal=itemsFinal.reduce((a,c)=>a+(getPrecio(c)*getCant(c)),0);
-  const ahora=Date.now();
-  const data={
-    mesa:destino,
-    items:itemsFinal,
-    total:totalFinal,
-    total_cobrado:ex? (ex.total_cobrado||ex.total||totalFinal) : totalFinal,
-    estado:ex? (ex.estado==='OCUPADA_SILENCIOSA'?'RECIBIDO':ex.estado) :'RECIBIDO',
-    estado_parrilla:ex? (ex.estado_parrilla==='MANOS_EN_MESA'?'RECIBIDO':ex.estado_parrilla) : 'RECIBIDO',
-    estado_cocina:ex? (ex.estado_cocina==='MANOS_EN_MESA'?'RECIBIDO':ex.estado_cocina) : 'RECIBIDO',
-    emisor:'Mariana',
-    hora:new Date().toLocaleTimeString().slice(0,5),
-    timestamp:ex?ex.timestamp:ahora,
-    timestamp_estado:ahora,
-    id:ex?ex.id:ahora,
-    nroOrden:ex?ex.nroOrden:ahora
-  };
-  db.ref('comandas_activas/'+destino).set(data);
-  carrito=[];renderCarrito();
-  db.ref('mensajes_chat').push({remitente:'Mariana',texto:`${destino} -> ${itemsFinal.filter(i=>getEstadoItem(i)==='PENDIENTE').map(i=>getNombre(i)).join(', ')}`,hora:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),timestamp:Date.now()});
- });
-}
-function escucharOrdenesFirebase(){
- db.ref('comandas_activas').on('value',snap=>{
-  const data=snap.val()||{}; comandasCache=data;
-  listadoMesasBase.forEach(id=>{const m=mesasDOM[id];if(m){m.card.className='card-mesa-grid';m.badge.textContent='LIBRE';m.preview.textContent='Sin comanda';m.total.textContent='$0';m.timer.textContent='--:--';}});
-  let pend=0,ocup=0,esperandoMozo=0,cobr=0;
-  const lista=document.getElementById('listaPendientesKDS');lista.innerHTML='';
-  Object.entries(data).forEach(([fbKey,cmd])=>{
-   if(!cmd||!cmd.mesa) return;
-   const mesaReal = cmd.mesa || fbKey;
-   const m=mesasDOM[mesaReal] || mesasDOM[fbKey];
-   if(!m) return;
-   const items = cmd.items||[];
-   const tienePendiente = items.some(i=>getEstadoItem(i)==='PENDIENTE' || getEstadoItem(i)==='EN_COCINA');
-   const tieneEsperando = items.some(i=>getEstadoItem(i)==='ENTREGADO_SECTOR');
-   const todoEnManos = items.length>0 && items.every(i=>getEstadoItem(i)==='MANOS_EN_MESA');
-   const esCobrada=(cmd.estado||'').toUpperCase()==='COBRADA';
-   ocup++;
-   const ts=cmd.timestamp_estado||cmd.timestamp||Date.now();
-   const seg=Math.floor((Date.now()-(cmd.timestamp||Date.now()))/1000);
-   const mm=String(Math.floor(seg/60)).padStart(2,'0'); const ss=String(seg%60).padStart(2,'0');
-   if(!esCobrada && (tienePendiente||tieneEsperando)) pend++;
-   if(tieneEsperando) esperandoMozo++;
-   if(esCobrada){cobr++; m.card.classList.add('cobrada'); m.badge.textContent=`💰 COBRADA $${cmd.total_cobrado||cmd.total}`; m.badge.style.background='#f1c40f'; m.badge.style.color='#000'; m.preview.innerHTML=`💰 $${cmd.total_cobrado||cmd.total}<br>${items.map(i=>getNombre(i)).join(', ')}`;}
-   else if(todoEnManos){
-     m.card.classList.add('manos-ok');
-     m.badge.textContent=`OCUPADA - MANOS OK`;
-     m.badge.style.background='#555'; m.badge.style.color='#fff';
-     m.preview.innerHTML=items.map(i=>`<span class="tachado">• ${getCant(i)}x ${getNombre(i)}</span>`).join('<br>') + '<br><small style="color:#888">Esperando nuevo pedido o cierre</small>';
-   } else if(tieneEsperando){
-     m.card.classList.add('ocupada'); m.card.classList.add('esperando-mozo');
-     m.badge.textContent=`✋ ENTREGADO - ESPERA MOZO`;
-     m.badge.style.background='#f1c40f'; m.badge.style.color='#000';
-     m.preview.innerHTML=items.map(i=>{
-       if(getEstadoItem(i)==='MANOS_EN_MESA') return `<span class="tachado">• ${getCant(i)}x ${getNombre(i)}</span>`;
-       if(getEstadoItem(i)==='ENTREGADO_SECTOR') return `<span class="entregado-sector">• ${getCant(i)}x ${getNombre(i)} ✋</span>`;
-       return `• ${getCant(i)}x ${getNombre(i)}`;
-     }).join('<br>');
-   } else {
-     m.card.classList.add('ocupada');
-     m.badge.textContent=`${getTipo(items)} P:${cmd.estado_parrilla||cmd.estado} C:${cmd.estado_cocina||cmd.estado}`;
-     m.preview.innerHTML=items.map(i=>{
-       if(getEstadoItem(i)==='MANOS_EN_MESA') return `<span class="tachado">• ${getCant(i)}x ${getNombre(i)}</span>`;
-       return `• ${getCant(i)}x ${getNombre(i)}`;
-     }).join('<br>');
-   }
-   m.total.textContent=`$${cmd.total_cobrado||cmd.total||0}`; m.timer.textContent=`${mm}:${ss}`;
-   if(!esCobrada &&!todoEnManos){
-     const d=document.createElement('div'); d.style.cssText="background:#222;padding:6px;border-radius:4px;margin-bottom:4px";
-     d.innerHTML=`<strong>${mesaReal}</strong> ${getTipo(items)} ${tieneEsperando?'✋ ESPERA MOZO':''} - ${items.filter(i=>getEstadoItem(i)!=='MANOS_EN_MESA').map(i=>getNombre(i)).join(', ')}`;
-     lista.appendChild(d);
-   }
-  });
-  document.getElementById('contadorPendientes').textContent=pend; document.getElementById('contadorMesasAtendidas').textContent=ocup; document.getElementById('contadorMixtas').textContent=esperandoMozo; document.getElementById('contadorCobradas').textContent=cobr;
- });
-}
+function enviarOActualizarComanda(){if(!carrito.length){alert("Seleccioná productos");return;}const destino=document.getElementById('selectUbicacion').value;db.ref('comandas_activas/'+destino).once('value').then(snap=>{const ex=snap.val();let itemsFinal=[];const nuevoItems=carrito.map(c=>({n:c.nombre,nombre:c.nombre,cantidad:c.cantidad,p:c.precio,precio:c.precio,cat:c.cat,estadoItem:'PENDIENTE'}));if(ex&&ex.items){const mapa={};ex.items.forEach(i=>{mapa[getNombre(i)]={...i,n:getNombre(i),nombre:getNombre(i),cantidad:getCant(i),p:getPrecio(i),precio:getPrecio(i),estadoItem:i.estadoItem||'PENDIENTE'}});nuevoItems.forEach(n=>{const nom=getNombre(n);if(mapa[nom]&&mapa[nom].estadoItem!=='MANOS_EN_MESA'){mapa[nom].cantidad+=getCant(n);}else if(mapa[nom]&&mapa[nom].estadoItem==='MANOS_EN_MESA'){mapa[nom+'_'+Date.now()]=n;}else{mapa[nom]=n;}});itemsFinal=Object.values(mapa);}else{itemsFinal=nuevoItems;}const totalFinal=itemsFinal.reduce((a,c)=>a+(getPrecio(c)*getCant(c)),0);const ahora=Date.now();const data={mesa:destino,items:itemsFinal,total:totalFinal,total_cobrado:ex?(ex.total_cobrado||ex.total||totalFinal):totalFinal,estado:ex?(ex.estado==='OCUPADA_SILENCIOSA'?'RECIBIDO':ex.estado):'RECIBIDO',estado_parrilla:ex?(ex.estado_parrilla==='MANOS_EN_MESA'?'RECIBIDO':ex.estado_parrilla):'RECIBIDO',estado_cocina:ex?(ex.estado_cocina==='MANOS_EN_MESA'?'RECIBIDO':ex.estado_cocina):'RECIBIDO',emisor:'Mariana',hora:new Date().toLocaleTimeString().slice(0,5),timestamp:ex?ex.timestamp:ahora,timestamp_estado:ahora,id:ex?ex.id:ahora,nroOrden:ex?ex.nroOrden:ahora};db.ref('comandas_activas/'+destino).set(data);carrito=[];renderCarrito();});}
+function escucharOrdenesFirebase(){db.ref('comandas_activas').on('value',snap=>{const data=snap.val()||{};comandasCache=data;listadoMesasBase.forEach(id=>{const m=mesasDOM[id];if(m){m.card.className='card-mesa-grid';m.badge.textContent='LIBRE';m.preview.textContent='Sin comanda';m.total.textContent='$0';m.timer.textContent='--:--';}});let pend=0,ocup=0,esperandoMozo=0,cobr=0;const lista=document.getElementById('listaPendientesKDS');lista.innerHTML='';Object.entries(data).forEach(([fbKey,cmd])=>{if(!cmd||!cmd.mesa) return;const mesaReal=cmd.mesa||fbKey;const m=mesasDOM[mesaReal]||mesasDOM[fbKey];if(!m) return;const items=cmd.items||[];const tienePendiente=items.some(i=>getEstadoItem(i)==='PENDIENTE'||getEstadoItem(i)==='EN_COCINA');const tieneEsperando=items.some(i=>getEstadoItem(i)==='ENTREGADO_SECTOR');const todoEnManos=items.length>0&&items.every(i=>getEstadoItem(i)==='MANOS_EN_MESA');const esCobrada=(cmd.estado||'').toUpperCase()==='COBRADA';ocup++;const seg=Math.floor((Date.now()-(cmd.timestamp||Date.now()))/1000);const mm=String(Math.floor(seg/60)).padStart(2,'0');const ss=String(seg%60).padStart(2,'0');if(!esCobrada&&(tienePendiente||tieneEsperando)) pend++;if(tieneEsperando) esperandoMozo++;if(esCobrada){cobr++;m.card.classList.add('cobrada');m.badge.textContent=`💰 COBRADA $${cmd.total_cobrado||cmd.total}`;m.badge.style.background='#f1c40f';m.badge.style.color='#000';m.preview.innerHTML=`💰 $${cmd.total_cobrado||cmd.total}<br>${items.map(i=>getNombre(i)).join(', ')}`;}else if(todoEnManos){m.card.classList.add('manos-ok');m.badge.textContent=`OCUPADA - MANOS OK`;m.badge.style.background='#555';m.badge.style.color='#fff';m.preview.innerHTML=items.map(i=>`<span class="tachado">• ${getCant(i)}x ${getNombre(i)}</span>`).join('<br>')+'<br><small style="color:#888">Esperando nuevo pedido o cierre</small>';}else if(tieneEsperando){m.card.classList.add('ocupada');m.card.classList.add('esperando-mozo');m.badge.textContent=`✋ ESPERA MOZO`;m.badge.style.background='#f1c40f';m.badge.style.color='#000';m.preview.innerHTML=items.map(i=>{if(getEstadoItem(i)==='MANOS_EN_MESA') return `<span class="tachado">• ${getCant(i)}x ${getNombre(i)}</span>`;if(getEstadoItem(i)==='ENTREGADO_SECTOR') return `<span class="entregado-sector">• ${getCant(i)}x ${getNombre(i)} ✋</span>`;return `• ${getCant(i)}x ${getNombre(i)}`;}).join('<br>');}else{m.card.classList.add('ocupada');m.badge.textContent=`${getTipo(items)} P:${cmd.estado_parrilla||cmd.estado} C:${cmd.estado_cocina||cmd.estado}`;m.preview.innerHTML=items.map(i=>{if(getEstadoItem(i)==='MANOS_EN_MESA') return `<span class="tachado">• ${getCant(i)}x ${getNombre(i)}</span>`;return `• ${getCant(i)}x ${getNombre(i)}`;}).join('<br>');}m.total.textContent=`$${cmd.total_cobrado||cmd.total||0}`;m.timer.textContent=`${mm}:${ss}`;if(!esCobrada&&!todoEnManos){const d=document.createElement('div');d.style.cssText="background:#222;padding:6px;border-radius:4px;margin-bottom:4px";d.innerHTML=`<strong>${mesaReal}</strong> ${getTipo(items)} ${tieneEsperando?'✋ ESPERA MOZO':''} - ${items.filter(i=>getEstadoItem(i)!=='MANOS_EN_MESA').map(i=>getNombre(i)).join(', ')}`;lista.appendChild(d);}});document.getElementById('contadorPendientes').textContent=pend;document.getElementById('contadorMesasAtendidas').textContent=ocup;document.getElementById('contadorMixtas').textContent=esperandoMozo;document.getElementById('contadorCobradas').textContent=cobr;});}
 function escucharMensajesFirebase(){db.ref('mensajes_chat').limitToLast(20).on('value',snap=>{const box=document.getElementById('chatMensajes');box.innerHTML='';const data=snap.val();if(!data)return;Object.values(data).sort((a,b)=>(a.timestamp||0)-(b.timestamp||0)).forEach(m=>{const d=document.createElement('div');d.className='chat-msg';d.innerHTML=`<strong>${m.remitente}</strong> (${m.hora||''})<br>${m.texto}`;box.appendChild(d);});box.scrollTop=box.scrollHeight;});}
-function checkAlarmas(){Object.values(comandasCache).forEach(cmd=>{if(!cmd.mesa)return;const items=cmd.items||[];const tieneEsperando=items.some(i=>getEstadoItem(i)==='ENTREGADO_SECTOR');const tienePend=items.some(i=>getEstadoItem(i)==='PENDIENTE');if(tieneEsperando || tienePend){const ts=cmd.timestamp_estado||cmd.timestamp||Date.now();const mins=(Date.now()-ts)/1000/60;let debe=null;if(tieneEsperando && mins>=1) debe='ESPERA_MOZO'; else if(tienePend && mins>=5) debe='RECIBIDO'; if(debe){const k=(cmd.mesa)+'_'+debe;if(!ultimaAlarma[k]||Date.now()-ultimaAlarma[k]>30000){alarmaTipo(debe);ultimaAlarma[k]=Date.now();}}}});}
+function checkAlarmas(){Object.values(comandasCache).forEach(cmd=>{if(!cmd.mesa)return;const items=cmd.items||[];const tieneEsperando=items.some(i=>getEstadoItem(i)==='ENTREGADO_SECTOR');const tienePend=items.some(i=>getEstadoItem(i)==='PENDIENTE');if(tieneEsperando||tienePend){const ts=cmd.timestamp_estado||cmd.timestamp||Date.now();const mins=(Date.now()-ts)/1000/60;let debe=null;if(tieneEsperando&&mins>=1) debe='ESPERA_MOZO'; else if(tienePend&&mins>=5) debe='RECIBIDO'; if(debe){const k=(cmd.mesa)+'_'+debe;if(!ultimaAlarma[k]||Date.now()-ultimaAlarma[k]>30000){alarmaTipo(debe);ultimaAlarma[k]=Date.now();}}}});}
 function clickUbicacion(id){
   idMesaGestion=id;
   const cmd=comandasCache[id] || Object.values(comandasCache).find(c=>c.mesa===id);
   document.getElementById('tituloOpcionesMesa').textContent=`Gestionar: ${id}`;
-  document.getElementById('btnsExtras').innerHTML='';
+  const contExtra=document.getElementById('btnsExtras');
+  contExtra.innerHTML='';
   if(cmd){
-    const items = cmd.items||[];
-    let itemsHtml = items.map(i=>{
-      let est = getEstadoItem(i);
-      let cls = est==='MANOS_EN_MESA'? 'tachado' : (est==='ENTREGADO_SECTOR'? 'entregado-sector' : '');
-      return `<div class="${cls}">• ${getCant(i)}x ${getNombre(i)} $${getPrecio(i)} <small style="color:#f1c40f">[${est}]</small></div>`;
+    const items=cmd.items||[];
+    let itemsHtml=items.map(i=>{
+      let est=getEstadoItem(i);
+      let cls=est==='MANOS_EN_MESA'? 'tachado' : (est==='ENTREGADO_SECTOR'? 'entregado-sector' : '');
+      return `<div class="${cls}">• ${getCant(i)}x ${getNombre(i)} $${getPrecio(i)} <small>[${est}]</small></div>`;
     }).join('');
-    let tieneEsperandoMozo = items.some(i=>getEstadoItem(i)==='ENTREGADO_SECTOR');
-    let pendientesParaImprimir = items.filter(i=>getEstadoItem(i)!=='MANOS_EN_MESA');
+    let tieneEsperandoMozo=items.some(i=>getEstadoItem(i)==='ENTREGADO_SECTOR');
+    let pendientesParaImprimir=items.filter(i=>getEstadoItem(i)!=='MANOS_EN_MESA');
     document.getElementById('detalleEstadosSeparados').innerHTML=`${getTipo(items)}<br>P: ${cmd.estado_parrilla||cmd.estado} C: ${cmd.estado_cocina||cmd.estado}<br><br>${itemsHtml}<br><br>Total $${cmd.total_cobrado||cmd.total}`;
-    let extraBtns='';
-    if(tieneEsperandoMozo){
-      extraBtns+=`<button class="btn-manos" onclick="marcarManosEnMesa('${id}')">✋ MANOS EN MESA - APAGAR ALARMA</button>`;
-    }
-    if(pendientesParaImprimir.length>0){
-      extraBtns+=`<button class="btn-print" onclick="imprimirSoloPendientes('${id}')">🖨️ IMPRIMIR SOLO PENDIENTES (${pendientesParaImprimir.length})</button>`;
-    } else {
-      extraBtns+=`<button class="btn-print" disabled style="opacity:0.4">🖨️ NADA PARA IMPRIMIR - TODO EN MANOS</button>`;
-    }
-    document.getElementById('btnsExtras').innerHTML=extraBtns;
+    if(tieneEsperandoMozo){contExtra.innerHTML+=`<button class="btn-manos" onclick="marcarManosEnMesa('${id}')">✋ MANOS EN MESA - APAGAR ALARMA</button>`;}
+    if(pendientesParaImprimir.length>0){contExtra.innerHTML+=`<button class="btn-print" onclick="imprimirSoloPendientes('${id}')">🖨️ IMPRIMIR SOLO PENDIENTES (${pendientesParaImprimir.length})</button>`;}
     document.getElementById('btnAgregar').style.display=(cmd.estado==='COBRADA')?'none':'block';
   }else{
     document.getElementById('detalleEstadosSeparados').innerHTML='Mesa libre';
@@ -362,71 +138,23 @@ function clickUbicacion(id){
   document.getElementById('modalOpcionesMesa').style.display='flex';
 }
 function seleccionarMesaParaAgregar(){document.getElementById('selectUbicacion').value=idMesaGestion;cerrarModal('modalOpcionesMesa');}
-function verDetalleMesaModal(){const cmd=comandasCache[idMesaGestion]||Object.values(comandasCache).find(c=>c.mesa===idMesaGestion);alert(cmd?`${cmd.mesa} $${cmd.total_cobrado||cmd.total}\n${(cmd.items||[]).map(i=>`${getNombre(i)} [${getEstadoItem(i)}]`).join('\n')}`:'Libre');}
-function cobrarMesa(){
- if(!idMesaGestion) return;
- const cmd=comandasCache[idMesaGestion] || Object.values(comandasCache).find(c=>c.mesa===idMesaGestion);
- if(!cmd || (cmd.estado||'').toUpperCase()!=='COBRADA'){alert('Solo se puede liberar cuando está COBRADA por Gustavo'); return;}
- if(!confirm(`Liberar ${idMesaGestion}? Se borra de comandas_activas`)) return;
- db.ref('comandas_activas/'+idMesaGestion).remove();
- cerrarModal('modalOpcionesMesa');
-}
+function cobrarMesa(){if(!idMesaGestion) return;const cmd=comandasCache[idMesaGestion]||Object.values(comandasCache).find(c=>c.mesa===idMesaGestion);if(!cmd||(cmd.estado||'').toUpperCase()!=='COBRADA'){alert('Solo se puede liberar cuando está COBRADA por Gustavo');return;}if(!confirm(`Liberar ${idMesaGestion}?`)) return;db.ref('comandas_activas/'+idMesaGestion).remove();cerrarModal('modalOpcionesMesa');}
+function cerrarModal(id){document.getElementById(id).style.display='none';if(id==='modalOpcionesMesa'){document.getElementById('btnsExtras').innerHTML='';}}
 function marcarManosEnMesa(mesaId){
-  const cmd = comandasCache[mesaId];
-  if(!cmd ||!cmd.items) return;
-  let nuevosItems = cmd.items.map(it=>{
-    if(getEstadoItem(it)==='ENTREGADO_SECTOR'){
-      return {...it, estadoItem:'MANOS_EN_MESA', fechaManos:Date.now()};
-    }
-    return it;
-  });
-  db.ref('comandas_activas/'+mesaId+'/items').set(nuevosItems).then(()=>{
-    let quedaAlgo = nuevosItems.some(i=> getEstadoItem(i)!=='MANOS_EN_MESA');
-    if(!quedaAlgo){
-      db.ref('comandas_activas/'+mesaId).update({
-        estado:'OCUPADA_SILENCIOSA',
-        estado_parrilla:'MANOS_EN_MESA',
-        estado_cocina:'MANOS_EN_MESA',
-        timestamp_estado:Date.now()
-      });
-    }
-  });
+  const cmd=comandasCache[mesaId];if(!cmd||!cmd.items) return;
+  let nuevosItems=cmd.items.map(it=>{if(getEstadoItem(it)==='ENTREGADO_SECTOR'){return {...it,estadoItem:'MANOS_EN_MESA',fechaManos:Date.now()};}return it;});
+  db.ref('comandas_activas/'+mesaId+'/items').set(nuevosItems).then(()=>{let quedaAlgo=nuevosItems.some(i=>getEstadoItem(i)!=='MANOS_EN_MESA');if(!quedaAlgo){db.ref('comandas_activas/'+mesaId).update({estado:'OCUPADA_SILENCIOSA',estado_parrilla:'MANOS_EN_MESA',estado_cocina:'MANOS_EN_MESA',timestamp_estado:Date.now()});}});
   cerrarModal('modalOpcionesMesa');
 }
 function imprimirSoloPendientes(mesaId){
-  const cmd = comandasCache[mesaId];
-  if(!cmd) return;
-  let pendientes = (cmd.items||[]).filter(i=> getEstadoItem(i)!=='MANOS_EN_MESA');
-  if(!pendientes.length){ alert('Nada para imprimir, todo ya está en MANOS'); return; }
-  let html = `
-    <html><head><title>Comanda ${mesaId}</title>
-    <style>body{font-family:monospace;font-size:14px;width:80mm} h3{text-align:center;margin:0}.tachado{text-decoration:line-through}</style>
-    </head><body>
-      <h3>LA PERSEVERANCIA</h3>
-      <p style="text-align:center">${mesaId} - ${new Date().toLocaleString('es-AR')}</p>
-      <hr>
-      <strong>SOLO PENDIENTES / POR ENTREGAR:</strong><br><br>
-      ${pendientes.map(i=>`${getCant(i)}x ${getNombre(i)} - $${getPrecio(i)} [${getEstadoItem(i)}]`).join('<br>')}
-      <hr>
-      <p>TOTAL MESA: $${cmd.total_cobrado||cmd.total}</p>
-      <p style="font-size:10px">Impresion inteligente - No incluye items en MANOS (${(cmd.items||[]).filter(i=>getEstadoItem(i)==='MANOS_EN_MESA').length} tachados)</p>
-      <script>window.onload=()=>{window.print(); setTimeout(()=>window.close(),500)}<\/script>
-    </body></html>
-  `;
-  let w = window.open('','','width=400,height=600');
-  w.document.write(html);
-  w.document.close();
+  const cmd=comandasCache[mesaId];if(!cmd) return;
+  let pendientes=(cmd.items||[]).filter(i=>getEstadoItem(i)!=='MANOS_EN_MESA');
+  if(!pendientes.length){alert('Nada para imprimir');return;}
+  let html=`<html><head><title>${mesaId}</title><style>body{font-family:monospace;width:80mm}</style></head><body><h3>LA PERSEVERANCIA</h3><p>${mesaId} - ${new Date().toLocaleString('es-AR')}</p><hr>${pendientes.map(i=>`${getCant(i)}x ${getNombre(i)} [${getEstadoItem(i)}]`).join('<br>')}<hr><p>TOTAL $${cmd.total_cobrado||cmd.total}</p><script>window.onload=()=>{window.print();}<\/script></body></html>`;
+  let w=window.open('','','width=400,height=600');w.document.write(html);w.document.close();
 }
 function enviarMensajeChat(){const inp=document.getElementById('inputMensaje');if(!inp.value.trim())return;db.ref('mensajes_chat').push({remitente:'Mariana',texto:inp.value,hora:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),timestamp:Date.now()});inp.value='';}
-function cerrarModal(id){document.getElementById(id).style.display='none';}
-function abrirPropinas(){
-  document.getElementById('modalPropinas').style.display='flex';
-  db.ref('propinas_dia').once('value').then(s=>{
-    let tot=0, html='', count=0;
-    Object.values(s.val()||{}).forEach(r=>{tot+=parseInt(r.monto||0); count++; html+=`<div style="display:flex;justify-content:space-between;border-bottom:1px solid #222;padding:6px 0"><span>${new Date(r.timestamp).toLocaleTimeString()} - ${r.mesa||''}</span><b style="color:#3498db">$${r.monto}</b></div>`;});
-    document.getElementById('tPropHoy').innerText='$'+tot; document.getElementById('tMesasCob').innerText=count; document.getElementById('listaPropinasDet').innerHTML=html||'Sin propinas hoy';
-  });
-}
+function abrirPropinas(){document.getElementById('modalPropinas').style.display='flex';db.ref('propinas_dia').once('value').then(s=>{let tot=0,html='',count=0;Object.values(s.val()||{}).forEach(r=>{tot+=parseInt(r.monto||0);count++;html+=`<div style="display:flex;justify-content:space-between;border-bottom:1px solid #222;padding:6px 0"><span>${new Date(r.timestamp).toLocaleTimeString()} - ${r.mesa||''}</span><b style="color:#3498db">$${r.monto}</b></div>`;});document.getElementById('tPropHoy').innerText='$'+tot;document.getElementById('tMesasCob').innerText=count;document.getElementById('listaPropinasDet').innerHTML=html||'Sin propinas hoy';});}
 </script>
 </body>
 </html>
