@@ -1,27 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>La Perseverancia - Carta</title>
+<title>La Perseverancia - Carta PDF</title>
 <style>
-body{margin:0;background:#111}
-.header{background:#8B0000;color:white;padding:12px;display:flex;justify-content:space-between;align-items:center;font-family:sans-serif}
-.header b{font-size:18px}
-.btn{background:#25D366;color:white;padding:8px 16px;border-radius:20px;text-decoration:none;font-weight:bold}
-iframe{width:100%;height:calc(100vh - 60px);border:0;background:white}
+body{margin:0;background:#000}
+.top{background:#8B0000;color:#fff;padding:12px 15px;display:flex;justify-content:space-between;align-items:center;font-family:Arial}
+.btn{background:#25D366;color:#fff;padding:9px 18px;border-radius:25px;text-decoration:none;font-weight:bold;font-size:14px}
+iframe{width:100%;height:calc(100vh - 54px);border:none;background:white}
 </style>
 </head>
 <body>
-<div class="header">
-<div><b>LA PERSEVERANCIA</b><div id="mesa" style="font-size:12px;opacity:0.8"></div></div>
-<a id="wa" class="btn" href="#">WhatsApp</a>
+<div class="top">
+<div><b>LA PERSEVERANCIA</b><div id="mesa" style="font-size:11px;opacity:.8"></div></div>
+<a id="wa" class="btn" href="#">Pedir</a>
 </div>
-<iframe src="./menu-ejecutivo.pdf#view=FitH"></iframe>
+<iframe src="menu-ejecutivo.pdf#zoom=page-width"></iframe>
 <script>
-var m = new URLSearchParams(location.search).get('mesa') || 'MESA';
+let m = new URLSearchParams(location.search).get('mesa') || 'CARTA';
 document.getElementById('mesa').textContent = m.replaceAll('_',' ').toUpperCase();
-document.getElementById('wa').href = "https://wa.me/5491150000000?text=Hola, soy " + encodeURIComponent(m);
+document.getElementById('wa').href = "https://wa.me/5491150000000?text=Hola soy "+encodeURIComponent(m)+" quiero pedir";
 </script>
 </body>
 </html>
