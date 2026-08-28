@@ -1,5 +1,5 @@
 <!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>COCINA HERNÁN - v2.8 FIX MESA2 + COMPATIBLE GUSTAVO</title>
+<title>COCINA HERNÁN - v3.2 RESALTE COCINA</title>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <style>
@@ -15,10 +15,13 @@ header{background:linear-gradient(90deg,#b03a2e,#d35400);padding:10px 14px;borde
 .ticket.alarm-recibido{box-shadow:0 0 10px #e67e22}.ticket.alarm-prep{box-shadow:0 0 14px #c0392b;animation:parp 1s infinite}.ticket.alarm-manos{box-shadow:0 0 18px #f1c40f;animation:parp.4s infinite}
 @keyframes parp{0%,100%{opacity:1}50%{opacity:.6}}
 .badge-tipo{font-size:8px;padding:2px 6px;border-radius:10px;border:1px solid;font-weight:bold}
-.guarnicion{background:rgba(39,174,96,0.25);border-left:3px solid #27ae60;padding:1px 5px;border-radius:3px;font-weight:900;color:#fff!important}
+.item-cocina-resaltado{background:rgba(39,174,96,0.32);border-left:4px solid #00ff66;padding:5px 7px;border-radius:4px;font-weight:bold;color:#fff;margin:3px 0;font-size:13px}
+.item-parrilla-tenue{opacity:0.32;font-size:9.5px;padding:1px 6px;color:#aaa;font-style:italic;margin:1px 0 1px 14px;border-left:1px dashed #555;letter-spacing:0.3px}
+.entregado-sector{background:#2a2411!important;border-left-color:#f1c40f!important;color:#f1c40f}
+.tachado{text-decoration:line-through;opacity:0.35}
 .plano-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px}
 .mesa-card{background:#1b1b1b;border:1px solid #333;border-radius:8px;padding:8px;min-height:130px;cursor:pointer}
-.mesa-card.ocupada{border-color:#00ff66;background:#122a18}.mesa-card.alarm-recibido{border-color:#e67e22;box-shadow:0 0 12px #e67e22}.mesa-card.alarm-prep{border-color:#c0392b;box-shadow:0 0 16px #c0392b;animation:parp 1s infinite}.mesa-card.alarm-manos{border-color:#f1c40f;box-shadow:0 0 20px #f1c40f;animation:parp.4s infinite}
+.mesa-card.ocupada{border-color:#00ff66;background:#122a18}.mesa-card.alarm-manos{border-color:#f1c40f;box-shadow:0 0 20px #f1c40f;animation:parp.4s infinite}
 .mesa-card.cobrada{border-color:#f1c40f;background:#1a1a00;opacity:0.7}
 .timer{background:#000;border:1px solid #00ff66;color:#00ff66;text-align:center;padding:3px;border-radius:4px;font-family:monospace;font-size:11px;margin-top:6px}
 .modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.88);display:none;justify-content:center;align-items:center;z-index:9999}
@@ -26,12 +29,17 @@ header{background:linear-gradient(90deg,#b03a2e,#d35400);padding:10px 14px;borde
 .btn-estado{width:100%;padding:12px;margin-bottom:8px;border:none;border-radius:6px;font-weight:bold;cursor:pointer;color:#fff;font-size:12px}
 .chat-box{background:#111;border:1px solid #333;border-radius:6px;height:300px;overflow-y:auto;padding:8px;font-size:11px;margin-bottom:8px;display:flex;flex-direction:column;gap:6px;text-align:left}
 </style></head><body>
-<header><div><b>🔥 LA PERSEVERANCIA</b> <span style="font-size:11px;opacity:.8">| COCINA HERNÁN v2.8 FIX MESA2</span></div>
-<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-caja" onclick="abrirCaja()">💰 CAJA</button><button class="btn btn-msj" onclick="abrirMensajes()">💬 MENSAJES</button><button class="btn" onclick="abrirResumen()">📋 RESUMEN</button><button class="btn btn-rojo" onclick="abrirAgotar()">🚫 AGOTAR</button><span style="font-size:11px;color:#00ff66;border:1px solid #00ff66;padding:5px 8px;border-radius:5px">• ACTIVA FIX v2.8</span></div></header>
-<div class="layout"><div class="panel"><div class="panel-titulo"><span>ÍTEMS COCINA (FIFO)</span><span id="cant">0</span></div><div id="listaFIFO"></div></div><div class="panel"><div class="panel-titulo"><span>📍 PLANO - comandas_activas</span></div><div id="plano"></div></div></div>
-<div class="modal-overlay" id="modal"><div class="modal" style="max-width:420px"><h3 id="modalTitulo" style="color:#00ff66;margin-bottom:8px"></h3><div id="modalDetalle" style="font-size:11px;text-align:left;background:#111;padding:8px;border-radius:6px;margin-bottom:10px"></div><button class="btn-estado" style="background:#2980b9" onclick="setEstado('RECIBIDO')">📥 RECIBIDO</button><button class="btn-estado" style="background:#d35400" onclick="setEstado('PREPARACION')">🔥 PREPARACIÓN</button><button class="btn-estado" style="background:#27ae60" onclick="setEstado('MANOS')">🖐️ MANOS / LISTO</button><button class="btn-estado" style="background:#333" onclick="cerrar()">CANCELAR</button></div></div>
+<header><div><b>🔥 LA PERSEVERANCIA</b> <span style="font-size:11px;opacity:.8">| COCINA HERNÁN v3.2 RESALTE</span></div>
+<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-caja" onclick="abrirCaja()">💰 CAJA</button><button class="btn btn-msj" onclick="abrirMensajes()">💬 MENSAJES</button><button class="btn" onclick="abrirResumen()">📋 RESUMEN</button><button class="btn btn-rojo" onclick="abrirAgotar()">🚫 AGOTAR</button><span style="font-size:11px;color:#00ff66;border:1px solid #00ff66;padding:5px 8px;border-radius:5px">• v3.2 MANOS FIX</span></div></header>
+<div class="layout"><div class="panel"><div class="panel-titulo"><span>ÍTEMS COCINA - COCINA RESALTADA / PARRILLA TENUE</span><span id="cant">0</span></div><div id="listaFIFO"></div></div><div class="panel"><div class="panel-titulo"><span>📍 PLANO - comandas_activas</span></div><div id="plano"></div></div></div>
+<div class="modal-overlay" id="modal"><div class="modal" style="max-width:460px"><h3 id="modalTitulo" style="color:#00ff66;margin-bottom:8px"></h3><div id="modalDetalle" style="font-size:11px;text-align:left;background:#111;padding:8px;border-radius:6px;margin-bottom:10px;max-height:50vh;overflow:auto"></div>
+<button class="btn-estado" style="background:#2980b9" onclick="setEstado('RECIBIDO')">📥 RECIBIDO</button>
+<button class="btn-estado" style="background:#d35400" onclick="setEstado('PREPARACION')">🔥 PREPARACIÓN</button>
+<button class="btn-estado" style="background:#27ae60" onclick="marcarTodosEntregados()">🖐️ ENTREGADO A MOZO - APAGAR TITILANTE MARIANA</button>
+<button class="btn-estado" style="background:#000;border:1px solid #3498db;color:#3498db" onclick="imprimirPendientesModal()">🖨️ IMPRIMIR SOLO COCINA PENDIENTE</button>
+<button class="btn-estado" style="background:#333" onclick="cerrar()">CERRAR (ESC)</button></div></div>
 <div class="modal-overlay" id="modalResumen"><div class="modal" style="max-width:550px;text-align:left"><h3 style="color:#ff9900">📋 RESUMEN</h3><div id="contenidoResumen" style="font-size:12px;background:#111;padding:10px;border-radius:6px;max-height:60vh;overflow-y:auto"></div><button class="btn-estado" style="background:#333;margin-top:10px" onclick="document.getElementById('modalResumen').style.display='none'">CERRAR</button></div></div>
-<div class="modal-overlay" id="modalCaja"><div class="modal" style="text-align:left"><h3 style="color:#f1c40f">💰 CAJA / ARQUEO</h3><div id="cajaLista" style="font-size:11px;background:#111;padding:10px;border-radius:6px;max-height:45vh;overflow-y:auto"></div><button class="btn-estado" style="background:#333;margin-top:10px" onclick="document.getElementById('modalCaja').style.display='none'">CERRAR</button></div></div>
+<div class="modal-overlay" id="modalCaja"><div class="modal" style="text-align:left"><h3 style="color:#f1c40f">💰 CAJA</h3><div id="cajaLista" style="font-size:11px;background:#111;padding:10px;border-radius:6px;max-height:45vh;overflow-y:auto"></div><button class="btn-estado" style="background:#333;margin-top:10px" onclick="document.getElementById('modalCaja').style.display='none'">CERRAR</button></div></div>
 <div class="modal-overlay" id="modalMensajes"><div class="modal" style="text-align:left"><h3 style="color:#3498db">💬 MENSAJES</h3><div class="chat-box" id="chatMensajes"></div><input type="text" id="inputMensaje" placeholder="Escribir aviso..." style="width:100%;padding:10px;background:#111;border:1px solid #444;color:#fff;border-radius:6px" onkeypress="if(event.key==='Enter')enviarMensaje()"><button style="margin-top:8px;width:100%;padding:10px;background:#27ae60;border:none;color:#fff;border-radius:6px;font-weight:bold" onclick="enviarMensaje()">📤 ENVIAR</button><button class="btn-estado" style="background:#333;margin-top:8px" onclick="document.getElementById('modalMensajes').style.display='none'">CERRAR</button></div></div>
 <div class="modal-overlay" id="modalAgotar"><div class="modal" style="max-width:550px;text-align:left"><h3 style="color:#e74c3c">🚫 AGOTAR STOCK</h3><div id="listaAgotar" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;max-height:60vh;overflow-y:auto"></div><button class="btn-estado" style="background:#333;margin-top:10px" onclick="document.getElementById('modalAgotar').style.display='none'">CERRAR</button></div></div>
 <script>
@@ -43,13 +51,14 @@ const MENU_COMPLETO=["Asado","Vacio","Bife de chorizo","Entraña","Chorizo","Mor
 let comandas={},sel=null,agotadosCache={};
 function getNombre(it){return (it.n||it.nombre||it.name||'').toString().trim();}
 function getPrecio(it){return it.p||it.precio||0;}
-function getCant(it){return parseInt(it.cantidad||it.qty||1);}const PARRILLA_BASE=['asado','vacio','vacío','bife','entraña','morcilla','chinchulin','chorizo','provoleta','molleja','matambre','bondiola','choripan','morcipan','parrillada','pollo'];
+function getCant(it){return parseInt(it.cantidad||it.qty||1);}
+function getEstadoItem(it){return (it.estadoItem||'PENDIENTE').toUpperCase();}
+const PARRILLA_BASE=['asado','vacio','vacío','bife','entraña','morcilla','chinchulin','chorizo','provoleta','molleja','matambre','bondiola','choripan','morcipan','parrillada','pollo'];
 const AGREGADOS_COCINA=['lechuga','tomate','jamon','jamón','queso','huevo','frita','papas'];
 const COCINA_PURA=['milanesa','suprema','pechuga','tortilla'];
 function descomponerItem(nom){const n=(nom||'').toLowerCase(); if(COCINA_PURA.some(k=>n.includes(k))) return [{texto:nom, estacion:'COCINA'}]; const esParr=PARRILLA_BASE.some(k=>n.includes(k)); const tiene=AGREGADOS_COCINA.some(k=>n.includes(k)); if(esParr&&tiene){const carne=nom.split(/c\/fritas/i)[0].trim(); return [{texto:carne, estacion:'PARRILLA'}, {texto:'FRITAS', estacion:'COCINA', esGuarnicion:true}];} if(esParr) return [{texto:nom, estacion:'PARRILLA'}]; return [{texto:nom, estacion:'COCINA'}];}
 function getTipo(items){let p=false,c=false;(items||[]).forEach(it=>{descomponerItem(getNombre(it)).forEach(s=>{if(s.estacion==='PARRILLA') p=true; else c=true;});}); if(p&&c) return 'MIXTA'; if(p) return 'PARRILLA'; return 'COCINA';}
 
-// LEER DE comandas_activas CON KEY EXACTA (FIX MESA 2)
 db.ref('comandas_activas').on('value',s=>{
 const data=s.val()||{};const nuevo={};
 Object.entries(data).forEach(([firebaseKey,cmd])=>{
@@ -60,14 +69,13 @@ Object.entries(data).forEach(([firebaseKey,cmd])=>{
  (cmd.items||[]).forEach(it=>{
    const nom=getNombre(it);
    if(!nom||nom.toLowerCase().includes('undefined')) return;
-   const ex=nuevo[idV].items.find(x=>getNombre(x)===nom);
-   if(ex) ex.cantidad=(ex.cantidad||1)+getCant(it); else nuevo[idV].items.push({n:nom,nombre:nom,cantidad:getCant(it),p:getPrecio(it)});
+   nuevo[idV].items.push({n:nom,nombre:nom,cantidad:getCant(it),p:getPrecio(it),estadoItem:it.estadoItem||'PENDIENTE',cat:it.cat||''});
  });
  nuevo[idV].estado=cmd.estado||nuevo[idV].estado; nuevo[idV].estado_cocina=cmd.estado_cocina||nuevo[idV].estado; nuevo[idV].estado_parrilla=cmd.estado_parrilla||nuevo[idV].estado; nuevo[idV].total_cobrado=cmd.total||nuevo[idV].total_cobrado;
 });
 comandas=nuevo;render();
 });
-db.ref('platos_agotados').on('value',s=>{agotadosCache=s.val()||{};render();});
+db.ref('platos_agotados').on('value',s=>{agotadosCache=s.val()||{};});
 db.ref('mensajes_chat').limitToLast(30).on('value',snap=>{
  const box=document.getElementById('chatMensajes'); if(!box) return; box.innerHTML=''; const data=snap.val(); if(!data) return;
  Object.values(data).sort((a,b)=>(a.timestamp||0)-(b.timestamp||0)).forEach(m=>{
@@ -78,39 +86,69 @@ function render(){
  const ids=Object.keys(comandas);document.getElementById('cant').textContent=ids.length;
  const fifo=document.getElementById('listaFIFO');fifo.innerHTML='';
  ids.sort((a,b)=>comandas[a].timestamp-comandas[b].timestamp).forEach(id=>{
-  const cmd=comandas[id];const tipo=getTipo(cmd.items);if(tipo==='PARRILLA') return;
-  const nro=String(cmd.nroOrden).slice(-3);const esCobrada=cmd.estado==='COBRADA';
-  const mins=(Date.now()-(cmd.timestamp_estado||cmd.timestamp))/1000/60; let alarmClass=''; if(!esCobrada){ if(cmd.estado==='RECIBIDO'&&mins>=5) alarmClass=' alarm-recibido'; else if((cmd.estado_cocina||'').includes('PREPARACION')&&mins>=15) alarmClass=' alarm-prep'; else if((cmd.estado_cocina||'').includes('MANOS')&&mins>=1.5) alarmClass=' alarm-manos';}
-  let items='';cmd.items.forEach(it=>{descomponerItem(getNombre(it)).forEach(s=>{let cls=''; if(s.estacion==='PARRILLA') cls='tachado'; else if(s.esGuarnicion) cls='guarnicion'; items+=`<div class="${cls}" style="display:flex;justify-content:space-between;font-size:12px"><span>• ${s.texto}</span><b>x${it.cantidad||1}</b></div>`;});});
-  const div=document.createElement('div');div.className=`ticket ${esCobrada?'COBRADA':cmd.estado_cocina||cmd.estado} ${alarmClass}`;div.onclick=()=>abrir(id);
-  div.innerHTML=`<div style="display:flex;justify-content:space-between"><span><span style="background:#000;color:#f1c40f;border:1px solid #f1c40f;padding:1px 4px;border-radius:4px;font-family:monospace">#${nro}</span> ${id}</span><span class="badge-tipo" style="color:${tipo==='MIXTA'?'#f1c40f':'#00ff66'}">${tipo}</span></div><div style="font-size:10px;color:#aaa;margin:4px 0">${cmd.estado_cocina||cmd.estado} - ${mins.toFixed(1)}min - $${(cmd.total_cobrado||0).toLocaleString()}</div>${items}`;fifo.appendChild(div);
+  const cmd=comandas[id];const tipo=getTipo(cmd.items);
+  const tieneCocina=cmd.items.some(i=>descomponerItem(getNombre(i)).some(s=>s.estacion==='COCINA'));
+  if(!tieneCocina) return;
+  const pendientesCocina=cmd.items.filter(i=>getEstadoItem(i)!=='MANOS_EN_MESA' && descomponerItem(getNombre(i)).some(s=>s.estacion==='COCINA'));
+  const tieneEntregado=cmd.items.some(i=>getEstadoItem(i)==='ENTREGADO_SECTOR' && descomponerItem(getNombre(i)).some(s=>s.estacion==='COCINA'));
+  if(pendientesCocina.length===0 &&!tieneEntregado) return;
+  const nro=String(cmd.nroOrden).slice(-3);
+  const mins=(Date.now()-(cmd.timestamp_estado||cmd.timestamp))/1000/60;
+  let alarmClass=''; if(cmd.estado==='RECIBIDO'&&mins>=5) alarmClass=' alarm-recibido'; else if((cmd.estado_cocina||'').includes('PREPARACION')&&mins>=15) alarmClass=' alarm-prep'; else if(tieneEntregado&&mins>=1) alarmClass=' alarm-manos';
+  let itemsHTML='';
+  cmd.items.forEach(it=>{
+    const est=getEstadoItem(it);
+    if(est==='MANOS_EN_MESA') return;
+    descomponerItem(getNombre(it)).forEach(s=>{
+      if(s.estacion==='COCINA'){
+        let extra=est==='ENTREGADO_SECTOR'?' entregado-sector':'';
+        itemsHTML+=`<div class="item-cocina-resaltado${extra}">• ${s.texto.toUpperCase()} x${it.cantidad||1} ${est==='ENTREGADO_SECTOR'?'✋':''} <small style="font-size:9px">[${est}]</small></div>`;
+      }else{
+        itemsHTML+=`<div class="item-parrilla-tenue">• ${s.texto} x${it.cantidad||1} (parrilla - ref)</div>`;
+      }
+    });
+  });
+  const div=document.createElement('div');div.className=`ticket ${cmd.estado_cocina||cmd.estado} ${alarmClass}`;div.onclick=()=>abrir(id);
+  div.innerHTML=`<div style="display:flex;justify-content:space-between"><span><span style="background:#000;color:#f1c40f;border:1px solid #f1c40f;padding:1px 4px;border-radius:4px;font-family:monospace">#${nro}</span> ${id}</span><span class="badge-tipo" style="color:${tipo==='MIXTA'?'#f1c40f':'#00ff66'}">${tipo}</span></div><div style="font-size:10px;color:#aaa;margin:4px 0">${cmd.estado_cocina||cmd.estado} - ${mins.toFixed(1)}min</div>${itemsHTML}`;fifo.appendChild(div);
  });
  const plano=document.getElementById('plano');plano.innerHTML='<div class="plano-grid" id="g"></div>';const g=document.getElementById('g');
  Object.keys(NOMBRES).forEach(id=>{
-  const cmd=comandas[id];
-  if(!cmd){const card=document.createElement('div');card.className='mesa-card';card.innerHTML=`<b>${NOMBRES[id]}</b><br><small style="color:#666">Libre</small>`;g.appendChild(card);return;}
-  const tipo=getTipo(cmd.items); if(tipo==='PARRILLA'&&false) return; // AHORA MUESTRA TODO, NO FILTRA PARRILLA
-  const esCobrada=cmd.estado==='COBRADA'; const mins=(Date.now()-(cmd.timestamp_estado||cmd.timestamp))/1000/60;
-  let alarmClass=''; if(!esCobrada){ if(cmd.estado==='RECIBIDO'&&mins>=5) alarmClass=' alarm-recibido'; else if((cmd.estado_cocina||'').includes('PREPARACION')&&mins>=15) alarmClass=' alarm-prep'; else if((cmd.estado_cocina||'').includes('MANOS')&&mins>=1.5) alarmClass=' alarm-manos';}
-  const card=document.createElement('div');card.className=`mesa-card ocupada ${alarmClass} ${esCobrada?'cobrada':''}`;card.onclick=()=>{if(cmd) abrir(id);};
-  if(esCobrada){card.innerHTML=`<b>${NOMBRES[id]}</b><div style="text-align:center;color:#f1c40f;font-weight:800;margin-top:8px">💰 COBRADA<br>$${cmd.total_cobrado||''}</div>`;}
-  else{const seg=Math.floor((Date.now()-cmd.timestamp)/1000);const mm=String(Math.floor(seg/60)).padStart(2,'0');const ss=String(seg%60).padStart(2,'0');let lista='';cmd.items.forEach(it=>{descomponerItem(getNombre(it)).forEach(s=>{let style='';if(s.estacion==='PARRILLA') style='color:#ff9900'; else if(s.esGuarnicion) style='font-weight:900;color:#fff;background:rgba(39,174,96,0.2)'; lista+=`<li style="${style}">• ${s.texto} x${it.cantidad||1}</li>`;});}); card.innerHTML=`<div style="display:flex;justify-content:space-between"><span><span style="color:#f1c40f">#${String(cmd.nroOrden).slice(-3)}</span> ${NOMBRES[id]}</span><span class="badge-tipo" style="color:${tipo==='MIXTA'?'#f1c40f':'#00ff66'}">${tipo}</span></div><div style="font-size:10px;color:#00ff66">${cmd.estado_cocina||cmd.estado} - ${mins.toFixed(1)}min</div><ul style="list-style:none;font-size:11px;margin:4px 0">${lista}</ul><div style="font-size:9px;color:#aaa">$${(cmd.total_cobrado||0).toLocaleString()} - ${cmd.mesa}</div><div class="timer">${mm}:${ss}</div>`;}
-  g.appendChild(card);
+  const cmd=comandas[id];if(!cmd){const card=document.createElement('div');card.className='mesa-card';card.innerHTML=`<b>${NOMBRES[id]}</b><br><small style="color:#666">Libre</small>`;g.appendChild(card);return;}
+  const mins=(Date.now()-(cmd.timestamp_estado||cmd.timestamp))/1000/60; let alarmClass=''; if(cmd.items.some(i=>getEstadoItem(i)==='ENTREGADO_SECTOR')&&mins>=1) alarmClass=' alarm-manos';
+  const card=document.createElement('div');card.className=`mesa-card ocupada ${alarmClass}`;card.onclick=()=>abrir(id);
+  let lista='';cmd.items.forEach(it=>{if(getEstadoItem(it)==='MANOS_EN_MESA') return; descomponerItem(getNombre(it)).forEach(s=>{if(s.estacion==='COCINA'){lista+=`<li class="item-cocina-resaltado" style="list-style:none">• ${s.texto} x${it.cantidad||1}</li>`;}else{lista+=`<li class="item-parrilla-tenue" style="list-style:none">• ${s.texto} (parrilla)</li>`;}});});
+  card.innerHTML=`<div><span style="color:#f1c40f">#${String(cmd.nroOrden).slice(-3)}</span> ${NOMBRES[id]}</div><ul style="margin:6px 0">${lista}</ul>`;g.appendChild(card);
  });
 }
-function abrir(id){sel=id;const cmd=comandas[id];const tipo=getTipo(cmd.items);document.getElementById('modalTitulo').textContent=id+' - '+tipo;let det=`<b>Estado: ${cmd.estado_cocina||cmd.estado}</b><br>Key FB: ${cmd.firebaseKey}<br><br>`;cmd.items.forEach(it=>{det+=`${getNombre(it)} x${it.cantidad||1} => ${descomponerItem(getNombre(it)).map(s=>s.estacion+':'+s.texto).join(' + ')}<br>`;});document.getElementById('modalDetalle').innerHTML=det;document.getElementById('modal').style.display='flex';}
+function abrir(id){sel=id;const cmd=comandas[id];const tipo=getTipo(cmd.items);document.getElementById('modalTitulo').textContent=id+' - '+tipo;let det=`<b>Estado: ${cmd.estado_cocina||cmd.estado}</b><br>Key FB: ${cmd.firebaseKey}<br><br>`;cmd.items.forEach((it,idx)=>{const est=getEstadoItem(it);const esCocina=descomponerItem(getNombre(it)).some(s=>s.estacion==='COCINA');let estilo=esCocina?'class="item-cocina-resaltado"':'class="item-parrilla-tenue"';det+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0"><span ${estilo}>${getNombre(it)} x${it.cantidad||1} [${est}]</span> ${esCocina&&est==='PENDIENTE'?`<button onclick="marcarItemEntregado(${idx})" style="background:#27ae60;color:#fff;border:none;padding:5px 10px;border-radius:4px;font-size:10px;cursor:pointer">✅ ENTREGAR</button>` : `<span style="font-size:10px;color:${est==='ENTREGADO_SECTOR'?'#f1c40f':'#888'}">${est}</span>`}</div>`;});document.getElementById('modalDetalle').innerHTML=det;document.getElementById('modal').style.display='flex';}
 function cerrar(){document.getElementById('modal').style.display='none';}
-function setEstado(n){if(!sel) return; const cmd=comandas[sel]; const firebaseKey=cmd.firebaseKey; const ahora=Date.now();
-db.ref('comandas_activas/'+firebaseKey+'/estado_cocina').set(n);
-db.ref('comandas_activas/'+firebaseKey+'/timestamp_estado').set(ahora);
-db.ref('comandas_activas/'+firebaseKey+'/timestamp_'+n.toLowerCase()).set(ahora);
-if(getTipo(cmd.items)==='COCINA'){db.ref('comandas_activas/'+firebaseKey+'/estado').set(n);}
-cerrar();
+function marcarItemEntregado(idx){
+ if(!sel) return; const cmd=comandas[sel]; const fbKey=cmd.firebaseKey;
+ db.ref('comandas_activas/'+fbKey+'/items').once('value').then(snap=>{
+   const itemsFB=snap.val()||[];const nombreBuscado=cmd.items[idx].n;let realIdx=itemsFB.findIndex(i=> (i.n||i.nombre)===nombreBuscado && (i.estadoItem||'PENDIENTE')==='PENDIENTE');if(realIdx===-1) realIdx=itemsFB.findIndex(i=> (i.n||i.nombre)===nombreBuscado);
+   if(realIdx>=0){db.ref('comandas_activas/'+fbKey+'/items/'+realIdx+'/estadoItem').set('ENTREGADO_SECTOR');db.ref('comandas_activas/'+fbKey+'/items/'+realIdx+'/fechaEntregadoSector').set(Date.now());db.ref('mensajes_chat').push({remitente:'Hernán',texto:`✋ ${sel} - ${nombreBuscado} ENTREGADO A MOZO`,hora:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),timestamp:Date.now()});}cerrar();
+ });
 }
-function abrirResumen(){let html='';Object.keys(comandas).forEach(id=>{const c=comandas[id];html+=`• ${id} [${getTipo(c.items)}] ${c.estado_cocina||c.estado} - ${c.items.map(i=>getNombre(i)).join(', ')}<br>`;});document.getElementById('contenidoResumen').innerHTML=html||'Sin comandas';document.getElementById('modalResumen').style.display='flex';}
+function marcarTodosEntregados(){
+ if(!sel) return; const fbKey=comandas[sel].firebaseKey;
+ db.ref('comandas_activas/'+fbKey+'/items').once('value').then(snap=>{
+   const itemsFB=snap.val()||[];let updates={};itemsFB.forEach((it,i)=>{const esCocina=descomponerItem(getNombre(it)).some(s=>s.estacion==='COCINA');if(esCocina && (it.estadoItem||'PENDIENTE')==='PENDIENTE'){updates[i+'/estadoItem']='ENTREGADO_SECTOR';updates[i+'/fechaEntregadoSector']=Date.now();}});db.ref('comandas_activas/'+fbKey+'/items').update(updates);cerrar();
+ });
+}
+function imprimirPendientesModal(){
+ if(!sel) return; const cmd=comandas[sel];
+ let pendientes=cmd.items.filter(i=>{const esCocina=descomponerItem(getNombre(i)).some(s=>s.estacion==='COCINA');return esCocina && getEstadoItem(i)!=='MANOS_EN_MESA';});
+ if(!pendientes.length){alert('Nada para imprimir');return;}
+ let html=`<html><head><title>${sel}</title><style>body{font-family:monospace;width:80mm;font-size:14px}.resaltado{font-weight:bold;font-size:16px}.tenue{font-size:10px;color:#888}</style></head><body><h3>COCINA - ${sel}</h3><p>${new Date().toLocaleString('es-AR')}</p><hr>${pendientes.map(i=>`<div class="resaltado">${i.cantidad}x ${i.n||i.nombre} [${getEstadoItem(i)}]</div>`).join('')}<hr><div class="tenue">Ref parrilla: ${cmd.items.filter(i=>descomponerItem(getNombre(i)).some(s=>s.estacion==='PARRILLA')).map(i=>i.n).join(', ')}</div><script>window.onload=()=>{window.print();}<\/script></body></html>`;
+ let w=window.open('','','width=400,height=600');w.document.write(html);w.document.close();
+}
+function setEstado(n){if(!sel) return; const cmd=comandas[sel]; const firebaseKey=cmd.firebaseKey; const ahora=Date.now();db.ref('comandas_activas/'+firebaseKey+'/estado_cocina').set(n);db.ref('comandas_activas/'+firebaseKey+'/timestamp_estado').set(ahora);if(getTipo(cmd.items)==='COCINA'){db.ref('comandas_activas/'+firebaseKey+'/estado').set(n);}cerrar();}
+function abrirResumen(){let html='';Object.keys(comandas).forEach(id=>{const c=comandas[id];html+=`• ${id} [${getTipo(c.items)}] ${c.estado_cocina||c.estado} - ${c.items.map(i=>getNombre(i)+'['+getEstadoItem(i)+']').join(', ')}<br>`;});document.getElementById('contenidoResumen').innerHTML=html||'Sin comandas';document.getElementById('modalResumen').style.display='flex';}
 function abrirCaja(){db.ref('historial_caja').once('value',s=>{let h='';Object.values(s.val()||{}).slice(0,30).forEach(r=>{h+=`$${r.total||r.total_cobrado} ${r.mesaId||r.mesa||''}<br>`;});document.getElementById('cajaLista').innerHTML=h||'Sin datos';document.getElementById('modalCaja').style.display='flex';});}
 function abrirMensajes(){document.getElementById('modalMensajes').style.display='flex';}
 function enviarMensaje(){const inp=document.getElementById('inputMensaje');const txt=inp.value.trim();if(!txt)return;db.ref('mensajes_chat').push({remitente:'Hernán',texto:txt,hora:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),timestamp:Date.now()});inp.value='';}
 function abrirAgotar(){const cont=document.getElementById('listaAgotar');cont.innerHTML='';MENU_COMPLETO.forEach(plato=>{const esta=!!agotadosCache[plato];const d=document.createElement('div');d.style.cssText=`padding:10px;border-radius:6px;cursor:pointer;font-size:11px;border:1px solid ${esta?'#c0392b':'#333'};background:${esta?'#3a1212':'#1e1e1e'};color:${esta?'#ff6b6b':'#fff'};text-align:center`;d.textContent=(esta?'❌ ':'')+plato;d.onclick=()=>{if(esta) db.ref('platos_agotados/'+plato).remove();else db.ref('platos_agotados/'+plato).set({timestamp:Date.now(),por:'Hernán'});};cont.appendChild(d);});document.getElementById('modalAgotar').style.display='flex';}
+document.getElementById('modal').addEventListener('click',e=>{if(e.target.id==='modal') cerrar();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape') cerrar();});
 setInterval(render,1000);
 </script></body></html>
