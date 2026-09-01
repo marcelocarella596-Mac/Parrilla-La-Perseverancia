@@ -78,7 +78,7 @@ function alarmaTipo(t){if(!sonidoOn) return; if(t==='RECIBIDO'){beep(600,400);} 
 function toggleSonido(){sonidoOn=!sonidoOn;document.getElementById('bSonido').textContent=sonidoOn?'🔔 SONIDO ON':'🔕 SONIDO OFF'; if(sonidoOn) initAudio();}
 function init(){
  document.getElementById('ubic').addEventListener('change',e=>mesaSel=e.target.value);
- renderTabs();renderMenu();
+ renderTabs();renderMenu();renderPlano();
  setInterval(()=>document.getElementById('reloj').innerText=new Date().toLocaleTimeString(),1000);
  setTimeout(generarQR,600);
  db.ref('comandas_activas').on('value', snap=>{
@@ -93,7 +93,7 @@ function init(){
  setInterval(checkAlarmas,4000);
 }
 function renderMsgs(snap){const msgs=snap.val()||{}; const cont=document.getElementById('msgs');cont.innerHTML='';Object.values(msgs).reverse().forEach(m=>{const d=document.createElement('div');d.style.cssText='font-size:10px;padding:4px;border-left:3px solid '+(m.emisor==='Gustavo'?'#ff9900':'#c0392b')+';margin-bottom:4px;background:#111';d.innerHTML=`<b style="color:${m.emisor==='Gustavo'?'#ff9900':'#c0392b'}">${m.emisor||'?'}</b> <span style="color:#666;font-size:8px">${m.hora||''}</span><br>${m.texto}`;cont.appendChild(d);});}
-function renderTabs(){const c=document.getElementById('tabs');c.innerHTML='';CATS.forEach(cat=>{const d=document.createElement('div');d.className='tab'+(filtro===cat.id?' active':'');d.innerText=cat.n;d.onclick=()=>{filtro=cat.id;renderTabs();renderMenu();};c.appendChild(d);});}
+function renderTabs(){const c=document.getElementById('tabs');c.innerHTML='';CATS.forEach(cat=>{const d=document.createElement('div');d.className='tab'+(filtro===cat.id?' active':'');d.innerText=cat.n;d.onclick=()=>{filtro=cat.id;renderTabs();renderMenu();renderPlano();};c.appendChild(d);});}
 function filtrarBus(){busca=document.getElementById('bus').value.toLowerCase();renderMenu();}
 function renderMenu(){const g=document.getElementById('grid');g.innerHTML='';MENU.filter(m=>{const okCat=filtro==='todos'||m.cat===filtro;const okBus=!busca||m.n.toLowerCase().includes(busca);return okCat&&okBus;}).forEach(m=>{const d=document.createElement('div');d.className='item';d.innerHTML=`<b>${m.n}</b><i>${m.sub}</i><span>$${m.p.toLocaleString()}</span>`;d.onclick=()=>add(m);g.appendChild(d);});}
 function add(m){sel.push({...m, cantidad:1});renderSel();}
